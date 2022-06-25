@@ -1,36 +1,50 @@
 from sklearn.metrics import roc_curve, precision_recall_curve, roc_auc_score, auc, f1_score
 import matplotlib.pyplot as plt
-import numpy as np
-from utils import MODEL_DATA_PATH, MERGE_MODEL_DATA_PATH
+import numpy as np 
 
 # Plot the history for training a model
-def plt_model(test_number, history, model_file_name, data_to_load="AP", merge = False):
+def plt_model(MODEL_DATA_PATH, test_number, history, model_file_name):
     
     # Summarize history for accuracy
     plt.figure()
-    plt.plot(history.history['accuracy'], label='točnost')
-    plt.plot(history.history['val_accuracy'], label='točnost prilikom validacije')
-    plt.title('Postotak točnih predviđanja')
-    plt.ylabel('točnost')
-    plt.xlabel('epoha')
+    plt.plot(history.history['accuracy'], label='Accuracy')
+    plt.plot(history.history['val_accuracy'], label='Validation accuracy')
+    plt.title('Accuracy')
+    plt.ylabel('Accuracy')
+    plt.xlabel('Epoch')
     plt.legend(loc='upper center', bbox_to_anchor=(0.5, -0.1), ncol = 2)
-    if not merge:
-       plt.savefig(MODEL_DATA_PATH[data_to_load]+str(test_number)+"_"+model_file_name+"_acc.png", bbox_inches='tight')
-    else: 
-       plt.savefig(MERGE_MODEL_DATA_PATH[data_to_load]+str(test_number)+"_"+model_file_name+"_acc.png", bbox_inches='tight')
+    plt.savefig(MODEL_DATA_PATH+str(test_number)+"_"+model_file_name+"_acc.png", bbox_inches='tight')
     plt.close()
     # Summarize history for loss
     plt.figure()
-    plt.plot(history.history['loss'], label='gubitak')
-    plt.plot(history.history['val_loss'], label='gubitak prilikom validacije')
-    plt.title('Funkcija gubitka\n(Entropija razlike između točne i predviđene klase)')
-    plt.ylabel('gubitak')
-    plt.xlabel('epoha')
+    plt.plot(history.history['loss'], label='Loss')
+    plt.plot(history.history['val_loss'], label='Validation loss')
+    plt.title('Loss')
+    plt.ylabel('Loss')
+    plt.xlabel('Epoch')
     plt.legend(loc='upper center', bbox_to_anchor=(0.5, -0.1), ncol = 2)
-    if not merge:
-       plt.savefig(MODEL_DATA_PATH[data_to_load]+str(test_number)+"_"+model_file_name+"_loss.png", bbox_inches='tight')
-    else: 
-       plt.savefig(MERGE_MODEL_DATA_PATH[data_to_load]+str(test_number)+"_"+model_file_name+"_loss.png", bbox_inches='tight')
+    plt.savefig(MODEL_DATA_PATH+str(test_number)+"_"+model_file_name+"_loss.png", bbox_inches='tight')
+    plt.close()
+# Plot the history for training a model
+def plt_model_final(MODEL_DATA_PATH, test_number, history, model_file_name):
+    
+    # Summarize history for accuracy
+    plt.figure()
+    plt.plot(history.history['accuracy'], label='Accuracy') 
+    plt.title('Accuracy')
+    plt.ylabel('Accuracy')
+    plt.xlabel('Epoch')
+    plt.legend(loc='upper center', bbox_to_anchor=(0.5, -0.1), ncol = 2)
+    plt.savefig(MODEL_DATA_PATH+str(test_number)+"_"+model_file_name+"_acc.png", bbox_inches='tight')
+    plt.close()
+    # Summarize history for loss
+    plt.figure()
+    plt.plot(history.history['loss'], label='Loss') 
+    plt.title('Loss')
+    plt.ylabel('Loss')
+    plt.xlabel('Epoch')
+    plt.legend(loc='upper center', bbox_to_anchor=(0.5, -0.1), ncol = 2)
+    plt.savefig(MODEL_DATA_PATH+str(test_number)+"_"+model_file_name+"_loss.png", bbox_inches='tight')
     plt.close()
 
 # Convert probability to class based on the threshold of probability
@@ -64,32 +78,17 @@ def make_a_PR_plot(test_labels, model_predictions, pattern, label):
 
     # Locate the index of the largest F1 score
     ix = np.argmax(fscore)
-    print(label+': Najbolji prag=%f, F1=%.3f' % (thresholds[ix], fscore[ix]))
+    print(label+': Threshold=%f, F1=%.3f' % (thresholds[ix], fscore[ix]))
     plt.plot(recall[ix], precision[ix], 'o', markerfacecolor=pattern, markeredgecolor='k')
 
-def make_PR_plots(test_number, test_labels, PR_file_name, data_to_load="AP", merge=False, model_predictions_amino=[], model_predictions_di=[], model_predictions_tri=[], model_predictions_ansamble=[], model_predictions_voting=[], model_predictions_avg=[]):
+def make_PR_plots(MODEL_DATA_PATH, test_number, test_labels, model_predictions=[]):
     
     plt.figure()
-    plt.title("Krivulja preciznosti i osjetljivosti (PR)")
+    plt.title("Precision - Recall (PR) curve")
 
-    if len(model_predictions_amino) != 0:
-        make_a_PR_plot(test_labels, model_predictions_amino, 'r', 'PR krivulja za model aminokiselina ' + data_to_load)
-        
-    if len(model_predictions_di) != 0:
-        make_a_PR_plot(test_labels, model_predictions_di, 'g', 'PR krivulja za model dipeptida ' + data_to_load)
-
-    if len(model_predictions_tri) != 0:
-        make_a_PR_plot(test_labels, model_predictions_tri, 'b', 'PR krivulja za mode tripeptida ' + data_to_load)
-
-    if len(model_predictions_ansamble) != 0:
-        make_a_PR_plot(test_labels, model_predictions_ansamble, 'y', 'PR krivulja za model ansambla ' + data_to_load)
-
-    if len(model_predictions_voting) != 0:
-        make_a_PR_plot(test_labels, model_predictions_voting, 'm', 'PR krivulja za model glasovanja ' + data_to_load)
-
-    if len(model_predictions_avg) != 0:
-        make_a_PR_plot(test_labels, model_predictions_avg, 'orange', 'PR krivulja za model prosjeka ' + data_to_load)
-
+    if len(model_predictions) != 0:
+        make_a_PR_plot(test_labels, model_predictions, 'r', 'PR curve for multiple properties model ')
+         
 	# Calculate the no skill line as the proportion of the positive class
     num_positive = 0
     for value in test_labels:
@@ -98,20 +97,18 @@ def make_PR_plots(test_number, test_labels, PR_file_name, data_to_load="AP", mer
     no_skill = num_positive / len(test_labels)
 
 	# Plot the no skill precision-recall curve
-    plt.plot([0, 1], [no_skill, no_skill], 'c', label='PR krivulja nasumičnog pogađanja')
-    plt.xlabel('Osjetljivost')
-    plt.ylabel('Preciznost')
+    plt.plot([0, 1], [no_skill, no_skill], 'c', label='PR curve for random guessing')
+    plt.xlabel('Recall')
+    plt.ylabel('Precision')
 
     plt.legend(loc='upper center', bbox_to_anchor=(0.5, -0.1), ncol = 2)
-    if merge:
-        plt.savefig(MERGE_MODEL_DATA_PATH[data_to_load]+str(test_number)+"_"+PR_file_name+"_merged_"+data_to_load+".png", bbox_inches = 'tight')
-    else:
-        plt.savefig(MODEL_DATA_PATH[data_to_load]+str(test_number)+"_"+PR_file_name+"_"+data_to_load+".png", bbox_inches = 'tight')
+    plt.savefig(MODEL_DATA_PATH+str(test_number)+"_PR_curve_multiple_properties.png", bbox_inches = 'tight')
+        
     plt.close()
 
 def make_a_ROC_plot(test_labels, model_predictions, pattern, label):
 
-    plt.title("Krivulja radnih karakteristika prijemnika (ROC)")
+    plt.title("Receiver operating characteristic (ROC)")
     
     # Get false positive rate and true positive rate.
     fpr, tpr, thresholds = roc_curve(test_labels, model_predictions)
@@ -124,42 +121,24 @@ def make_a_ROC_plot(test_labels, model_predictions, pattern, label):
 
     # Locate the index of the largest g-mean
     ix = np.argmax(gmeans)
-    print(label+': Najbolji prag=%f, Geometrijska sredina=%.3f' % (thresholds[ix], gmeans[ix]))
+    print(label+': Threshold=%f, Geometric mean=%.3f' % (thresholds[ix], gmeans[ix]))
     plt.plot(fpr[ix], tpr[ix], 'o', markerfacecolor=pattern, markeredgecolor='k')
 
-def make_ROC_plots(test_number, test_labels, ROC_file_name, data_to_load="AP", merge=False, model_predictions_amino=[], model_predictions_di=[], model_predictions_tri=[], model_predictions_ansamble=[], model_predictions_voting=[], model_predictions_avg=[]):
+def make_ROC_plots(MODEL_DATA_PATH, test_number, test_labels, model_predictions=[]):
     
     plt.figure()
 
-    if len(model_predictions_amino) != 0:
-        make_a_ROC_plot(test_labels, model_predictions_amino, 'r', 'ROC krivulja za model aminokiselina ' + data_to_load)
-        
-    if len(model_predictions_di) != 0:
-        make_a_ROC_plot(test_labels, model_predictions_di, 'g', 'ROC krivulja za model dipeptida ' + data_to_load)
-
-    if len(model_predictions_tri) != 0:
-        make_a_ROC_plot(test_labels, model_predictions_tri, 'b', 'ROC krivulja za model tripeptida ' + data_to_load)
-
-    if len(model_predictions_ansamble) != 0:
-        make_a_ROC_plot(test_labels, model_predictions_ansamble, 'y', 'ROC krivulja za model ansambla ' + data_to_load)
-
-    if len(model_predictions_voting) != 0:
-        make_a_ROC_plot(test_labels, model_predictions_voting, 'm', 'ROC krivulja za model glasovanja ' + data_to_load)
-    
-    if len(model_predictions_avg) != 0:
-        make_a_ROC_plot(test_labels, model_predictions_avg, 'orange', 'ROC krivulja za model prosjeka ' + data_to_load)
+    make_a_ROC_plot(test_labels, model_predictions, 'r', 'ROC curve for multiple properties model ')
 
     # Plot random guessing ROC curve.
-    plt.plot([0, 1], [0, 1], 'c', label='ROC krivulja nasumičnog pogađanja')
+    plt.plot([0, 1], [0, 1], 'c', label='ROC curve for random guessing')
 
     plt.xlabel("FPR")
     plt.ylabel("TPR")
 
     plt.legend(loc='upper center', bbox_to_anchor=(0.5, -0.1), ncol = 2)
-    if merge:
-        plt.savefig(MERGE_MODEL_DATA_PATH[data_to_load]+str(test_number)+"_"+ROC_file_name+"_merged_"+data_to_load+".png", bbox_inches = 'tight')
-    else:
-        plt.savefig(MODEL_DATA_PATH[data_to_load]+str(test_number)+"_"+ROC_file_name+"_"+data_to_load+".png", bbox_inches = 'tight')
+    plt.savefig(MODEL_DATA_PATH+str(test_number)+"_ROC_curve_multiple_properties.png", bbox_inches = 'tight')
+    
     plt.close()
 
 # Count correct predictions based on a custom threshold of probability
@@ -176,85 +155,105 @@ def my_accuracy_calculate(test_labels, model_predictions, threshold=0.5):
         
     return score / len(test_labels) * 100
 
-def output_metrics(test_labels, model_predictions, name_of_model, data_to_load="AP", threshold=0.5):
+def output_metrics(test_labels, model_predictions, threshold=0.5):
     # Get recall and precision.
     precision, recall, _ = precision_recall_curve(test_labels, model_predictions)
 
     # Convert probabilities to predictions
     model_predictions_binary = convert_to_binary(model_predictions, threshold)
 
-    print("Model %s %s: Točnost: %.2f%% Površina ispod ROC krivulje: %.4f Površina ispod PR krivulje: %.4f F1: %.4f" 
-                        % (name_of_model, data_to_load,
+    print("Multiple properties model: Accuracy: %.2f%% Area under ROC curve: %.4f Area under PR curve: %.4f F1: %.4f" 
+                        % (
                         my_accuracy_calculate(test_labels, model_predictions, threshold), 
                         roc_auc_score(test_labels, model_predictions), 
                         auc(recall, precision), 
                         f1_score(test_labels, model_predictions_binary)))
 
-def hist_predicted(test_number, test_labels, model_predictions, hist_file_name, data_to_load="AP", merge=False):
+def hist_predicted(MODEL_DATA_PATH, test_number, test_labels, model_predictions):
 
     # Create a histogram of the predicted probabilities only for the peptides that show self-assembly
 
     model_predictions_true = []
     for x in range(len(test_labels)):
         if test_labels[x] == 1.0:
-            model_predictions_true.append(model_predictions[x])
+            model_predictions_true.append(float(model_predictions[x]))
 
     plt.figure()
-    plt.title("Model "+hist_file_name+"\nHistogram predviđenih vjerojatnosti samosastavljanja\nza peptide koji imaju samosastavljanje")
-    plt.xlabel("Predviđene vjerojatnosti samosastavljanja")
-    plt.ylabel("Broj peptida")
-    plt.hist(model_predictions_true, bins=100)
-    if merge:
-        plt.savefig(MERGE_MODEL_DATA_PATH[data_to_load]+str(test_number)+"_"+"model_"+hist_file_name+"_merged_"+data_to_load+"_histogram_SA.png", bbox_inches = 'tight')
-    else:
-        plt.savefig(MODEL_DATA_PATH[data_to_load]+str(test_number)+"_"+"model_"+hist_file_name+"_"+data_to_load+"_histogram_SA.png", bbox_inches = 'tight')
-    plt.close()
+    plt.title("Multiple properties model\nHistogram of predicted self assembly probability\nfor peptides with self assembly")
+    plt.xlabel("Predicted self assembly probability")
+    plt.ylabel("Number of peptides")
+    plt.hist(model_predictions_true, bins = [0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1])
+    
+    plt.savefig(MODEL_DATA_PATH+str(test_number)+"_"+"model_multiple_properties_histogram_SA.png", bbox_inches = 'tight')
+   
 
     # Create a histogram of the predicted probabilities only for the peptides that don't show self-assembly
 
     model_predictions_false = []
     for x in range(len(test_labels)):
         if test_labels[x] == 0.0:
-            model_predictions_false.append(model_predictions[x])
+            model_predictions_false.append(float(model_predictions[x]))
 
     plt.figure()
-    plt.title("Model "+hist_file_name+"\nHistogram predviđenih vjerojatnosti samosastavljanja\nza peptide koji nemaju samosastavljanje")
-    plt.xlabel("Predviđene vjerojatnosti samosastavljanja")
-    plt.ylabel("Broj peptida")
-    plt.hist(model_predictions_false, bins=100)
-    if merge:
-        plt.savefig(MERGE_MODEL_DATA_PATH[data_to_load]+str(test_number)+"_"+"model_"+hist_file_name+"_merged_"+data_to_load+"_histogram_NSA.png", bbox_inches = 'tight')
-    else:
-        plt.savefig(MODEL_DATA_PATH[data_to_load]+str(test_number)+"_"+"model_"+hist_file_name+"_"+data_to_load+"_histogram_NSA.png", bbox_inches = 'tight')
-    plt.close()
+    plt.title("Multiple properties model\nHistogram of predicted self assembly probability\nfor peptides without self assembly")
+    plt.xlabel("Predicted self assembly probability")
+    plt.ylabel("Number of peptides")
+    plt.hist(model_predictions_false, bins = [0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1])
+    
+    plt.savefig(MODEL_DATA_PATH+str(test_number)+"_"+"model_multiple_properties_histogram_NSA.png", bbox_inches = 'tight')
+   
 
-def decorate_stats(model_type, index, history, data_to_load="AP"):
-    accuracy = [history[i].history['accuracy'] for i in range(len(history))]
-    val_acc = [history[i].history['val_accuracy'] for i in range(len(history))]
-    loss = [history[i].history['loss'] for i in range(len(history))]
-    val_loss = [history[i].history['val_loss'] for i in range(len(history))]
+def decorate_stats(history, params_nr='', fold_nr=''):
+    accuracy =history.history['accuracy'] 
+    loss = history.history['loss'] 
+    val_loss = history.history['val_loss']  
+    val_acc = history.history['val_accuracy']
+    
+    accuracy_max = np.max(accuracy)
+    val_acc_max = np.max(val_acc) 
+    loss_min = np.min(loss) 
+    val_loss_min = np.min(val_loss)
 
-    accuracy_max = [np.max(accuracy[i]) for i in range(len(history))]
-    val_acc_max = [np.max(val_acc[i]) for i in range(len(history))]
-    loss_min = [np.min(loss[i]) for i in range(len(history))]
-    val_loss_min = [np.min(val_loss[i]) for i in range(len(history))]
+    begin_string =  "Multiple properties model (params " + str(params_nr) + ", fold " + str(fold_nr) + ")" 
+    if params_nr=='' and fold_nr=='':
+        begin_string = "Best multiple properties model"
 
-    print('Prosjek modela %s %s: Maksimalna točnost=%.2f%% (%.2f%%) Maksimalna točnost pri validaciji=%.2f%% (%.2f%%) Minimalni gubitak=%.2f (%.2f%%) Minimalni gubitak pri validaciji=%.2f (%.2f%%)' 
-    % (model_type, data_to_load, np.mean(accuracy_max)*100, np.std(accuracy_max)*100, np.mean(val_acc_max)*100, np.std(val_acc_max)*100, np.mean(loss_min), np.std(loss_min)*100, np.mean(val_loss_min), np.std(val_loss_min)*100))
-    print('Prosjek modela %s %s: Točnost=%.2f%% (%.2f%%) Točnost pri validaciji=%.2f%% (%.2f%%) Gubitak=%.2f (%.2f%%) Gubitak pri validaciji=%.2f (%.2f%%)' 
-    % (model_type, data_to_load, np.mean(accuracy)*100, np.std(accuracy)*100, np.mean(val_acc)*100, np.std(val_acc)*100, np.mean(loss), np.std(loss)*100, np.mean(val_loss), np.std(val_loss)*100))
+    print('%s: Maximum accuracy=%.2f%% Maximum validation accuracy=%.2f%% Minimal loss=%.2f Minimal validation loss=%.2f' 
+    % (begin_string, accuracy_max*100, val_acc_max*100, loss_min*100, val_loss_min*100))
+    print('%s: Accuracy=%.2f%% (%.2f%%) Validation accuracy=%.2f%% (%.2f%%) Loss=%.2f (%.2f%%) Validation loss=%.2f (%.2f%%)' 
+    % (begin_string, 
+    np.mean(accuracy)*100, np.std(accuracy)*100, 
+    np.mean(val_acc)*100, np.std(val_acc)*100, 
+    np.mean(loss)*100, np.std(loss)*100, 
+    np.mean(val_loss)*100, np.std(val_loss)*100))
+    
+def decorate_stats_final(history, params_nr='', fold_nr=''):
+    accuracy =history.history['accuracy'] 
+    loss = history.history['loss'] 
+    
+    accuracy_max = np.max(accuracy)
+    loss_min = np.min(loss) 
 
-    for i in range(len(history)):
+    begin_string =  "Multiple properties model (params " + str(params_nr) + ", fold " + str(fold_nr) + ")" 
+    if params_nr=='' and fold_nr=='':
+        begin_string = "Best multiple properties model"
 
-        begin_string = "Model"
-        if i == index:
-            begin_string = "Najbolji model"
+    print('%s: Maximum accuracy=%.2f%% Minimal loss=%.2f' 
+    % (begin_string, accuracy_max*100, loss_min*100))
+    print('%s: Accuracy=%.2f%% (%.2f%%) Loss=%.2f (%.2f%%)' 
+    % (begin_string, 
+    np.mean(accuracy)*100, np.std(accuracy)*100, 
+    np.mean(loss)*100, np.std(loss)*100))
+    
+def decorate_stats_avg(accuracy, val_acc, loss, val_loss, params_nr=''):  
+    
+    accuracy_max = np.max(accuracy)
+    val_acc_max = np.max(val_acc) 
+    loss_min = np.min(loss) 
+    val_loss_min = np.min(val_loss)
 
-        print('%s %s %s (indeks %d): Maksimalna točnost=%.2f%% Maksimalna točnost pri validaciji=%.2f%% Minimalni gubitak=%.2f Minimalni gubitak pri validaciji=%.2f' 
-        % (begin_string, model_type, data_to_load, i + 1, accuracy_max[i]*100, val_acc_max[i]*100, loss_min[i], val_loss_min[i]))
-        print('%s %s %s (indeks %d): Točnost=%.2f%% (%.2f%%) Točnost pri validaciji=%.2f%% (%.2f%%) Gubitak=%.2f (%.2f%%) Gubitak pri validaciji=%.2f (%.2f%%)' 
-        % (begin_string, model_type, data_to_load, i + 1, 
-        np.mean(accuracy[i])*100, np.std(accuracy[i])*100, 
-        np.mean(val_acc[i])*100, np.std(val_acc[i])*100, 
-        np.mean(loss[i]), np.std(loss[i])*100, 
-        np.mean(val_loss[i]), np.std(val_loss[i])*100))
+    print('Model average for multiple properties model (params %d): Maximum accuracy=%.2f%% (%.2f%%) Maximum validation accuracy=%.2f%% (%.2f%%) Minimal loss=%.2f (%.2f%%) Minimal validation loss=%.2f (%.2f%%)' 
+    % (params_nr, np.mean(accuracy_max)*100, np.std(accuracy_max)*100, np.mean(val_acc_max)*100, np.std(val_acc_max)*100, np.mean(loss_min), np.std(loss_min)*100, np.mean(val_loss_min), np.std(val_loss_min)*100))
+    print('Model average for multiple properties model (params %d): Accuracy=%.2f%% (%.2f%%) Validation accuracy=%.2f%% (%.2f%%) Loss=%.2f (%.2f%%) Validation loss=%.2f (%.2f%%)' 
+    % (params_nr, np.mean(accuracy)*100, np.std(accuracy)*100, np.mean(val_acc)*100, np.std(val_acc)*100, np.mean(loss), np.std(loss)*100, np.mean(val_loss), np.std(val_loss)*100))
+
