@@ -218,9 +218,9 @@ def decorate_stats(history, params_nr='', fold_nr=''):
     if params_nr=='' and fold_nr=='':
         begin_string = "Best multiple properties model"
 
-    print('%s: Maximum accuracy=%.2f%% Maximum validation accuracy=%.2f%% Minimal loss=%.2f Minimal validation loss=%.2f' 
+    print('%s: Maximum accuracy=%.2f%% Maximum validation accuracy=%.2f%% Minimal loss=%.2f%% Minimal validation loss=%.2f%%' 
     % (begin_string, accuracy_max*100, val_acc_max*100, loss_min*100, val_loss_min*100))
-    print('%s: Accuracy=%.2f%% (%.2f%%) Validation accuracy=%.2f%% (%.2f%%) Loss=%.2f (%.2f%%) Validation loss=%.2f (%.2f%%)' 
+    print('%s: Accuracy=%.2f%% (%.2f%%) Validation accuracy=%.2f%% (%.2f%%) Loss=%.2f%% (%.2f%%) Validation loss=%.2f%% (%.2f%%)' 
     % (begin_string, 
     np.mean(accuracy)*100, np.std(accuracy)*100, 
     np.mean(val_acc)*100, np.std(val_acc)*100, 
@@ -238,9 +238,9 @@ def decorate_stats_final(history, params_nr='', fold_nr=''):
     if params_nr=='' and fold_nr=='':
         begin_string = "Best multiple properties model"
 
-    print('%s: Maximum accuracy=%.2f%% Minimal loss=%.2f' 
+    print('%s: Maximum accuracy=%.2f%% Minimal loss=%.2f%%' 
     % (begin_string, accuracy_max*100, loss_min*100))
-    print('%s: Accuracy=%.2f%% (%.2f%%) Loss=%.2f (%.2f%%)' 
+    print('%s: Accuracy=%.2f%% (%.2f%%) Loss=%.2f%% (%.2f%%)' 
     % (begin_string, 
     np.mean(accuracy)*100, np.std(accuracy)*100, 
     np.mean(loss)*100, np.std(loss)*100))
@@ -252,8 +252,8 @@ def decorate_stats_avg(accuracy, val_acc, loss, val_loss, params_nr=''):
     loss_min = np.min(loss) 
     val_loss_min = np.min(val_loss)
 
-    print('Model average for multiple properties model (params %d): Maximum accuracy=%.2f%% (%.2f%%) Maximum validation accuracy=%.2f%% (%.2f%%) Minimal loss=%.2f (%.2f%%) Minimal validation loss=%.2f (%.2f%%)' 
+    print('Model average for multiple properties model (params %d): Maximum accuracy=%.2f%% (%.2f%%) Maximum validation accuracy=%.2f%% (%.2f%%) Minimal loss=%.2f%% (%.2f%%) Minimal validation loss=%.2f%% (%.2f%%)' 
     % (params_nr, np.mean(accuracy_max)*100, np.std(accuracy_max)*100, np.mean(val_acc_max)*100, np.std(val_acc_max)*100, np.mean(loss_min), np.std(loss_min)*100, np.mean(val_loss_min), np.std(val_loss_min)*100))
-    print('Model average for multiple properties model (params %d): Accuracy=%.2f%% (%.2f%%) Validation accuracy=%.2f%% (%.2f%%) Loss=%.2f (%.2f%%) Validation loss=%.2f (%.2f%%)' 
+    print('Model average for multiple properties model (params %d): Accuracy=%.2f%% (%.2f%%) Validation accuracy=%.2f%% (%.2f%%) Loss=%.2f%% (%.2f%%) Validation loss=%.2f%% (%.2f%%)' 
     % (params_nr, np.mean(accuracy)*100, np.std(accuracy)*100, np.mean(val_acc)*100, np.std(val_acc)*100, np.mean(loss), np.std(loss)*100, np.mean(val_loss), np.std(val_loss)*100))
 
