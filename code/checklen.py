@@ -1,11 +1,3 @@
-# -*- coding: utf-8 -*-
-"""
-Created on Wed Jun 15 11:22:59 2022
-
-@author: Lucija
-"""
-
-
 import numpy as np  
 from utils import DATA_PATH  
 import matplotlib.pyplot as plt

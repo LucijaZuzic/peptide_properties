@@ -1,10 +1,3 @@
-# -*- coding: utf-8 -*-
-"""
-Created on Wed Jun 15 08:12:54 2022
-
-@author: Lucija
-""" 
-
 from tensorflow.keras.models import Model
 from tensorflow.keras.layers import Dense, Dropout, Input, Masking, Concatenate
 from tensorflow.keras.layers import LSTM, Bidirectional, Conv1D
@@ -19,9 +12,9 @@ def create_seq_model(input_shape, conv1_filters=64, conv2_filters=64, conv_kerne
         
         if conv2_filters > 0:
             x = Conv1D(conv2_filters, conv_kernel_size, padding='same', kernel_initializer='he_normal', name="conv1d_2")(x)
-        x = Bidirectional(LSTM(num_cells, unroll=True, name="bi_lstm"))(x)
+        x = Bidirectional(LSTM(num_cells, name="bi_lstm"))(x)
     else:
-        x = Bidirectional(LSTM(num_cells, unroll=True,  name="bi_lstm"))(mask)
+        x = Bidirectional(LSTM(num_cells, name="bi_lstm"))(mask)
 
     if dropout > 0:
         x = Dropout(dropout, name="dropout")(x)
@@ -40,16 +33,16 @@ def _create_seq_model(input_shape, conv1_filters=64, conv2_filters=64, conv_kern
         
         if conv2_filters > 0:
             x = Conv1D(conv2_filters, conv_kernel_size, padding='same', kernel_initializer='he_normal')(x)
-        x = Bidirectional(LSTM(num_cells, unroll=True))(x)
+        x = Bidirectional(LSTM(num_cells))(x)
     else:
-        x = Bidirectional(LSTM(num_cells, unroll=True))(mask)
+        x = Bidirectional(LSTM(num_cells))(mask)
 
     if dropout > 0:
         x = Dropout(dropout)(x) 
      
     return model_input, x
 
-def __one_prop_model(lstm1=5, lstm2=5, dense=15, dropout=0.2, lambda2=0.0, mask_value=2):
+def _one_prop_model(lstm1=5, lstm2=5, dense=15, dropout=0.2, lambda2=0.0, mask_value=2):
     # LSTM model which processes dipeptide AP scores.
 
     input_layer = Input((None, 1))
@@ -63,11 +56,11 @@ def __one_prop_model(lstm1=5, lstm2=5, dense=15, dropout=0.2, lambda2=0.0, mask_
     return input_layer, dropout_1 
  
 def amino_di_tri_model(num_props, input_shape, conv = 64, kernel_size=6, numcells = 128, lstm1=5, lstm2=5, dense=15, dropout=0.2, lambda2=0.0, mask_value=2):
-    # Instantiate three separate submodels.
+    # Instantiate separate submodels.
     inputs = []
     outputs = []
     for i in range(num_props):
-        input1, output1 = __one_prop_model(lstm1, lstm2, dense, dropout, lambda2, mask_value) 
+        input1, output1 = _one_prop_model(lstm1, lstm2, dense, dropout, lambda2, mask_value) 
         inputs.append(input1)
         outputs.append(output1)
         
@@ -87,11 +80,11 @@ def amino_di_tri_model(num_props, input_shape, conv = 64, kernel_size=6, numcell
     return Model(inputs=inputs, outputs=final_output_layer)
 
 def only_amino_di_tri_model(num_props, lstm1=5, lstm2=5, dense=15, dropout=0.2, lambda2=0.0, mask_value=2):
-       # Instantiate three separate submodels.
+       # Instantiate separate submodels.
        inputs = []
        outputs = []
        for i in range(num_props):
-           input1, output1 = __one_prop_model(lstm1, lstm2, dense, dropout, lambda2, mask_value) 
+           input1, output1 = _one_prop_model(lstm1, lstm2, dense, dropout, lambda2, mask_value) 
            inputs.append(input1)
            outputs.append(output1) 
 

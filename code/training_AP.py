@@ -1,17 +1,12 @@
+import numpy as np
+from automate_training import load_data_SA_AP, model_training_AP, merge_data_AP, data_and_labels_from_indices
+from utils import DATA_PATH, MY_MODEL_DATA_PATH
+import sys 
+from sklearn.model_selection import StratifiedKFold
 
-import numpy as np 
-from automate_training import load_data_SA_AP
-from utils import DATA_PATH 
-import sys  
-from automate_training import model_training_AP, merge_data_AP
-from utils import MY_MODEL_DATA_PATH  
-from sklearn.model_selection import StratifiedKFold   
-from automate_training import data_and_labels_from_indices 
-from generate_predictions import generate_predictions_AP
-#from sklearn.model_selection import train_test_split
 # Algorithm settings 
-N_FOLDS_FIRST = 5
-N_FOLDS_SECOND = 5
+N_FOLDS_FIRST = 2
+N_FOLDS_SECOND = 2
 EPOCHS = 70
 names = ['AP']
 offset = 1
@@ -27,9 +22,6 @@ SA, NSA = load_data_SA_AP(SA_data, names, offset, properties, masking_value)
 # In our data, there are more peptides that do exhibit self assembly property than are those that do not. Therefore,
 # during model training, we must adjust weight factors to combat this data imbalance.
 factor_NSA = len(SA) / len(NSA)
-
-# Define random seed
-seed = 42
  
 # Merge SA nad NSA data the train and validation subsets.
 all_data, all_labels = merge_data_AP(SA, NSA) 
@@ -49,7 +41,7 @@ for train_and_validation_data_indices, test_data_indices in kfold_first.split(al
     # Convert train and validation indices to train and validation data and train and validation labels
     train_and_validation_data, train_and_validation_labels = data_and_labels_from_indices(all_data, all_labels, train_and_validation_data_indices) 
     
-     # Convert test indices to test data and test labels
+    # Convert test indices to test data and test labels
     test_data, test_labels = data_and_labels_from_indices(all_data, all_labels, test_data_indices)
 
     #train_and_validation_data, test_data, train_and_validation_labels, test_labels = train_test_split(all_data, all_labels, test_size= 1 / N_FOLDS_FIRST, random_state=seed, stratify = all_labels)
@@ -58,10 +50,7 @@ for train_and_validation_data_indices, test_data_indices in kfold_first.split(al
     sys.stdout = open(MY_MODEL_DATA_PATH+str(test_number)+"_training_log_multiple_properties.txt", "w", encoding="utf-8")
     
     # Train the ansamble model
-    best_batch_size = model_training_AP(num_props, test_number, train_and_validation_data, train_and_validation_labels, kfold_second, EPOCHS, factor_NSA, mask_value=masking_value)
-    best_model_file = MY_MODEL_DATA_PATH+str(test_number)+'_rnn_model_multiple_properties_final_model.h5'
-     
-    generate_predictions_AP(num_props, best_batch_size, best_model_file, test_number, test_data, test_labels, properties, names, offset, masking_value)
-    
+    model_training_AP(num_props, test_number, train_and_validation_data, train_and_validation_labels, kfold_second, EPOCHS, factor_NSA, test_data, test_labels, properties, names, offset, mask_value=masking_value)
+         
     # Close output file
     sys.stdout.close()

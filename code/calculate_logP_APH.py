@@ -1,8 +1,3 @@
-# -*- coding: utf-8 -*-
-"""
-Created on Thu Apr 14 07:05:16 2022
-@author: Lucija
-""" 
 import numpy as np
 from utils import DATA_PATH
 

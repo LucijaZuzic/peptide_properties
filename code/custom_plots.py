@@ -25,6 +25,7 @@ def plt_model(MODEL_DATA_PATH, test_number, history, model_file_name):
     plt.legend(loc='upper center', bbox_to_anchor=(0.5, -0.1), ncol = 2)
     plt.savefig(MODEL_DATA_PATH+str(test_number)+"_"+model_file_name+"_loss.png", bbox_inches='tight')
     plt.close()
+    
 # Plot the history for training a model
 def plt_model_final(MODEL_DATA_PATH, test_number, history, model_file_name):
     
@@ -81,7 +82,7 @@ def make_a_PR_plot(test_labels, model_predictions, pattern, label):
     print(label+': Threshold=%f, F1=%.3f' % (thresholds[ix], fscore[ix]))
     plt.plot(recall[ix], precision[ix], 'o', markerfacecolor=pattern, markeredgecolor='k')
 
-def make_PR_plots(MODEL_DATA_PATH, test_number, test_labels, model_predictions=[]):
+def make_PR_plots(MODEL_DATA_PATH, test_number, iteration, test_labels, model_predictions=[]):
     
     plt.figure()
     plt.title("Precision - Recall (PR) curve")
@@ -102,7 +103,7 @@ def make_PR_plots(MODEL_DATA_PATH, test_number, test_labels, model_predictions=[
     plt.ylabel('Precision')
 
     plt.legend(loc='upper center', bbox_to_anchor=(0.5, -0.1), ncol = 2)
-    plt.savefig(MODEL_DATA_PATH+str(test_number)+"_PR_curve_multiple_properties.png", bbox_inches = 'tight')
+    plt.savefig(MODEL_DATA_PATH+str(test_number)+"_PR_curve_multiple_properties" + iteration + ".png", bbox_inches = 'tight')
         
     plt.close()
 
@@ -124,7 +125,7 @@ def make_a_ROC_plot(test_labels, model_predictions, pattern, label):
     print(label+': Threshold=%f, Geometric mean=%.3f' % (thresholds[ix], gmeans[ix]))
     plt.plot(fpr[ix], tpr[ix], 'o', markerfacecolor=pattern, markeredgecolor='k')
 
-def make_ROC_plots(MODEL_DATA_PATH, test_number, test_labels, model_predictions=[]):
+def make_ROC_plots(MODEL_DATA_PATH, test_number, iteration, test_labels, model_predictions=[]):
     
     plt.figure()
 
@@ -137,7 +138,7 @@ def make_ROC_plots(MODEL_DATA_PATH, test_number, test_labels, model_predictions=
     plt.ylabel("TPR")
 
     plt.legend(loc='upper center', bbox_to_anchor=(0.5, -0.1), ncol = 2)
-    plt.savefig(MODEL_DATA_PATH+str(test_number)+"_ROC_curve_multiple_properties.png", bbox_inches = 'tight')
+    plt.savefig(MODEL_DATA_PATH+str(test_number)+"_ROC_curve_multiple_properties" + iteration + ".png", bbox_inches = 'tight')
     
     plt.close()
 
@@ -169,7 +170,7 @@ def output_metrics(test_labels, model_predictions, threshold=0.5):
                         auc(recall, precision), 
                         f1_score(test_labels, model_predictions_binary)))
 
-def hist_predicted(MODEL_DATA_PATH, test_number, test_labels, model_predictions):
+def hist_predicted(MODEL_DATA_PATH, test_number, iteration, test_labels, model_predictions):
 
     # Create a histogram of the predicted probabilities only for the peptides that show self-assembly
 
@@ -184,9 +185,8 @@ def hist_predicted(MODEL_DATA_PATH, test_number, test_labels, model_predictions)
     plt.ylabel("Number of peptides")
     plt.hist(model_predictions_true, bins = [0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1])
     
-    plt.savefig(MODEL_DATA_PATH+str(test_number)+"_"+"model_multiple_properties_histogram_SA.png", bbox_inches = 'tight')
+    plt.savefig(MODEL_DATA_PATH+str(test_number)+"_"+"model_multiple_properties_histogram_SA" + iteration + ".png", bbox_inches = 'tight')
    
-
     # Create a histogram of the predicted probabilities only for the peptides that don't show self-assembly
 
     model_predictions_false = []
@@ -200,8 +200,7 @@ def hist_predicted(MODEL_DATA_PATH, test_number, test_labels, model_predictions)
     plt.ylabel("Number of peptides")
     plt.hist(model_predictions_false, bins = [0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1])
     
-    plt.savefig(MODEL_DATA_PATH+str(test_number)+"_"+"model_multiple_properties_histogram_NSA.png", bbox_inches = 'tight')
-   
+    plt.savefig(MODEL_DATA_PATH+str(test_number)+"_"+"model_multiple_properties_histogram_NSA" + iteration + ".png", bbox_inches = 'tight')
 
 def decorate_stats(history, params_nr='', fold_nr=''):
     accuracy =history.history['accuracy'] 
@@ -256,4 +255,3 @@ def decorate_stats_avg(accuracy, val_acc, loss, val_loss, params_nr=''):
     % (params_nr, np.mean(accuracy_max)*100, np.std(accuracy_max)*100, np.mean(val_acc_max)*100, np.std(val_acc_max)*100, np.mean(loss_min), np.std(loss_min)*100, np.mean(val_loss_min), np.std(val_loss_min)*100))
     print('Model average for multiple properties model (params %d): Accuracy=%.2f%% (%.2f%%) Validation accuracy=%.2f%% (%.2f%%) Loss=%.2f%% (%.2f%%) Validation loss=%.2f%% (%.2f%%)' 
     % (params_nr, np.mean(accuracy)*100, np.std(accuracy)*100, np.mean(val_acc)*100, np.std(val_acc)*100, np.mean(loss), np.std(loss)*100, np.mean(val_loss), np.std(val_loss)*100))
-

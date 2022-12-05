@@ -1,17 +1,12 @@
+import numpy as np
+from automate_training import load_data_SA_seq, model_training_seq, merge_data_seq, data_and_labels_from_indices
+from utils import DATA_PATH, SEQ_MODEL_DATA_PATH
+import sys 
+from sklearn.model_selection import StratifiedKFold
 
-import numpy as np 
-from automate_training import load_data_SA_seq
-from utils import DATA_PATH 
-import sys  
-from automate_training import model_training_seq, merge_data_seq
-from utils import SEQ_MODEL_DATA_PATH  
-from sklearn.model_selection import StratifiedKFold   
-from automate_training import data_and_labels_from_indices
-from generate_predictions import generate_predictions_seq
-#from sklearn.model_selection import train_test_split
 # Algorithm settings 
-N_FOLDS_FIRST = 5
-N_FOLDS_SECOND = 5
+N_FOLDS_FIRST = 2
+N_FOLDS_SECOND = 2
 EPOCHS = 70
 names = ['AP', 'logP', 'APH', 'polarity_selu']
 offset = 1
@@ -33,7 +28,6 @@ seed = 42
  
 # Merge SA nad NSA data the train and validation subsets.
 all_data, all_labels = merge_data_seq(SA, NSA) 
-
 
 # Define N-fold cross validation test harness for splitting the test data from the train and validation data
 kfold_first = StratifiedKFold(n_splits=N_FOLDS_FIRST, shuffle=True, random_state=seed)
@@ -58,10 +52,7 @@ for train_and_validation_data_indices, test_data_indices in kfold_first.split(al
     sys.stdout = open(SEQ_MODEL_DATA_PATH+str(test_number)+"_training_log_multiple_properties.txt", "w", encoding="utf-8")
     
     # Train the ansamble model
-    best_batch_size = model_training_seq(test_number, train_and_validation_data, train_and_validation_labels, kfold_second, EPOCHS, factor_NSA, mask_value=masking_value)
-    best_model_file = SEQ_MODEL_DATA_PATH+str(test_number)+'_rnn_model_multiple_properties_final_model.h5'
-     
-    generate_predictions_seq(best_batch_size, best_model_file, test_number, test_data, test_labels, properties, names, offset, masking_value)
-    
+    model_training_seq(test_number, train_and_validation_data, train_and_validation_labels, kfold_second, EPOCHS, factor_NSA, test_data, test_labels, properties, names, offset, mask_value=masking_value)
+         
     # Close output file
     sys.stdout.close()
