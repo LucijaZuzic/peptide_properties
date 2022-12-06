@@ -5,7 +5,7 @@ import sys
 from sklearn.model_selection import StratifiedKFold
 
 # Algorithm settings 
-N_FOLDS_SECOND = 2
+N_FOLDS_SECOND = 5
 EPOCHS = 70
 names = ['AP']
 offset = 1

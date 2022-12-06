@@ -9,9 +9,9 @@ from seqprops import SequentialPropertiesEncoder
 import random
 from custom_plots import convert_to_binary, make_ROC_plots, make_PR_plots, output_metrics, hist_predicted
 
-MAX_ITERATIONS = 2
+MAX_ITERATIONS = 5
  
-def no_file_model_predict_seq(best_batch_size, test_data, test_labels, models, alpha_values):
+def no_file_model_predict_seq(best_batch_size, test_data, test_labels, models, model_predictions, alpha_values):
     test_data, test_labels = reshape_seq(test_data, test_labels)
     model_predictions = []
     
@@ -28,7 +28,7 @@ def no_file_model_predict_seq(best_batch_size, test_data, test_labels, models, a
 
     return model_predictions 
 
-def no_file_model_predict(num_props, best_batch_size, test_data, test_labels, models, alpha_values):
+def no_file_model_predict(num_props, best_batch_size, test_data, test_labels, models, model_predictions, alpha_values):
     test_data, test_labels = reshape(num_props, test_data, test_labels) 
     model_predictions = []
     
@@ -45,7 +45,7 @@ def no_file_model_predict(num_props, best_batch_size, test_data, test_labels, mo
 
     return model_predictions 
 
-def no_file_model_predict_AP(num_props, best_batch_size, test_data, test_labels, models, alpha_values):
+def no_file_model_predict_AP(num_props, best_batch_size, test_data, test_labels, models, model_predictions, alpha_values):
     test_data, test_labels = reshape_AP(num_props, test_data, test_labels) 
     model_predictions = []
     
@@ -116,7 +116,7 @@ def after_training_seq(best_batch_size, test_number, best_model_file, properties
     sequences = sequences[:-1] 
       
     # Generate predictions on data that has no label beforehand 
-    model_predictions_amino = model_predict_seq(best_batch_size, all_data, all_labels, best_model_file)
+    model_predictions = model_predict_seq(best_batch_size, all_data, all_labels, best_model_file)
     # Write SA probability to file
     
     percentage_filename = SEQ_MODEL_DATA_PATH+str(test_number)+"_"+"percentage_multiple_properties.csv"
@@ -124,7 +124,7 @@ def after_training_seq(best_batch_size, test_number, best_model_file, properties
     percentage_string_to_write = "Sequence;Multiple properties model;Method without RNN\n"
     
     for x in range(len(sequences)):
-        percentage_string_to_write += sequences[x]+";"+str(np.round(model_predictions_amino[x] * 100, 2))+";"+past_grades[x]+"\n"
+        percentage_string_to_write += sequences[x]+";"+str(np.round(model_predictions[x] * 100, 2))+";"+past_grades[x]+"\n"
     percentage_string_to_write = percentage_string_to_write.replace('.',',')
     percentage_file.write(percentage_string_to_write)
     percentage_file.close()
@@ -133,7 +133,7 @@ def after_training_seq(best_batch_size, test_number, best_model_file, properties
     
     threshold_amino = 0.5 
     
-    model_predictions_amino = convert_to_binary(model_predictions_amino, threshold_amino) 
+    model_predictions = convert_to_binary(model_predictions, threshold_amino) 
     
     grade_filename = SEQ_MODEL_DATA_PATH+str(test_number)+"_"+"grade_multiple_properties.csv"
     grade_file = open(grade_filename, "w", encoding="utf-8")
@@ -141,10 +141,10 @@ def after_training_seq(best_batch_size, test_number, best_model_file, properties
     
     correct_amino = 0 
     for x in range(len(sequences)): 
-        if (model_predictions_amino[x] == 1 and past_classes[x] == 'Y') or (model_predictions_amino[x] == 0 and past_classes[x] == 'N'):
+        if (model_predictions[x] == 1 and past_classes[x] == 'Y') or (model_predictions[x] == 0 and past_classes[x] == 'N'):
             correct_amino += 1 
             
-        part1 = sequences[x]+";"+str(model_predictions_amino[x])+";"+past_classes[x]+"\n"
+        part1 = sequences[x]+";"+str(model_predictions[x])+";"+past_classes[x]+"\n"
         part1 = part1.replace(".0",'')
         part1 = part1.replace('1','Y')
         part1 = part1.replace('0','N') 
@@ -179,7 +179,7 @@ def after_training(num_props, best_batch_size, test_number, best_model_file, pro
     sequences = sequences[:-1] 
       
     # Generate predictions on data that has no label beforehand 
-    model_predictions_amino = model_predict(num_props, best_batch_size, all_data, all_labels, best_model_file)
+    model_predictions = model_predict(num_props, best_batch_size, all_data, all_labels, best_model_file)
     # Write SA probability to file
     
     percentage_filename = MODEL_DATA_PATH+str(test_number)+"_"+"percentage_multiple_properties.csv"
@@ -187,7 +187,7 @@ def after_training(num_props, best_batch_size, test_number, best_model_file, pro
     percentage_string_to_write = "Sequence;Multiple properties model;Method without RNN\n"
     
     for x in range(len(sequences)):
-        percentage_string_to_write += sequences[x]+";"+str(np.round(model_predictions_amino[x] * 100, 2))+";"+past_grades[x]+"\n"
+        percentage_string_to_write += sequences[x]+";"+str(np.round(model_predictions[x] * 100, 2))+";"+past_grades[x]+"\n"
     percentage_string_to_write = percentage_string_to_write.replace('.',',')
     percentage_file.write(percentage_string_to_write)
     percentage_file.close()
@@ -196,7 +196,7 @@ def after_training(num_props, best_batch_size, test_number, best_model_file, pro
     
     threshold_amino = 0.5 
     
-    model_predictions_amino = convert_to_binary(model_predictions_amino, threshold_amino) 
+    model_predictions = convert_to_binary(model_predictions, threshold_amino) 
     
     grade_filename = MODEL_DATA_PATH+str(test_number)+"_"+"grade_multiple_properties.csv"
     grade_file = open(grade_filename, "w", encoding="utf-8")
@@ -204,10 +204,10 @@ def after_training(num_props, best_batch_size, test_number, best_model_file, pro
     
     correct_amino = 0 
     for x in range(len(sequences)): 
-        if (model_predictions_amino[x] == 1 and past_classes[x] == 'Y') or (model_predictions_amino[x] == 0 and past_classes[x] == 'N'):
+        if (model_predictions[x] == 1 and past_classes[x] == 'Y') or (model_predictions[x] == 0 and past_classes[x] == 'N'):
             correct_amino += 1 
             
-        part1 = sequences[x]+";"+str(model_predictions_amino[x])+";"+past_classes[x]+"\n"
+        part1 = sequences[x]+";"+str(model_predictions[x])+";"+past_classes[x]+"\n"
         part1 = part1.replace(".0",'')
         part1 = part1.replace('1','Y')
         part1 = part1.replace('0','N') 
@@ -242,7 +242,7 @@ def after_training_AP(num_props, best_batch_size, test_number, best_model_file, 
     sequences = sequences[:-1] 
       
     # Generate predictions on data that has no label beforehand 
-    model_predictions_amino = model_predict_AP(num_props, best_batch_size, all_data, all_labels, best_model_file)
+    model_predictions = model_predict_AP(num_props, best_batch_size, all_data, all_labels, best_model_file)
     # Write SA probability to file
     
     percentage_filename = MY_MODEL_DATA_PATH+str(test_number)+"_"+"percentage_multiple_properties.csv"
@@ -250,7 +250,7 @@ def after_training_AP(num_props, best_batch_size, test_number, best_model_file, 
     percentage_string_to_write = "Sequence;Multiple properties model;Method without RNN\n"
     
     for x in range(len(sequences)):
-        percentage_string_to_write += sequences[x]+";"+str(np.round(model_predictions_amino[x] * 100, 2))+";"+past_grades[x]+"\n"
+        percentage_string_to_write += sequences[x]+";"+str(np.round(model_predictions[x] * 100, 2))+";"+past_grades[x]+"\n"
     percentage_string_to_write = percentage_string_to_write.replace('.',',')
     percentage_file.write(percentage_string_to_write)
     percentage_file.close()
@@ -259,7 +259,7 @@ def after_training_AP(num_props, best_batch_size, test_number, best_model_file, 
     
     threshold_amino = 0.5 
     
-    model_predictions_amino = convert_to_binary(model_predictions_amino, threshold_amino) 
+    model_predictions = convert_to_binary(model_predictions, threshold_amino) 
     
     grade_filename = MY_MODEL_DATA_PATH+str(test_number)+"_"+"grade_multiple_properties.csv"
     grade_file = open(grade_filename, "w", encoding="utf-8")
@@ -267,10 +267,10 @@ def after_training_AP(num_props, best_batch_size, test_number, best_model_file, 
     
     correct_amino = 0 
     for x in range(len(sequences)): 
-        if (model_predictions_amino[x] == 1 and past_classes[x] == 'Y') or (model_predictions_amino[x] == 0 and past_classes[x] == 'N'):
+        if (model_predictions[x] == 1 and past_classes[x] == 'Y') or (model_predictions[x] == 0 and past_classes[x] == 'N'):
             correct_amino += 1 
             
-        part1 = sequences[x]+";"+str(model_predictions_amino[x])+";"+past_classes[x]+"\n"
+        part1 = sequences[x]+";"+str(model_predictions[x])+";"+past_classes[x]+"\n"
         part1 = part1.replace(".0",'')
         part1 = part1.replace('1','Y')
         part1 = part1.replace('0','N') 
@@ -281,7 +281,7 @@ def after_training_AP(num_props, best_batch_size, test_number, best_model_file, 
     grade_file.write(grade_string_to_write)
     grade_file.close() 
 
-def no_file_after_training_seq(best_batch_size, test_number, iteration, models, alpha_values, properties, names=['AP'], offset = 1, masking_value=2):
+def no_file_after_training_seq(best_batch_size, test_number, iteration, models, model_predictions, alpha_values, properties, names=['AP'], offset = 1):
         
     # Get sequences for peptides with no labels and predictions from the model without machine learning 
     resulteval = DATA_PATH+'RESULTEVAL.csv' 
@@ -305,24 +305,24 @@ def no_file_after_training_seq(best_batch_size, test_number, iteration, models, 
     sequences = sequences[:-1] 
       
     # Generate predictions on data that has no label beforehand 
-    model_predictions_amino = no_file_model_predict_seq(best_batch_size, all_data, all_labels, models, alpha_values)
+    if len(model_predictions) == 0:
+        model_predictions = no_file_model_predict_seq(best_batch_size, all_data, all_labels, models, model_predictions, alpha_values)
+
     # Write SA probability to file
-    
     percentage_filename = SEQ_MODEL_DATA_PATH+str(test_number)+"_"+"percentage_multiple_properties" + iteration + ".csv"
     percentage_file = open(percentage_filename, "w", encoding="utf-8")
     percentage_string_to_write = "Sequence;Multiple properties model;Method without RNN\n"
     
     for x in range(len(sequences)):
-        percentage_string_to_write += sequences[x]+";"+str(np.round(model_predictions_amino[x] * 100, 2))+";"+past_grades[x]+"\n"
+        percentage_string_to_write += sequences[x]+";"+str(np.round(model_predictions[x] * 100, 2))+";"+past_grades[x]+"\n"
     percentage_string_to_write = percentage_string_to_write.replace('.',',')
     percentage_file.write(percentage_string_to_write)
     percentage_file.close()
 
     # Write class based on the threshold of probability to file
-    
     threshold_amino = 0.5 
     
-    model_predictions_amino = convert_to_binary(model_predictions_amino, threshold_amino) 
+    model_predictions = convert_to_binary(model_predictions, threshold_amino) 
     
     grade_filename = SEQ_MODEL_DATA_PATH+str(test_number)+"_"+"grade_multiple_properties" + iteration + ".csv"
     grade_file = open(grade_filename, "w", encoding="utf-8")
@@ -330,10 +330,10 @@ def no_file_after_training_seq(best_batch_size, test_number, iteration, models, 
     
     correct_amino = 0 
     for x in range(len(sequences)): 
-        if (model_predictions_amino[x] == 1 and past_classes[x] == 'Y') or (model_predictions_amino[x] == 0 and past_classes[x] == 'N'):
+        if (model_predictions[x] == 1 and past_classes[x] == 'Y') or (model_predictions[x] == 0 and past_classes[x] == 'N'):
             correct_amino += 1 
             
-        part1 = sequences[x]+";"+str(model_predictions_amino[x])+";"+past_classes[x]+"\n"
+        part1 = sequences[x]+";"+str(model_predictions[x])+";"+past_classes[x]+"\n"
         part1 = part1.replace(".0",'')
         part1 = part1.replace('1','Y')
         part1 = part1.replace('0','N') 
@@ -344,7 +344,7 @@ def no_file_after_training_seq(best_batch_size, test_number, iteration, models, 
     grade_file.write(grade_string_to_write)
     grade_file.close() 
 
-def no_file_after_training(num_props, best_batch_size, test_number, iteration, models, alpha_values, properties, names=['AP'], offset = 1, masking_value=2):
+def no_file_after_training(num_props, best_batch_size, test_number, iteration, models, model_predictions, alpha_values, properties, names=['AP'], offset = 1):
         
     # Get sequences for peptides with no labels and predictions from the model without machine learning 
     resulteval = DATA_PATH+'RESULTEVAL.csv' 
@@ -368,24 +368,24 @@ def no_file_after_training(num_props, best_batch_size, test_number, iteration, m
     sequences = sequences[:-1] 
       
     # Generate predictions on data that has no label beforehand 
-    model_predictions_amino = no_file_model_predict(num_props, best_batch_size, all_data, all_labels, models, alpha_values)
+    if len(model_predictions) == 0:
+        model_predictions = no_file_model_predict(num_props, best_batch_size, all_data, all_labels, models, model_predictions, alpha_values)
+
     # Write SA probability to file
-    
     percentage_filename = MODEL_DATA_PATH+str(test_number)+"_"+"percentage_multiple_properties" + iteration + ".csv"
     percentage_file = open(percentage_filename, "w", encoding="utf-8")
     percentage_string_to_write = "Sequence;Multiple properties model;Method without RNN\n"
     
     for x in range(len(sequences)):
-        percentage_string_to_write += sequences[x]+";"+str(np.round(model_predictions_amino[x] * 100, 2))+";"+past_grades[x]+"\n"
+        percentage_string_to_write += sequences[x]+";"+str(np.round(model_predictions[x] * 100, 2))+";"+past_grades[x]+"\n"
     percentage_string_to_write = percentage_string_to_write.replace('.',',')
     percentage_file.write(percentage_string_to_write)
     percentage_file.close()
 
     # Write class based on the threshold of probability to file
-    
     threshold_amino = 0.5 
     
-    model_predictions_amino = convert_to_binary(model_predictions_amino, threshold_amino) 
+    model_predictions = convert_to_binary(model_predictions, threshold_amino) 
     
     grade_filename = MODEL_DATA_PATH+str(test_number)+"_"+"grade_multiple_properties" + iteration + ".csv"
     grade_file = open(grade_filename, "w", encoding="utf-8")
@@ -393,10 +393,10 @@ def no_file_after_training(num_props, best_batch_size, test_number, iteration, m
     
     correct_amino = 0 
     for x in range(len(sequences)): 
-        if (model_predictions_amino[x] == 1 and past_classes[x] == 'Y') or (model_predictions_amino[x] == 0 and past_classes[x] == 'N'):
+        if (model_predictions[x] == 1 and past_classes[x] == 'Y') or (model_predictions[x] == 0 and past_classes[x] == 'N'):
             correct_amino += 1 
             
-        part1 = sequences[x]+";"+str(model_predictions_amino[x])+";"+past_classes[x]+"\n"
+        part1 = sequences[x]+";"+str(model_predictions[x])+";"+past_classes[x]+"\n"
         part1 = part1.replace(".0",'')
         part1 = part1.replace('1','Y')
         part1 = part1.replace('0','N') 
@@ -407,7 +407,7 @@ def no_file_after_training(num_props, best_batch_size, test_number, iteration, m
     grade_file.write(grade_string_to_write)
     grade_file.close() 
         
-def no_file_after_training_AP(num_props, best_batch_size, test_number, iteration, models, alpha_values, properties, names=['AP'], offset = 1, masking_value=2):
+def no_file_after_training_AP(num_props, best_batch_size, test_number, iteration, models, model_predictions, alpha_values, properties, names=['AP'], offset = 1):
         
     # Get sequences for peptides with no labels and predictions from the model without machine learning 
     resulteval = DATA_PATH+'RESULTEVAL.csv' 
@@ -431,24 +431,24 @@ def no_file_after_training_AP(num_props, best_batch_size, test_number, iteration
     sequences = sequences[:-1] 
       
     # Generate predictions on data that has no label beforehand 
-    model_predictions_amino = no_file_model_predict_AP(num_props, best_batch_size, all_data, all_labels, models, alpha_values)
+    if len(model_predictions) == 0:
+        model_predictions = no_file_model_predict_AP(num_props, best_batch_size, all_data, all_labels, models, model_predictions, alpha_values)
+
     # Write SA probability to file
-    
     percentage_filename = MY_MODEL_DATA_PATH+str(test_number)+"_"+"percentage_multiple_properties" + iteration + ".csv"
     percentage_file = open(percentage_filename, "w", encoding="utf-8")
     percentage_string_to_write = "Sequence;Multiple properties model;Method without RNN\n"
     
     for x in range(len(sequences)):
-        percentage_string_to_write += sequences[x]+";"+str(np.round(model_predictions_amino[x] * 100, 2))+";"+past_grades[x]+"\n"
+        percentage_string_to_write += sequences[x]+";"+str(np.round(model_predictions[x] * 100, 2))+";"+past_grades[x]+"\n"
     percentage_string_to_write = percentage_string_to_write.replace('.',',')
     percentage_file.write(percentage_string_to_write)
     percentage_file.close()
 
     # Write class based on the threshold of probability to file
-    
     threshold_amino = 0.5 
     
-    model_predictions_amino = convert_to_binary(model_predictions_amino, threshold_amino) 
+    model_predictions = convert_to_binary(model_predictions, threshold_amino) 
     
     grade_filename = MY_MODEL_DATA_PATH+str(test_number)+"_"+"grade_multiple_properties" + iteration + ".csv"
     grade_file = open(grade_filename, "w", encoding="utf-8")
@@ -456,10 +456,10 @@ def no_file_after_training_AP(num_props, best_batch_size, test_number, iteration
     
     correct_amino = 0 
     for x in range(len(sequences)): 
-        if (model_predictions_amino[x] == 1 and past_classes[x] == 'Y') or (model_predictions_amino[x] == 0 and past_classes[x] == 'N'):
+        if (model_predictions[x] == 1 and past_classes[x] == 'Y') or (model_predictions[x] == 0 and past_classes[x] == 'N'):
             correct_amino += 1 
             
-        part1 = sequences[x]+";"+str(model_predictions_amino[x])+";"+past_classes[x]+"\n"
+        part1 = sequences[x]+";"+str(model_predictions[x])+";"+past_classes[x]+"\n"
         part1 = part1.replace(".0",'')
         part1 = part1.replace('1','Y')
         part1 = part1.replace('0','N') 
@@ -527,9 +527,10 @@ def generate_predictions_AP(num_props, best_batch_size, best_model_file, test_nu
     # Generate predictions on data that has no label beforehand
     after_training_AP(num_props, best_batch_size, test_number, best_model_file, properties, names, offset, masking_value)
     
-def adaboost_generate_predictions(models, alpha_values, num_props, best_batch_size, test_number, iteration, test_data, test_labels, properties, names = ['AP'], offset = 1, masking_value = 2): 
+def adaboost_generate_predictions(models, model_predictions, alpha_values, num_props, best_batch_size, test_number, iteration, test_data, test_labels, properties, names = ['AP'], offset = 1): 
      # Get predictions from all the models for data that was labeled beforehand
-     model_predictions = no_file_model_predict(num_props, best_batch_size, test_data, test_labels, models, alpha_values) 
+     if len(model_predictions) == 0:
+        model_predictions = no_file_model_predict(num_props, best_batch_size, test_data, test_labels, models, model_predictions, alpha_values) 
       
      #Plot ROC curves for all models
      make_ROC_plots(MODEL_DATA_PATH, test_number, iteration, test_labels, model_predictions=model_predictions)
@@ -544,11 +545,12 @@ def adaboost_generate_predictions(models, alpha_values, num_props, best_batch_si
      hist_predicted(MODEL_DATA_PATH, test_number, iteration, test_labels, model_predictions) 
     
      # Generate predictions on data that has no label beforehand
-     no_file_after_training(num_props, best_batch_size, test_number, iteration, models, alpha_values, properties, names, offset, masking_value)
+     no_file_after_training(num_props, best_batch_size, test_number, iteration, models, model_predictions, alpha_values, properties, names, offset)
      
-def adaboost_generate_predictions_seq(models, alpha_values, best_batch_size, test_number, iteration, test_data, test_labels, properties, names = ['AP'], offset = 1, masking_value = 2): 
+def adaboost_generate_predictions_seq(models, model_predictions, alpha_values, best_batch_size, test_number, iteration, test_data, test_labels, properties, names = ['AP'], offset = 1):  
      # Get predictions from all the models for data that was labeled beforehand
-     model_predictions = no_file_model_predict_seq(best_batch_size, test_data, test_labels, models, alpha_values) 
+     if len(model_predictions) == 0:   
+        model_predictions = no_file_model_predict_seq(best_batch_size, test_data, test_labels, models, model_predictions, alpha_values) 
       
      #Plot ROC curves for all models
      make_ROC_plots(SEQ_MODEL_DATA_PATH, test_number, iteration, test_labels, model_predictions=model_predictions)
@@ -563,11 +565,12 @@ def adaboost_generate_predictions_seq(models, alpha_values, best_batch_size, tes
      hist_predicted(SEQ_MODEL_DATA_PATH, test_number, iteration, test_labels, model_predictions) 
     
      # Generate predictions on data that has no label beforehand
-     no_file_after_training_seq(best_batch_size, test_number, iteration, models, alpha_values, properties, names, offset, masking_value)
+     no_file_after_training_seq(best_batch_size, test_number, iteration, models, model_predictions, alpha_values, properties, names, offset)
 
-def adaboost_generate_predictions_AP(models, alpha_values, num_props, best_batch_size, test_number, iteration, test_data, test_labels, properties, names = ['AP'], offset = 1, masking_value = 2): 
+def adaboost_generate_predictions_AP(models, model_predictions, alpha_values, num_props, best_batch_size, test_number, iteration, test_data, test_labels, properties, names = ['AP'], offset = 1):  
     # Get predictions from all the models for data that was labeled beforehand
-    model_predictions = no_file_model_predict_AP(num_props, best_batch_size, test_data, test_labels, models, alpha_values) 
+    if len(model_predictions) == 0:    
+        model_predictions = no_file_model_predict_AP(num_props, best_batch_size, test_data, test_labels, models, model_predictions, alpha_values) 
      
     #Plot ROC curves for all models
     make_ROC_plots(MY_MODEL_DATA_PATH, test_number, iteration, test_labels, model_predictions=model_predictions)
@@ -582,7 +585,7 @@ def adaboost_generate_predictions_AP(models, alpha_values, num_props, best_batch
     hist_predicted(MY_MODEL_DATA_PATH, test_number, iteration, test_labels, model_predictions) 
    
     # Generate predictions on data that has no label beforehand
-    no_file_after_training_AP(num_props, best_batch_size, test_number, iteration, models, alpha_values, properties, names, offset, masking_value)
+    no_file_after_training_AP(num_props, best_batch_size, test_number, iteration, models, model_predictions, alpha_values, properties, names, offset)
 
 def extract_len_from_data_and_labels(data, labels, len_target, padding):
     only_one_len_indices = [] 
@@ -864,10 +867,10 @@ def model_training_seq(test_number, train_and_validation_data, train_and_validat
     min_val_loss = 1000
     
     hyperparameter_conv = [5]
-    #hyperparameter_numcells = [32, 48, 64]
-    #hyperparameter_kernel_size = [4, 6, 8]
-    hyperparameter_numcells = [32]
-    hyperparameter_kernel_size = [8]
+    hyperparameter_numcells = [32, 48, 64]
+    hyperparameter_kernel_size = [4, 6, 8]
+    #hyperparameter_numcells = [32]
+    #hyperparameter_kernel_size = [8]
     hyperparameter_dropout = [0.5]
     hyperparameter_batch_size = [600]
     
@@ -992,9 +995,9 @@ def model_training_seq(test_number, train_and_validation_data, train_and_validat
     for i in range(len(train_and_validation_labels)):
         sample_weights.append(1 / len(train_and_validation_labels))  
             
-    models, alpha_values = final_train_seq([], [], sample_weights, 1, factor_NSA, epochs, test_number, model_name, train_and_validation_data, train_and_validation_labels, best_batch_size, best_dropout, best_conv, best_numcells, best_kernel, test_data, test_labels, properties, names, offset, mask_value)
+    models, model_predictions, alpha_values = final_train_seq([], [], [], sample_weights, 1, factor_NSA, epochs, test_number, model_name, train_and_validation_data, train_and_validation_labels, best_batch_size, best_dropout, best_conv, best_numcells, best_kernel, test_data, test_labels, properties, names, offset, mask_value)
     
-    adaboost_generate_predictions_seq(models, alpha_values, best_batch_size, test_number, "_final", test_data, test_labels, properties, names, offset, mask_value)
+    adaboost_generate_predictions_seq(models, model_predictions, alpha_values, best_batch_size, test_number, "_final", test_data, test_labels, properties, names, offset)
 
 def model_training(num_props, test_number, train_and_validation_data, train_and_validation_labels, kfold_second, epochs, factor_NSA, test_data, test_labels, properties, names, offset, mask_value=2):
     
@@ -1004,10 +1007,10 @@ def model_training(num_props, test_number, train_and_validation_data, train_and_
     min_val_loss = 1000
     
     hyperparameter_conv = [5]
-    #hyperparameter_numcells = [32, 48, 64]
-    #hyperparameter_kernel_size = [4, 6, 8]
-    hyperparameter_numcells = [32]
-    hyperparameter_kernel_size = [8]
+    hyperparameter_numcells = [32, 48, 64]
+    hyperparameter_kernel_size = [4, 6, 8]
+    #hyperparameter_numcells = [32]
+    #hyperparameter_kernel_size = [8]
     hyperparameter_lstm = [5]
     hyperparameter_dense = [15]
     hyperparameter_lambda = [0.0]
@@ -1148,9 +1151,9 @@ def model_training(num_props, test_number, train_and_validation_data, train_and_
     for i in range(len(train_and_validation_labels)):
         sample_weights.append(1 / len(train_and_validation_labels))  
             
-    models, alpha_values = final_train([], [], sample_weights, 1, factor_NSA, epochs, test_number, model_name, num_props, train_and_validation_data, train_and_validation_labels, best_batch_size, best_lstm, best_dense, best_dropout, best_lambda, best_conv, best_numcells, best_kernel, test_data, test_labels, properties, names, offset, mask_value)
+    models, model_predictions, alpha_values = final_train([], [], [], sample_weights, 1, factor_NSA, epochs, test_number, model_name, num_props, train_and_validation_data, train_and_validation_labels, best_batch_size, best_lstm, best_dense, best_dropout, best_lambda, best_conv, best_numcells, best_kernel, test_data, test_labels, properties, names, offset, mask_value)
 
-    adaboost_generate_predictions(models, alpha_values, num_props, best_batch_size, test_number, "_final", test_data, test_labels, properties, names, offset, mask_value)
+    adaboost_generate_predictions(models, model_predictions, alpha_values, num_props, best_batch_size, test_number, "_final", test_data, test_labels, properties, names, offset)
 
 def model_training_AP(num_props, test_number, train_and_validation_data, train_and_validation_labels, kfold_second, epochs, factor_NSA, test_data, test_labels, properties, names, offset, mask_value=2):
 
@@ -1160,8 +1163,8 @@ def model_training_AP(num_props, test_number, train_and_validation_data, train_a
     min_val_loss = 1000
       
     hyperparameter_lstm = [5]
-    #hyperparameter_dense = [64, 96, 128] 
-    hyperparameter_dense = [128] 
+    hyperparameter_dense = [64, 96, 128] 
+    #hyperparameter_dense = [128] 
     hyperparameter_lambda = [0.0]
     hyperparameter_dropout = [0.5]
     hyperparameter_batch_size = [600]
@@ -1287,11 +1290,11 @@ def model_training_AP(num_props, test_number, train_and_validation_data, train_a
     for i in range(len(train_and_validation_labels)):
         sample_weights.append(1 / len(train_and_validation_labels))  
             
-    models, alpha_values = final_train_AP([], [], sample_weights, 1, factor_NSA, epochs, test_number, model_name, num_props, train_and_validation_data, train_and_validation_labels, best_batch_size, best_lstm, best_dense, best_dropout, best_lambda, test_data, test_labels, properties, names, offset, mask_value)
+    models, model_predictions, alpha_values = final_train_AP([], [], [], sample_weights, 1, factor_NSA, epochs, test_number, model_name, num_props, train_and_validation_data, train_and_validation_labels, best_batch_size, best_lstm, best_dense, best_dropout, best_lambda, test_data, test_labels, properties, names, offset, mask_value)
  
-    adaboost_generate_predictions_AP(models, alpha_values, num_props, best_batch_size, test_number, "_final", test_data, test_labels, properties, names, offset, mask_value)
+    adaboost_generate_predictions_AP(models, model_predictions, alpha_values, num_props, best_batch_size, test_number, "_final", test_data, test_labels, properties, names, offset)
 
-def final_train_AP(models, alpha_values, sample_weights, iteration, factor_NSA, epochs, test_number, model_name, num_props, data, labels, best_batch_size, best_lstm, best_dense, best_dropout, best_lambda, test_data, test_labels, properties, names, offset, mask_value):
+def final_train_AP(models, model_predictions, alpha_values, sample_weights, iteration, factor_NSA, epochs, test_number, model_name, num_props, data, labels, best_batch_size, best_lstm, best_dense, best_dropout, best_lambda, test_data, test_labels, properties, names, offset, mask_value):
                     
     model_picture = MY_MODEL_DATA_PATH+str(test_number)+'_rnn_model_'+model_name+'_final_model_iteration'+str(iteration)+'.png'
     model_file = MY_MODEL_DATA_PATH+str(test_number)+'_rnn_model_'+model_name+'_final_model_iteration'+str(iteration)+'.h5'
@@ -1369,15 +1372,16 @@ def final_train_AP(models, alpha_values, sample_weights, iteration, factor_NSA, 
     
     models.append(model)
     alpha_values.append(alpha1)
+    model_predictions.append(no_file_after_training_AP(best_batch_size, test_number, "_weak" + str(iteration), [model], [], [alpha1], properties, names, offset))
 
-    adaboost_generate_predictions_AP(models, alpha_values, num_props, best_batch_size, test_number, "_iteration" + str(iteration), test_data, test_labels, properties, names, offset, mask_value)
+    adaboost_generate_predictions_AP(models, model_predictions, alpha_values, num_props, best_batch_size, test_number, "_iteration" + str(iteration), test_data, test_labels, properties, names, offset)
     
     if iteration < MAX_ITERATIONS:
-        return final_train_AP(models, alpha_values, sample_weights, iteration + 1, factor_NSA, epochs, test_number, model_name, num_props, data, labels, best_batch_size, best_lstm, best_dense, best_dropout, best_lambda, test_data, test_labels, properties, names, offset,  mask_value)
+        return final_train_AP(models, model_predictions, alpha_values, sample_weights, iteration + 1, factor_NSA, epochs, test_number, model_name, num_props, data, labels, best_batch_size, best_lstm, best_dense, best_dropout, best_lambda, test_data, test_labels, properties, names, offset,  mask_value)
     else:
-        return models, alpha_values
+        return models, model_predictions, alpha_values
    
-def final_train(models, alpha_values, sample_weights, iteration, factor_NSA, epochs, test_number, model_name, num_props, data, labels, best_batch_size, best_lstm, best_dense, best_dropout, best_lambda, best_conv, best_numcells, best_kernel, test_data, test_labels, properties, names, offset, mask_value):
+def final_train(models, model_predictions, alpha_values, sample_weights, iteration, factor_NSA, epochs, test_number, model_name, num_props, data, labels, best_batch_size, best_lstm, best_dense, best_dropout, best_lambda, best_conv, best_numcells, best_kernel, test_data, test_labels, properties, names, offset, mask_value):
                         
     model_picture = MODEL_DATA_PATH+str(test_number)+'_rnn_model_'+model_name+'_final_model_iteration'+str(iteration)+'.png'
     model_file = MODEL_DATA_PATH+str(test_number)+'_rnn_model_'+model_name+'_final_model_iteration'+str(iteration)+'.h5'
@@ -1455,15 +1459,16 @@ def final_train(models, alpha_values, sample_weights, iteration, factor_NSA, epo
     
     models.append(model)
     alpha_values.append(alpha1)
+    model_predictions.append(no_file_after_training(best_batch_size, test_number, "_weak" + str(iteration), [model], [], [alpha1], properties, names, offset))
 
-    adaboost_generate_predictions(models, alpha_values, num_props, best_batch_size, test_number, "_iteration" + str(iteration), test_data, test_labels, properties, names, offset, mask_value)
+    adaboost_generate_predictions(models, model_predictions, alpha_values, num_props, best_batch_size, test_number, "_iteration" + str(iteration), test_data, test_labels, properties, names, offset)
 
     if iteration < MAX_ITERATIONS:
-        return final_train(models, alpha_values, sample_weights, iteration + 1, factor_NSA, epochs, test_number, model_name, num_props, data, labels, best_batch_size, best_lstm, best_dense, best_dropout, best_lambda, best_conv, best_numcells, best_kernel, test_data, test_labels, properties, names, offset,  mask_value)
+        return final_train(models, model_predictions, alpha_values, sample_weights, iteration + 1, factor_NSA, epochs, test_number, model_name, num_props, data, labels, best_batch_size, best_lstm, best_dense, best_dropout, best_lambda, best_conv, best_numcells, best_kernel, test_data, test_labels, properties, names, offset,  mask_value)
     else:
-        return models, alpha_values
+        return models, model_predictions, alpha_values
 
-def final_train_seq(models, alpha_values, sample_weights, iteration, factor_NSA, epochs, test_number, model_name, data, labels, best_batch_size, best_dropout, best_conv, best_numcells, best_kernel, test_data, test_labels, properties, names, offset, mask_value):
+def final_train_seq(models, model_predictions, alpha_values, sample_weights, iteration, factor_NSA, epochs, test_number, model_name, data, labels, best_batch_size, best_dropout, best_conv, best_numcells, best_kernel, test_data, test_labels, properties, names, offset, mask_value):
                         
     model_picture = SEQ_MODEL_DATA_PATH+str(test_number)+'_rnn_model_'+model_name+'_final_model_iteration'+str(iteration)+'.png'
     model_file = SEQ_MODEL_DATA_PATH+str(test_number)+'_rnn_model_'+model_name+'_final_model_iteration'+str(iteration)+'.h5'
@@ -1541,13 +1546,14 @@ def final_train_seq(models, alpha_values, sample_weights, iteration, factor_NSA,
     
     models.append(model)
     alpha_values.append(alpha1)
+    model_predictions.append(no_file_after_training_seq(best_batch_size, test_number, "_weak" + str(iteration), [model], [], [alpha1], properties, names, offset))
 
-    adaboost_generate_predictions_seq(models, alpha_values, best_batch_size, test_number, "_iteration" + str(iteration), test_data, test_labels, properties, names, offset, mask_value)
+    adaboost_generate_predictions_seq(models, model_predictions, alpha_values, best_batch_size, test_number, "_iteration" + str(iteration), test_data, test_labels, properties, names, offset)
     
     if iteration < MAX_ITERATIONS:
-        return final_train_seq(models, alpha_values, sample_weights, iteration + 1, factor_NSA, epochs, test_number, model_name, data, labels, best_batch_size, best_dropout, best_conv, best_numcells, best_kernel, test_data, test_labels, properties, names, offset, mask_value)
+        return final_train_seq(models, model_predictions, alpha_values, sample_weights, iteration + 1, factor_NSA, epochs, test_number, model_name, data, labels, best_batch_size, best_dropout, best_conv, best_numcells, best_kernel, test_data, test_labels, properties, names, offset, mask_value)
     else:
-        return models, alpha_values
+        return models, model_predictions, alpha_values
     
 def boost_AP(num_props, batch_size, data, labels, model_file, sample_weights, thr):
     # Load the best model.
@@ -1660,7 +1666,7 @@ def boost(num_props, batch_size, data, labels, model_file, sample_weights, thr):
         new_weights.append(sample_weights[index])
     return alpha1, new_data, new_labels, new_weights
 
-def select2(sample_weights):
+def select(sample_weights):
     cumulative = np.cumsum(sample_weights)
     indices = []
     for i in range(len(sample_weights)):
@@ -1669,10 +1675,4 @@ def select2(sample_weights):
         while n > cumulative[index] and index < len(sample_weights) - 1:
             index += 1
         indices.append(index) 
-    return indices
-
-def select(sample_weights):
-    indices = []
-    for i in range(len(sample_weights)):
-        indices.append(i) 
     return indices

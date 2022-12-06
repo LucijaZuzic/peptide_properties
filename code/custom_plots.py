@@ -186,7 +186,8 @@ def hist_predicted(MODEL_DATA_PATH, test_number, iteration, test_labels, model_p
     plt.hist(model_predictions_true, bins = [0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1])
     
     plt.savefig(MODEL_DATA_PATH+str(test_number)+"_"+"model_multiple_properties_histogram_SA" + iteration + ".png", bbox_inches = 'tight')
-   
+    plt.close()
+
     # Create a histogram of the predicted probabilities only for the peptides that don't show self-assembly
 
     model_predictions_false = []
@@ -201,6 +202,7 @@ def hist_predicted(MODEL_DATA_PATH, test_number, iteration, test_labels, model_p
     plt.hist(model_predictions_false, bins = [0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1])
     
     plt.savefig(MODEL_DATA_PATH+str(test_number)+"_"+"model_multiple_properties_histogram_NSA" + iteration + ".png", bbox_inches = 'tight')
+    plt.close()
 
 def decorate_stats(history, params_nr='', fold_nr=''):
     accuracy =history.history['accuracy'] 
