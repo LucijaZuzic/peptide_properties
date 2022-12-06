@@ -1389,9 +1389,9 @@ def final_train_AP(models, model_predictions, alpha_values, sample_weights, iter
     model_predictions.append(model_pred)
     model_pred_multiple = no_file_model_predict_AP(num_props, best_batch_size, test_data, test_labels, models, model_predictions, alpha_values)
 
-    adaboost_generate_predictions_AP([model], [model_pred], [alpha1], num_props, best_batch_size, test_number, "_weak" + str(iteration), test_data, test_labels, properties, names, offset)
+    adaboost_generate_predictions_AP([model], model_pred, [alpha1], num_props, best_batch_size, test_number, "_weak" + str(iteration), test_data, test_labels, properties, names, offset)
 
-    adaboost_generate_predictions_AP(models, [model_pred_multiple], alpha_values, num_props, best_batch_size, test_number, "_iteration" + str(iteration), test_data, test_labels, properties, names, offset)
+    adaboost_generate_predictions_AP(models, model_pred_multiple, alpha_values, num_props, best_batch_size, test_number, "_iteration" + str(iteration), test_data, test_labels, properties, names, offset)
     
     if iteration < MAX_ITERATIONS:
         final_train_AP(models, model_predictions, alpha_values, sample_weights, iteration + 1, factor_NSA, epochs, test_number, model_name, num_props, data, labels, best_batch_size, best_lstm, best_dense, best_dropout, best_lambda, test_data, test_labels, properties, names, offset,  mask_value)
@@ -1478,9 +1478,9 @@ def final_train(models, model_predictions, alpha_values, sample_weights, iterati
     model_predictions.append(model_pred)
     model_pred_multiple = no_file_model_predict(num_props, best_batch_size, test_data, test_labels, models, model_predictions, alpha_values)
 
-    adaboost_generate_predictions([model], [model_pred], [alpha1], num_props, best_batch_size, test_number, "_weak" + str(iteration), test_data, test_labels, properties, names, offset)
+    adaboost_generate_predictions([model], model_pred, [alpha1], num_props, best_batch_size, test_number, "_weak" + str(iteration), test_data, test_labels, properties, names, offset)
 
-    adaboost_generate_predictions(models, [model_pred_multiple], alpha_values, num_props, best_batch_size, test_number, "_iteration" + str(iteration), test_data, test_labels, properties, names, offset)
+    adaboost_generate_predictions(models, model_pred_multiple, alpha_values, num_props, best_batch_size, test_number, "_iteration" + str(iteration), test_data, test_labels, properties, names, offset)
 
     if iteration < MAX_ITERATIONS:
         final_train(models, model_predictions, alpha_values, sample_weights, iteration + 1, factor_NSA, epochs, test_number, model_name, num_props, data, labels, best_batch_size, best_lstm, best_dense, best_dropout, best_lambda, best_conv, best_numcells, best_kernel, test_data, test_labels, properties, names, offset,  mask_value)
