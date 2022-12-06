@@ -13,54 +13,78 @@ MAX_ITERATIONS = 5
  
 def no_file_model_predict_seq(best_batch_size, test_data, test_labels, models, model_predictions, alpha_values):
     test_data, test_labels = reshape_seq(test_data, test_labels)
-    model_predictions = []
+
+    model_predictions_new = []
+    tmp_model_predictions = []
     
     # Get model predictions on the test data.
     for i in range(len(models)):
-        tmp_model_predictions = models[i].predict(test_data, batch_size=best_batch_size) * alpha_values[i] / sum(alpha_values)
-        
         if len(model_predictions) == 0:
+            tmp_model_predictions = models[i].predict(test_data, batch_size=best_batch_size)
+        else:
+            tmp_model_predictions = model_predictions[i]
+
+        for j in range(len(tmp_model_predictions)):
+            tmp_model_predictions[j] = tmp_model_predictions[j] * alpha_values[i] / sum(alpha_values)
+        
+        if len(model_predictions_new) == 0:
             for j in range(len(tmp_model_predictions)):
-                model_predictions.append(tmp_model_predictions[j])
+                model_predictions_new.append(tmp_model_predictions[j])
         else:
             for j in range(len(tmp_model_predictions)):
-                model_predictions[j] += tmp_model_predictions[j]
+                model_predictions_new[j] += tmp_model_predictions[j]
 
-    return model_predictions 
+    return model_predictions_new 
 
 def no_file_model_predict(num_props, best_batch_size, test_data, test_labels, models, model_predictions, alpha_values):
     test_data, test_labels = reshape(num_props, test_data, test_labels) 
-    model_predictions = []
+    
+    model_predictions_new = []
+    tmp_model_predictions = []
     
     # Get model predictions on the test data.
     for i in range(len(models)):
-        tmp_model_predictions = models[i].predict(test_data, batch_size=best_batch_size) * alpha_values[i] / sum(alpha_values)
-        
         if len(model_predictions) == 0:
+            tmp_model_predictions = models[i].predict(test_data, batch_size=best_batch_size)
+        else:
+            tmp_model_predictions = model_predictions[i]
+
+        for j in range(len(tmp_model_predictions)):
+            tmp_model_predictions[j] = tmp_model_predictions[j] * alpha_values[i] / sum(alpha_values)
+        
+        if len(model_predictions_new) == 0:
             for j in range(len(tmp_model_predictions)):
-                model_predictions.append(tmp_model_predictions[j])
+                model_predictions_new.append(tmp_model_predictions[j])
         else:
             for j in range(len(tmp_model_predictions)):
-                model_predictions[j] += tmp_model_predictions[j]
+                model_predictions_new[j] += tmp_model_predictions[j]
 
-    return model_predictions 
+    return model_predictions_new 
 
 def no_file_model_predict_AP(num_props, best_batch_size, test_data, test_labels, models, model_predictions, alpha_values):
     test_data, test_labels = reshape_AP(num_props, test_data, test_labels) 
-    model_predictions = []
+    
+    model_predictions_new = []
+    tmp_model_predictions = []
     
     # Get model predictions on the test data.
     for i in range(len(models)):
-        tmp_model_predictions = models[i].predict(test_data, batch_size=best_batch_size) * alpha_values[i] / sum(alpha_values)
-        
         if len(model_predictions) == 0:
+            tmp_model_predictions = models[i].predict(test_data, batch_size=best_batch_size)
+        else:
+            tmp_model_predictions = model_predictions[i]
+
+        for j in range(len(tmp_model_predictions)):
+            tmp_model_predictions[j] = tmp_model_predictions[j] * alpha_values[i] / sum(alpha_values)
+        
+        if len(model_predictions_new) == 0:
             for j in range(len(tmp_model_predictions)):
-                model_predictions.append(tmp_model_predictions[j])
+                model_predictions_new.append(tmp_model_predictions[j])
         else:
             for j in range(len(tmp_model_predictions)):
-                model_predictions[j] += tmp_model_predictions[j]
+                model_predictions_new[j] += tmp_model_predictions[j]
 
-    return model_predictions 
+    return model_predictions_new 
 
 def model_predict_seq(best_batch_size, test_data, test_labels, best_model_file):
     # Load the best model.
@@ -869,8 +893,6 @@ def model_training_seq(test_number, train_and_validation_data, train_and_validat
     hyperparameter_conv = [5]
     hyperparameter_numcells = [32, 48, 64]
     hyperparameter_kernel_size = [4, 6, 8]
-    #hyperparameter_numcells = [32]
-    #hyperparameter_kernel_size = [8]
     hyperparameter_dropout = [0.5]
     hyperparameter_batch_size = [600]
     
@@ -995,9 +1017,7 @@ def model_training_seq(test_number, train_and_validation_data, train_and_validat
     for i in range(len(train_and_validation_labels)):
         sample_weights.append(1 / len(train_and_validation_labels))  
             
-    models, model_predictions, alpha_values = final_train_seq([], [], [], sample_weights, 1, factor_NSA, epochs, test_number, model_name, train_and_validation_data, train_and_validation_labels, best_batch_size, best_dropout, best_conv, best_numcells, best_kernel, test_data, test_labels, properties, names, offset, mask_value)
-    
-    adaboost_generate_predictions_seq(models, model_predictions, alpha_values, best_batch_size, test_number, "_final", test_data, test_labels, properties, names, offset)
+    final_train_seq([], [], [], sample_weights, 1, factor_NSA, epochs, test_number, model_name, train_and_validation_data, train_and_validation_labels, best_batch_size, best_dropout, best_conv, best_numcells, best_kernel, test_data, test_labels, properties, names, offset, mask_value)
 
 def model_training(num_props, test_number, train_and_validation_data, train_and_validation_labels, kfold_second, epochs, factor_NSA, test_data, test_labels, properties, names, offset, mask_value=2):
     
@@ -1009,8 +1029,6 @@ def model_training(num_props, test_number, train_and_validation_data, train_and_
     hyperparameter_conv = [5]
     hyperparameter_numcells = [32, 48, 64]
     hyperparameter_kernel_size = [4, 6, 8]
-    #hyperparameter_numcells = [32]
-    #hyperparameter_kernel_size = [8]
     hyperparameter_lstm = [5]
     hyperparameter_dense = [15]
     hyperparameter_lambda = [0.0]
@@ -1151,9 +1169,7 @@ def model_training(num_props, test_number, train_and_validation_data, train_and_
     for i in range(len(train_and_validation_labels)):
         sample_weights.append(1 / len(train_and_validation_labels))  
             
-    models, model_predictions, alpha_values = final_train([], [], [], sample_weights, 1, factor_NSA, epochs, test_number, model_name, num_props, train_and_validation_data, train_and_validation_labels, best_batch_size, best_lstm, best_dense, best_dropout, best_lambda, best_conv, best_numcells, best_kernel, test_data, test_labels, properties, names, offset, mask_value)
-
-    adaboost_generate_predictions(models, model_predictions, alpha_values, num_props, best_batch_size, test_number, "_final", test_data, test_labels, properties, names, offset)
+    final_train([], [], [], sample_weights, 1, factor_NSA, epochs, test_number, model_name, num_props, train_and_validation_data, train_and_validation_labels, best_batch_size, best_lstm, best_dense, best_dropout, best_lambda, best_conv, best_numcells, best_kernel, test_data, test_labels, properties, names, offset, mask_value)
 
 def model_training_AP(num_props, test_number, train_and_validation_data, train_and_validation_labels, kfold_second, epochs, factor_NSA, test_data, test_labels, properties, names, offset, mask_value=2):
 
@@ -1163,8 +1179,7 @@ def model_training_AP(num_props, test_number, train_and_validation_data, train_a
     min_val_loss = 1000
       
     hyperparameter_lstm = [5]
-    hyperparameter_dense = [64, 96, 128] 
-    #hyperparameter_dense = [128] 
+    hyperparameter_dense = [64, 96, 128]
     hyperparameter_lambda = [0.0]
     hyperparameter_dropout = [0.5]
     hyperparameter_batch_size = [600]
@@ -1290,10 +1305,8 @@ def model_training_AP(num_props, test_number, train_and_validation_data, train_a
     for i in range(len(train_and_validation_labels)):
         sample_weights.append(1 / len(train_and_validation_labels))  
             
-    models, model_predictions, alpha_values = final_train_AP([], [], [], sample_weights, 1, factor_NSA, epochs, test_number, model_name, num_props, train_and_validation_data, train_and_validation_labels, best_batch_size, best_lstm, best_dense, best_dropout, best_lambda, test_data, test_labels, properties, names, offset, mask_value)
- 
-    adaboost_generate_predictions_AP(models, model_predictions, alpha_values, num_props, best_batch_size, test_number, "_final", test_data, test_labels, properties, names, offset)
-
+    final_train_AP([], [], [], sample_weights, 1, factor_NSA, epochs, test_number, model_name, num_props, train_and_validation_data, train_and_validation_labels, best_batch_size, best_lstm, best_dense, best_dropout, best_lambda, test_data, test_labels, properties, names, offset, mask_value)
+    
 def final_train_AP(models, model_predictions, alpha_values, sample_weights, iteration, factor_NSA, epochs, test_number, model_name, num_props, data, labels, best_batch_size, best_lstm, best_dense, best_dropout, best_lambda, test_data, test_labels, properties, names, offset, mask_value):
                     
     model_picture = MY_MODEL_DATA_PATH+str(test_number)+'_rnn_model_'+model_name+'_final_model_iteration'+str(iteration)+'.png'
@@ -1372,14 +1385,16 @@ def final_train_AP(models, model_predictions, alpha_values, sample_weights, iter
     
     models.append(model)
     alpha_values.append(alpha1)
-    model_predictions.append(no_file_after_training_AP(best_batch_size, test_number, "_weak" + str(iteration), [model], [], [alpha1], properties, names, offset))
+    model_pred = no_file_model_predict_AP(num_props, best_batch_size, test_data, test_labels, [model], [], [alpha1])
+    model_predictions.append(model_pred)
+    model_pred_multiple = no_file_model_predict_AP(num_props, best_batch_size, test_data, test_labels, models, model_predictions, alpha_values)
 
-    adaboost_generate_predictions_AP(models, model_predictions, alpha_values, num_props, best_batch_size, test_number, "_iteration" + str(iteration), test_data, test_labels, properties, names, offset)
+    adaboost_generate_predictions_AP([model], [model_pred], [alpha1], num_props, best_batch_size, test_number, "_weak" + str(iteration), test_data, test_labels, properties, names, offset)
+
+    adaboost_generate_predictions_AP(models, [model_pred_multiple], alpha_values, num_props, best_batch_size, test_number, "_iteration" + str(iteration), test_data, test_labels, properties, names, offset)
     
     if iteration < MAX_ITERATIONS:
-        return final_train_AP(models, model_predictions, alpha_values, sample_weights, iteration + 1, factor_NSA, epochs, test_number, model_name, num_props, data, labels, best_batch_size, best_lstm, best_dense, best_dropout, best_lambda, test_data, test_labels, properties, names, offset,  mask_value)
-    else:
-        return models, model_predictions, alpha_values
+        final_train_AP(models, model_predictions, alpha_values, sample_weights, iteration + 1, factor_NSA, epochs, test_number, model_name, num_props, data, labels, best_batch_size, best_lstm, best_dense, best_dropout, best_lambda, test_data, test_labels, properties, names, offset,  mask_value)
    
 def final_train(models, model_predictions, alpha_values, sample_weights, iteration, factor_NSA, epochs, test_number, model_name, num_props, data, labels, best_batch_size, best_lstm, best_dense, best_dropout, best_lambda, best_conv, best_numcells, best_kernel, test_data, test_labels, properties, names, offset, mask_value):
                         
@@ -1459,14 +1474,16 @@ def final_train(models, model_predictions, alpha_values, sample_weights, iterati
     
     models.append(model)
     alpha_values.append(alpha1)
-    model_predictions.append(no_file_after_training(best_batch_size, test_number, "_weak" + str(iteration), [model], [], [alpha1], properties, names, offset))
+    model_pred = no_file_model_predict(num_props, best_batch_size, test_data, test_labels, [model], [], [alpha1])
+    model_predictions.append(model_pred)
+    model_pred_multiple = no_file_model_predict(num_props, best_batch_size, test_data, test_labels, models, model_predictions, alpha_values)
 
-    adaboost_generate_predictions(models, model_predictions, alpha_values, num_props, best_batch_size, test_number, "_iteration" + str(iteration), test_data, test_labels, properties, names, offset)
+    adaboost_generate_predictions([model], [model_pred], [alpha1], num_props, best_batch_size, test_number, "_weak" + str(iteration), test_data, test_labels, properties, names, offset)
+
+    adaboost_generate_predictions(models, [model_pred_multiple], alpha_values, num_props, best_batch_size, test_number, "_iteration" + str(iteration), test_data, test_labels, properties, names, offset)
 
     if iteration < MAX_ITERATIONS:
-        return final_train(models, model_predictions, alpha_values, sample_weights, iteration + 1, factor_NSA, epochs, test_number, model_name, num_props, data, labels, best_batch_size, best_lstm, best_dense, best_dropout, best_lambda, best_conv, best_numcells, best_kernel, test_data, test_labels, properties, names, offset,  mask_value)
-    else:
-        return models, model_predictions, alpha_values
+        final_train(models, model_predictions, alpha_values, sample_weights, iteration + 1, factor_NSA, epochs, test_number, model_name, num_props, data, labels, best_batch_size, best_lstm, best_dense, best_dropout, best_lambda, best_conv, best_numcells, best_kernel, test_data, test_labels, properties, names, offset,  mask_value)
 
 def final_train_seq(models, model_predictions, alpha_values, sample_weights, iteration, factor_NSA, epochs, test_number, model_name, data, labels, best_batch_size, best_dropout, best_conv, best_numcells, best_kernel, test_data, test_labels, properties, names, offset, mask_value):
                         
@@ -1546,14 +1563,16 @@ def final_train_seq(models, model_predictions, alpha_values, sample_weights, ite
     
     models.append(model)
     alpha_values.append(alpha1)
-    model_predictions.append(no_file_after_training_seq(best_batch_size, test_number, "_weak" + str(iteration), [model], [], [alpha1], properties, names, offset))
+    model_pred = no_file_model_predict_seq(best_batch_size, test_data, test_labels, [model], [], [alpha1])
+    model_predictions.append(model_pred)
+    model_pred_multiple = no_file_model_predict_seq(best_batch_size, test_data, test_labels, models, model_predictions, alpha_values)
 
-    adaboost_generate_predictions_seq(models, model_predictions, alpha_values, best_batch_size, test_number, "_iteration" + str(iteration), test_data, test_labels, properties, names, offset)
+    adaboost_generate_predictions_seq([model], model_pred, [alpha1], best_batch_size, test_number, "_weak" + str(iteration), test_data, test_labels, properties, names, offset)
+
+    adaboost_generate_predictions_seq(models, model_pred_multiple, alpha_values, best_batch_size, test_number, "_iteration" + str(iteration), test_data, test_labels, properties, names, offset)
     
     if iteration < MAX_ITERATIONS:
-        return final_train_seq(models, model_predictions, alpha_values, sample_weights, iteration + 1, factor_NSA, epochs, test_number, model_name, data, labels, best_batch_size, best_dropout, best_conv, best_numcells, best_kernel, test_data, test_labels, properties, names, offset, mask_value)
-    else:
-        return models, model_predictions, alpha_values
+        final_train_seq(models, model_predictions, alpha_values, sample_weights, iteration + 1, factor_NSA, epochs, test_number, model_name, data, labels, best_batch_size, best_dropout, best_conv, best_numcells, best_kernel, test_data, test_labels, properties, names, offset, mask_value)
     
 def boost_AP(num_props, batch_size, data, labels, model_file, sample_weights, thr):
     # Load the best model.
@@ -1572,7 +1591,11 @@ def boost_AP(num_props, batch_size, data, labels, model_file, sample_weights, th
                 predicted_classes.append(0)
             if labels[i] != predicted_classes[i]:
                 e1 += sample_weights[i] 
-    alpha1 = 0.5 * np.log((1 - (e1 + pow(10, -12))) / (e1 + pow(10, -12)))
+    if e1 <= 0:
+        e1 = pow(10, -18)
+    if e1 >= 1:
+        e1 = 1 - pow(10, -18)
+    alpha1 = 0.5 * np.log((1 - e1) / e1)
     # Updated weights
     for i in range(len(model_predictions)):
         for pred in model_predictions[i]: 
@@ -1609,7 +1632,11 @@ def boost_seq(batch_size, data, labels, model_file, sample_weights, thr):
                 predicted_classes.append(0)
             if labels[i] != predicted_classes[i]:
                 e1 += sample_weights[i] 
-    alpha1 = 0.5 * np.log((1 - (e1 + pow(10, -12))) / (e1 + pow(10, -12)))
+    if e1 <= 0:
+        e1 = pow(10, -18)
+    if e1 >= 1:
+        e1 = 1 - pow(10, -18)
+    alpha1 = 0.5 * np.log((1 - e1) / e1)
     # Updated weights
     for i in range(len(model_predictions)):
         for pred in model_predictions[i]: 
@@ -1645,8 +1672,12 @@ def boost(num_props, batch_size, data, labels, model_file, sample_weights, thr):
             else:
                 predicted_classes.append(0)
             if labels[i] != predicted_classes[i]:
-                e1 += sample_weights[i] 
-    alpha1 = 0.5 * np.log((1 - (e1 + pow(10, -12))) / (e1 + pow(10, -12)))
+                e1 += sample_weights[i]
+    if e1 <= 0:
+        e1 = pow(10, -18)
+    if e1 >= 1:
+        e1 = 1 - pow(10, -18)
+    alpha1 = 0.5 * np.log((1 - e1) / e1)
     # Updated weights
     for i in range(len(model_predictions)):
         for pred in model_predictions[i]: 
