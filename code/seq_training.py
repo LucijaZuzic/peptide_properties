@@ -12,7 +12,7 @@ names = ['AP', 'logP', 'APH', 'polarity_selu']
 offset = 1
 # Define random seed
 seed = 42
-SA_data = np.load(DATA_PATH+'data_SA.npy')
+SA_data = np.load(DATA_PATH+'data_SA_updated.npy', allow_pickle=True).item()
   
 properties = np.ones(95) 
 masking_value = 2

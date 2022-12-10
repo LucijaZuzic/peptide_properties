@@ -2,122 +2,145 @@ import tensorflow as tf
 import numpy as np
 import pandas as pd
 from custom_plots import plt_model, plt_model_final, decorate_stats, decorate_stats_avg, decorate_stats_final
-from utils import DATA_PATH, MODEL_DATA_PATH, SEQ_MODEL_DATA_PATH, MY_MODEL_DATA_PATH, scale, split_amino_acids, split_dipeptides, split_tripeptides, padding
+from utils import convert_list, DATA_PATH, MODEL_DATA_PATH, SEQ_MODEL_DATA_PATH, MY_MODEL_DATA_PATH, scale, split_amino_acids, split_dipeptides, split_tripeptides, padding
 import new_model
 from sklearn.preprocessing import MinMaxScaler 
 from seqprops import SequentialPropertiesEncoder 
 import random
 from custom_plots import convert_to_binary, make_ROC_plots, make_PR_plots, output_metrics, hist_predicted
 
+LEARNING_RATE_SET = 0.01
 MAX_ITERATIONS = 5
+MAXLEN = 24
+
+# This function keeps the initial learning rate for the first ten epochs
+# and decreases it exponentially after that.
+def scheduler(epoch, lr):
+  if epoch < 10:
+    return lr
+  else:
+    return lr * tf.math.exp(-0.1)
+
+def return_callbacks(model_file, metric):
+    callbacks = [
+        # When validation loss doesn't decrease in 10 consecutive epochs, reduce the learning rate by 90%.
+        # This is repeated while learning rate is >= 0.000001.
+        #tf.keras.callbacks.ReduceLROnPlateau(
+        #    monitor='loss', factor=0.1, patience=10, min_lr=0.000001
+        #),
+        # Save the best model (the one with the lowest validation loss).
+        tf.keras.callbacks.ModelCheckpoint(
+            model_file, save_best_only=True, monitor=metric, mode='min'
+        ),
+        # This callback will stop the training when there is no improvement in
+        # the loss for three consecutive epochs.
+        # Restoring best weights in case of performance drop
+        #tf.keras.callbacks.EarlyStopping(monitor=metric, patience=10, restore_best_weights=True),
+        tf.keras.callbacks.LearningRateScheduler(scheduler)
+    ]
+    return callbacks
+
+def read_mordred(sequence_of_peptide, new_props, length_to_pad, masking_value=2):
+
+    df = pd.read_csv(DATA_PATH+"mordred_descriptors.csv", skipinitialspace=True, sep=';')
+
+    index = 0
+    
+    for i in range(len(df['sequence'])):
+        if df['sequence'][i] == sequence_of_peptide:
+            index = i
+            break
+    
+    new_props = []
+    for column in df.columns[:35]:
+        if column == 'sequence':
+            continue
+        padded = padding([df[column][index]], length_to_pad, masking_value)   
+        new_props.append(padded)
+
+    return new_props
+
+def common_multiple_model_predict(thr, model_predictions, alpha_values):
  
-def no_file_model_predict_seq(best_batch_size, test_data, test_labels, models, model_predictions, alpha_values):
+    model_predictions_new = []
+    
+    # Get model predictions on the test data.
+    for i in range(len(model_predictions)):
+        tmp_model_predictions = []
+        for j in range(len(model_predictions[i])):
+            tmp_model_predictions.append(model_predictions[i][j])
+
+        for j in range(len(tmp_model_predictions)):
+            if tmp_model_predictions[j] > thr:
+                tmp_model_predictions[j] = 1
+            else:
+                tmp_model_predictions[j] = -1
+            tmp_model_predictions[j] = tmp_model_predictions[j] * alpha_values[i]
+        
+        if len(model_predictions_new) == 0:
+            for j in range(len(tmp_model_predictions)):
+                model_predictions_new.append(tmp_model_predictions[j])
+        else:
+            for j in range(len(tmp_model_predictions)):
+                model_predictions_new[j] += tmp_model_predictions[j]
+
+    for i in range(len(model_predictions_new)):
+        if model_predictions_new[i] > 0:
+            model_predictions_new[i] = 1
+        else:
+            model_predictions_new[i] = 0 
+
+    return model_predictions_new 
+    
+def multiple_model_predict_seq(thr, best_batch_size, test_data, test_labels, models, model_predictions, alpha_values):
     test_data, test_labels = reshape_seq(test_data, test_labels)
 
-    model_predictions_new = []
-    tmp_model_predictions = []
-    
-    # Get model predictions on the test data.
-    for i in range(len(models)):
-        if len(model_predictions) == 0:
-            tmp_model_predictions = models[i].predict(test_data, batch_size=best_batch_size)
-        else:
-            tmp_model_predictions = model_predictions[i]
+    return common_multiple_model_predict(thr, model_predictions, alpha_values)
 
-        for j in range(len(tmp_model_predictions)):
-            tmp_model_predictions[j] = tmp_model_predictions[j] * alpha_values[i] / sum(alpha_values)
-        
-        if len(model_predictions_new) == 0:
-            for j in range(len(tmp_model_predictions)):
-                model_predictions_new.append(tmp_model_predictions[j])
-        else:
-            for j in range(len(tmp_model_predictions)):
-                model_predictions_new[j] += tmp_model_predictions[j]
-
-    return model_predictions_new 
-
-def no_file_model_predict(num_props, best_batch_size, test_data, test_labels, models, model_predictions, alpha_values):
+def multiple_model_predict(thr, num_props, best_batch_size, test_data, test_labels, models, model_predictions, alpha_values):
     test_data, test_labels = reshape(num_props, test_data, test_labels) 
-    
-    model_predictions_new = []
-    tmp_model_predictions = []
-    
-    # Get model predictions on the test data.
-    for i in range(len(models)):
-        if len(model_predictions) == 0:
-            tmp_model_predictions = models[i].predict(test_data, batch_size=best_batch_size)
-        else:
-            tmp_model_predictions = model_predictions[i]
 
-        for j in range(len(tmp_model_predictions)):
-            tmp_model_predictions[j] = tmp_model_predictions[j] * alpha_values[i] / sum(alpha_values)
-        
-        if len(model_predictions_new) == 0:
-            for j in range(len(tmp_model_predictions)):
-                model_predictions_new.append(tmp_model_predictions[j])
-        else:
-            for j in range(len(tmp_model_predictions)):
-                model_predictions_new[j] += tmp_model_predictions[j]
+    return common_multiple_model_predict(thr, model_predictions, alpha_values)
 
-    return model_predictions_new 
-
-def no_file_model_predict_AP(num_props, best_batch_size, test_data, test_labels, models, model_predictions, alpha_values):
+def multiple_model_predict_AP(thr, num_props, best_batch_size, test_data, test_labels, models, model_predictions, alpha_values):
     test_data, test_labels = reshape_AP(num_props, test_data, test_labels) 
     
-    model_predictions_new = []
-    tmp_model_predictions = []
-    
-    # Get model predictions on the test data.
-    for i in range(len(models)):
-        if len(model_predictions) == 0:
-            tmp_model_predictions = models[i].predict(test_data, batch_size=best_batch_size)
-        else:
-            tmp_model_predictions = model_predictions[i]
+    return common_multiple_model_predict(thr, model_predictions, alpha_values)
 
-        for j in range(len(tmp_model_predictions)):
-            tmp_model_predictions[j] = tmp_model_predictions[j] * alpha_values[i] / sum(alpha_values)
-        
-        if len(model_predictions_new) == 0:
-            for j in range(len(tmp_model_predictions)):
-                model_predictions_new.append(tmp_model_predictions[j])
-        else:
-            for j in range(len(tmp_model_predictions)):
-                model_predictions_new[j] += tmp_model_predictions[j]
-
-    return model_predictions_new 
-
-def model_predict_seq(best_batch_size, test_data, test_labels, best_model_file):
+def model_predict_seq(best_batch_size, test_data, test_labels, best_model_file, best_model):
     # Load the best model.
-    best_model = tf.keras.models.load_model(best_model_file) 
+    if best_model_file != '':
+        best_model = tf.keras.models.load_model(best_model_file) 
     test_data, test_labels = reshape_seq(test_data, test_labels)
     
     # Get model predictions on the test data.
     model_predictions = best_model.predict(test_data, batch_size=best_batch_size)
+    model_predictions = convert_list(model_predictions)  
+    return model_predictions
 
-    return model_predictions 
-
-def model_predict(num_props, best_batch_size, test_data, test_labels, best_model_file):
+def model_predict(num_props, best_batch_size, test_data, test_labels, best_model_file, best_model):
     # Load the best model.
-    best_model = tf.keras.models.load_model(best_model_file)   
+    if best_model_file != '':
+        best_model = tf.keras.models.load_model(best_model_file) 
     test_data, test_labels = reshape(num_props, test_data, test_labels) 
+
     # Get model predictions on the test data.
-    
     model_predictions = best_model.predict(test_data, batch_size=best_batch_size)
+    model_predictions = convert_list(model_predictions)  
+    return model_predictions
 
-    return model_predictions 
-
-def model_predict_AP(num_props, best_batch_size, test_data, test_labels, best_model_file):
+def model_predict_AP(num_props, best_batch_size, test_data, test_labels, best_model_file, best_model):
     # Load the best model.
-    best_model = tf.keras.models.load_model(best_model_file)   
+    if best_model_file != '':
+        best_model = tf.keras.models.load_model(best_model_file)
     test_data, test_labels = reshape_AP(num_props, test_data, test_labels) 
+
     # Get model predictions on the test data.
-    
     model_predictions = best_model.predict(test_data, batch_size=best_batch_size)
+    model_predictions = convert_list(model_predictions)  
+    return model_predictions
 
-    return model_predictions 
-
-def after_training_seq(best_batch_size, test_number, best_model_file, properties, names=['AP'], offset = 1, masking_value=2):
-        
+def common_no_file_after_training_first():
     # Get sequences for peptides with no labels and predictions from the model without machine learning 
     resulteval = DATA_PATH+'RESULTEVAL.csv' 
     df = pd.read_csv(resulteval, skipinitialspace=True, sep=';')
@@ -127,490 +150,119 @@ def after_training_seq(best_batch_size, test_number, best_model_file, properties
         seq_example += 'A'
     sequences.append(seq_example)
     past_grades = list(df['Postotak svojstava koja imaju AUC > 0,5 koja su dala SA'])
-    past_classes= list(df['SA'])
-    
-    SA_data = []
+    past_classes= list(df['SA']) 
+
+    SA_data = {}
     for i in range(len(sequences)):
-        SA_data.append([sequences[i], '0'])
-         
-    SA, NSA = load_data_SA_seq(SA_data, names, offset, properties)
+        SA_data[sequences[i]] = '0'
+
+    return SA_data, sequences, past_classes, past_grades
+
+def common_no_file_after_training(thr, sequences, past_classes, past_grades, percentage_filename, grade_filename, model_predictions):
+    # Write SA probability to file
+    percentage_file = open(percentage_filename, "w", encoding="utf-8")
+    percentage_string_to_write = "Sequence;Multiple properties model;Method without RNN\n"
+     
+    for x in range(len(sequences)):
+        percentage_string_to_write += sequences[x]+";"+str(np.round(model_predictions[x] * 100, 2))+";"+past_grades[x]+"\n"
+    percentage_string_to_write = percentage_string_to_write.replace('.',',')
+    percentage_file.write(percentage_string_to_write)
+    percentage_file.close()
+
+    # Write class based on the threshold of probability to file
+    threshold_amino = thr
+    
+    model_predictions = convert_to_binary(model_predictions, threshold_amino) 
+    
+    grade_file = open(grade_filename, "w", encoding="utf-8")
+    grade_string_to_write = "Sequence;Multiple properties model;Method without RNN\n"
+    
+    correct_amino = 0 
+    for x in range(len(sequences)): 
+        if (model_predictions[x] == 1 and past_classes[x] == 'Y') or (model_predictions[x] == 0 and past_classes[x] == 'N'):
+            correct_amino += 1 
+            
+        part1 = sequences[x]+";"+str(model_predictions[x])+";"+past_classes[x]+"\n"
+        part1 = part1.replace(".0",'')
+        part1 = part1.replace('1','Y')
+        part1 = part1.replace('0','N') 
+        grade_string_to_write += part1  
+    last_line = "Number of matches with method without RNN;"+str(correct_amino)+";\n"
+    last_line = last_line.replace(".",',') 
+    grade_string_to_write += last_line
+    grade_file.write(grade_string_to_write)
+    grade_file.close() 
+
+def no_file_after_training_seq(thr, test_number, iteration, model_predictions, properties, names=['AP'], offset = 1, masking_value=2):
+    SA_data, sequences, past_classes, past_grades = common_no_file_after_training_first()
+
+    SA, NSA = load_data_SA_seq(SA_data, names, offset, properties, masking_value)
     all_data, all_labels = merge_data_seq(SA, NSA)
     all_data = all_data[:-1] 
     all_labels = all_labels[:-1]  
     sequences = sequences[:-1] 
-      
-    # Generate predictions on data that has no label beforehand 
-    model_predictions = model_predict_seq(best_batch_size, all_data, all_labels, best_model_file)
-    # Write SA probability to file
     
-    percentage_filename = SEQ_MODEL_DATA_PATH+str(test_number)+"_"+"percentage_multiple_properties.csv"
-    percentage_file = open(percentage_filename, "w", encoding="utf-8")
-    percentage_string_to_write = "Sequence;Multiple properties model;Method without RNN\n"
-    
-    for x in range(len(sequences)):
-        percentage_string_to_write += sequences[x]+";"+str(np.round(model_predictions[x] * 100, 2))+";"+past_grades[x]+"\n"
-    percentage_string_to_write = percentage_string_to_write.replace('.',',')
-    percentage_file.write(percentage_string_to_write)
-    percentage_file.close()
-
-    # Write class based on the threshold of probability to file
-    
-    threshold_amino = 0.5 
-    
-    model_predictions = convert_to_binary(model_predictions, threshold_amino) 
-    
-    grade_filename = SEQ_MODEL_DATA_PATH+str(test_number)+"_"+"grade_multiple_properties.csv"
-    grade_file = open(grade_filename, "w", encoding="utf-8")
-    grade_string_to_write = "Sequence;Multiple properties model;Method without RNN\n"
-    
-    correct_amino = 0 
-    for x in range(len(sequences)): 
-        if (model_predictions[x] == 1 and past_classes[x] == 'Y') or (model_predictions[x] == 0 and past_classes[x] == 'N'):
-            correct_amino += 1 
-            
-        part1 = sequences[x]+";"+str(model_predictions[x])+";"+past_classes[x]+"\n"
-        part1 = part1.replace(".0",'')
-        part1 = part1.replace('1','Y')
-        part1 = part1.replace('0','N') 
-        grade_string_to_write += part1  
-    last_line = "Number of matches with method without RNN;"+str(correct_amino)+";\n"
-    last_line = last_line.replace(".",',') 
-    grade_string_to_write += last_line
-    grade_file.write(grade_string_to_write)
-    grade_file.close() 
-
-def after_training(num_props, best_batch_size, test_number, best_model_file, properties, names=['AP'], offset = 1, masking_value=2):
-        
-    # Get sequences for peptides with no labels and predictions from the model without machine learning 
-    resulteval = DATA_PATH+'RESULTEVAL.csv' 
-    df = pd.read_csv(resulteval, skipinitialspace=True, sep=';')
-    sequences = list(df['Dizajnirani peptid'])
-    seq_example = ''
-    for i in range(24):
-        seq_example += 'A'
-    sequences.append(seq_example)
-    past_grades = list(df['Postotak svojstava koja imaju AUC > 0,5 koja su dala SA'])
-    past_classes= list(df['SA'])
-    
-    SA_data = []
-    for i in range(len(sequences)):
-        SA_data.append([sequences[i], '0'])
-         
-    SA, NSA = load_data_SA(SA_data, names, offset, properties)
-    all_data, all_labels = merge_data(SA, NSA)
-    all_data = all_data[:-1] 
-    all_labels = all_labels[:-1] 
-    sequences = sequences[:-1] 
-      
-    # Generate predictions on data that has no label beforehand 
-    model_predictions = model_predict(num_props, best_batch_size, all_data, all_labels, best_model_file)
-    # Write SA probability to file
-    
-    percentage_filename = MODEL_DATA_PATH+str(test_number)+"_"+"percentage_multiple_properties.csv"
-    percentage_file = open(percentage_filename, "w", encoding="utf-8")
-    percentage_string_to_write = "Sequence;Multiple properties model;Method without RNN\n"
-    
-    for x in range(len(sequences)):
-        percentage_string_to_write += sequences[x]+";"+str(np.round(model_predictions[x] * 100, 2))+";"+past_grades[x]+"\n"
-    percentage_string_to_write = percentage_string_to_write.replace('.',',')
-    percentage_file.write(percentage_string_to_write)
-    percentage_file.close()
-
-    # Write class based on the threshold of probability to file
-    
-    threshold_amino = 0.5 
-    
-    model_predictions = convert_to_binary(model_predictions, threshold_amino) 
-    
-    grade_filename = MODEL_DATA_PATH+str(test_number)+"_"+"grade_multiple_properties.csv"
-    grade_file = open(grade_filename, "w", encoding="utf-8")
-    grade_string_to_write = "Sequence;Multiple properties model;Method without RNN\n"
-    
-    correct_amino = 0 
-    for x in range(len(sequences)): 
-        if (model_predictions[x] == 1 and past_classes[x] == 'Y') or (model_predictions[x] == 0 and past_classes[x] == 'N'):
-            correct_amino += 1 
-            
-        part1 = sequences[x]+";"+str(model_predictions[x])+";"+past_classes[x]+"\n"
-        part1 = part1.replace(".0",'')
-        part1 = part1.replace('1','Y')
-        part1 = part1.replace('0','N') 
-        grade_string_to_write += part1  
-    last_line = "Number of matches with method without RNN;"+str(correct_amino)+";\n"
-    last_line = last_line.replace(".",',') 
-    grade_string_to_write += last_line
-    grade_file.write(grade_string_to_write)
-    grade_file.close() 
-        
-def after_training_AP(num_props, best_batch_size, test_number, best_model_file, properties, names=['AP'], offset = 1, masking_value=2):
-        
-    # Get sequences for peptides with no labels and predictions from the model without machine learning 
-    resulteval = DATA_PATH+'RESULTEVAL.csv' 
-    df = pd.read_csv(resulteval, skipinitialspace=True, sep=';')
-    sequences = list(df['Dizajnirani peptid'])
-    seq_example = ''
-    for i in range(24):
-        seq_example += 'A'
-    sequences.append(seq_example)
-    past_grades = list(df['Postotak svojstava koja imaju AUC > 0,5 koja su dala SA'])
-    past_classes= list(df['SA'])
-    
-    SA_data = []
-    for i in range(len(sequences)):
-        SA_data.append([sequences[i], '0'])
-         
-    SA, NSA = load_data_SA_AP(SA_data, names, offset, properties)
-    all_data, all_labels = merge_data_AP(SA, NSA)
-    all_data = all_data[:-1] 
-    all_labels = all_labels[:-1] 
-    sequences = sequences[:-1] 
-      
-    # Generate predictions on data that has no label beforehand 
-    model_predictions = model_predict_AP(num_props, best_batch_size, all_data, all_labels, best_model_file)
-    # Write SA probability to file
-    
-    percentage_filename = MY_MODEL_DATA_PATH+str(test_number)+"_"+"percentage_multiple_properties.csv"
-    percentage_file = open(percentage_filename, "w", encoding="utf-8")
-    percentage_string_to_write = "Sequence;Multiple properties model;Method without RNN\n"
-    
-    for x in range(len(sequences)):
-        percentage_string_to_write += sequences[x]+";"+str(np.round(model_predictions[x] * 100, 2))+";"+past_grades[x]+"\n"
-    percentage_string_to_write = percentage_string_to_write.replace('.',',')
-    percentage_file.write(percentage_string_to_write)
-    percentage_file.close()
-
-    # Write class based on the threshold of probability to file
-    
-    threshold_amino = 0.5 
-    
-    model_predictions = convert_to_binary(model_predictions, threshold_amino) 
-    
-    grade_filename = MY_MODEL_DATA_PATH+str(test_number)+"_"+"grade_multiple_properties.csv"
-    grade_file = open(grade_filename, "w", encoding="utf-8")
-    grade_string_to_write = "Sequence;Multiple properties model;Method without RNN\n"
-    
-    correct_amino = 0 
-    for x in range(len(sequences)): 
-        if (model_predictions[x] == 1 and past_classes[x] == 'Y') or (model_predictions[x] == 0 and past_classes[x] == 'N'):
-            correct_amino += 1 
-            
-        part1 = sequences[x]+";"+str(model_predictions[x])+";"+past_classes[x]+"\n"
-        part1 = part1.replace(".0",'')
-        part1 = part1.replace('1','Y')
-        part1 = part1.replace('0','N') 
-        grade_string_to_write += part1  
-    last_line = "Number of matches with method without RNN;"+str(correct_amino)+";\n"
-    last_line = last_line.replace(".",',') 
-    grade_string_to_write += last_line
-    grade_file.write(grade_string_to_write)
-    grade_file.close() 
-
-def no_file_after_training_seq(best_batch_size, test_number, iteration, models, model_predictions, alpha_values, properties, names=['AP'], offset = 1):
-        
-    # Get sequences for peptides with no labels and predictions from the model without machine learning 
-    resulteval = DATA_PATH+'RESULTEVAL.csv' 
-    df = pd.read_csv(resulteval, skipinitialspace=True, sep=';')
-    sequences = list(df['Dizajnirani peptid'])
-    seq_example = ''
-    for i in range(24):
-        seq_example += 'A'
-    sequences.append(seq_example)
-    past_grades = list(df['Postotak svojstava koja imaju AUC > 0,5 koja su dala SA'])
-    past_classes= list(df['SA'])
-    
-    SA_data = []
-    for i in range(len(sequences)):
-        SA_data.append([sequences[i], '0'])
-         
-    SA, NSA = load_data_SA_seq(SA_data, names, offset, properties)
-    all_data, all_labels = merge_data_seq(SA, NSA)
-    all_data = all_data[:-1] 
-    all_labels = all_labels[:-1]  
-    sequences = sequences[:-1] 
-      
-    # Generate predictions on data that has no label beforehand 
-    if len(model_predictions) == 0:
-        model_predictions = no_file_model_predict_seq(best_batch_size, all_data, all_labels, models, model_predictions, alpha_values)
-
-    # Write SA probability to file
     percentage_filename = SEQ_MODEL_DATA_PATH+str(test_number)+"_"+"percentage_multiple_properties" + iteration + ".csv"
-    percentage_file = open(percentage_filename, "w", encoding="utf-8")
-    percentage_string_to_write = "Sequence;Multiple properties model;Method without RNN\n"
-    
-    for x in range(len(sequences)):
-        percentage_string_to_write += sequences[x]+";"+str(np.round(model_predictions[x] * 100, 2))+";"+past_grades[x]+"\n"
-    percentage_string_to_write = percentage_string_to_write.replace('.',',')
-    percentage_file.write(percentage_string_to_write)
-    percentage_file.close()
-
-    # Write class based on the threshold of probability to file
-    threshold_amino = 0.5 
-    
-    model_predictions = convert_to_binary(model_predictions, threshold_amino) 
-    
     grade_filename = SEQ_MODEL_DATA_PATH+str(test_number)+"_"+"grade_multiple_properties" + iteration + ".csv"
-    grade_file = open(grade_filename, "w", encoding="utf-8")
-    grade_string_to_write = "Sequence;Multiple properties model;Method without RNN\n"
     
-    correct_amino = 0 
-    for x in range(len(sequences)): 
-        if (model_predictions[x] == 1 and past_classes[x] == 'Y') or (model_predictions[x] == 0 and past_classes[x] == 'N'):
-            correct_amino += 1 
-            
-        part1 = sequences[x]+";"+str(model_predictions[x])+";"+past_classes[x]+"\n"
-        part1 = part1.replace(".0",'')
-        part1 = part1.replace('1','Y')
-        part1 = part1.replace('0','N') 
-        grade_string_to_write += part1  
-    last_line = "Number of matches with method without RNN;"+str(correct_amino)+";\n"
-    last_line = last_line.replace(".",',') 
-    grade_string_to_write += last_line
-    grade_file.write(grade_string_to_write)
-    grade_file.close() 
+    common_no_file_after_training(thr, sequences, past_classes, past_grades, percentage_filename, grade_filename, model_predictions)
 
-def no_file_after_training(num_props, best_batch_size, test_number, iteration, models, model_predictions, alpha_values, properties, names=['AP'], offset = 1):
-        
-    # Get sequences for peptides with no labels and predictions from the model without machine learning 
-    resulteval = DATA_PATH+'RESULTEVAL.csv' 
-    df = pd.read_csv(resulteval, skipinitialspace=True, sep=';')
-    sequences = list(df['Dizajnirani peptid'])
-    seq_example = ''
-    for i in range(24):
-        seq_example += 'A'
-    sequences.append(seq_example)
-    past_grades = list(df['Postotak svojstava koja imaju AUC > 0,5 koja su dala SA'])
-    past_classes= list(df['SA'])
-    
-    SA_data = []
-    for i in range(len(sequences)):
-        SA_data.append([sequences[i], '0'])
-         
-    SA, NSA = load_data_SA(SA_data, names, offset, properties)
+def no_file_after_training(thr, test_number, iteration, model_predictions, properties, names=['AP'], offset = 1, masking_value=2):
+    SA_data, sequences, past_classes, past_grades = common_no_file_after_training_first()
+
+    SA, NSA = load_data_SA(SA_data, names, offset, properties, masking_value)
     all_data, all_labels = merge_data(SA, NSA)
     all_data = all_data[:-1] 
-    all_labels = all_labels[:-1] 
+    all_labels = all_labels[:-1]  
     sequences = sequences[:-1] 
-      
-    # Generate predictions on data that has no label beforehand 
-    if len(model_predictions) == 0:
-        model_predictions = no_file_model_predict(num_props, best_batch_size, all_data, all_labels, models, model_predictions, alpha_values)
-
-    # Write SA probability to file
+    
     percentage_filename = MODEL_DATA_PATH+str(test_number)+"_"+"percentage_multiple_properties" + iteration + ".csv"
-    percentage_file = open(percentage_filename, "w", encoding="utf-8")
-    percentage_string_to_write = "Sequence;Multiple properties model;Method without RNN\n"
-    
-    for x in range(len(sequences)):
-        percentage_string_to_write += sequences[x]+";"+str(np.round(model_predictions[x] * 100, 2))+";"+past_grades[x]+"\n"
-    percentage_string_to_write = percentage_string_to_write.replace('.',',')
-    percentage_file.write(percentage_string_to_write)
-    percentage_file.close()
-
-    # Write class based on the threshold of probability to file
-    threshold_amino = 0.5 
-    
-    model_predictions = convert_to_binary(model_predictions, threshold_amino) 
-    
     grade_filename = MODEL_DATA_PATH+str(test_number)+"_"+"grade_multiple_properties" + iteration + ".csv"
-    grade_file = open(grade_filename, "w", encoding="utf-8")
-    grade_string_to_write = "Sequence;Multiple properties model;Method without RNN\n"
-    
-    correct_amino = 0 
-    for x in range(len(sequences)): 
-        if (model_predictions[x] == 1 and past_classes[x] == 'Y') or (model_predictions[x] == 0 and past_classes[x] == 'N'):
-            correct_amino += 1 
-            
-        part1 = sequences[x]+";"+str(model_predictions[x])+";"+past_classes[x]+"\n"
-        part1 = part1.replace(".0",'')
-        part1 = part1.replace('1','Y')
-        part1 = part1.replace('0','N') 
-        grade_string_to_write += part1  
-    last_line = "Number of matches with method without RNN;"+str(correct_amino)+";\n"
-    last_line = last_line.replace(".",',') 
-    grade_string_to_write += last_line
-    grade_file.write(grade_string_to_write)
-    grade_file.close() 
-        
-def no_file_after_training_AP(num_props, best_batch_size, test_number, iteration, models, model_predictions, alpha_values, properties, names=['AP'], offset = 1):
-        
-    # Get sequences for peptides with no labels and predictions from the model without machine learning 
-    resulteval = DATA_PATH+'RESULTEVAL.csv' 
-    df = pd.read_csv(resulteval, skipinitialspace=True, sep=';')
-    sequences = list(df['Dizajnirani peptid'])
-    seq_example = ''
-    for i in range(24):
-        seq_example += 'A'
-    sequences.append(seq_example)
-    past_grades = list(df['Postotak svojstava koja imaju AUC > 0,5 koja su dala SA'])
-    past_classes= list(df['SA'])
-    
-    SA_data = []
-    for i in range(len(sequences)):
-        SA_data.append([sequences[i], '0'])
-         
-    SA, NSA = load_data_SA_AP(SA_data, names, offset, properties)
+   
+    common_no_file_after_training(thr, sequences, past_classes, past_grades, percentage_filename, grade_filename, model_predictions)
+
+def no_file_after_training_AP(thr, test_number, iteration, model_predictions, properties, names=['AP'], offset = 1, masking_value=2):
+    SA_data, sequences, past_classes, past_grades = common_no_file_after_training_first()
+
+    SA, NSA = load_data_SA_AP(SA_data, names, offset, properties, masking_value)
     all_data, all_labels = merge_data_AP(SA, NSA)
     all_data = all_data[:-1] 
-    all_labels = all_labels[:-1] 
-    sequences = sequences[:-1] 
-      
-    # Generate predictions on data that has no label beforehand 
-    if len(model_predictions) == 0:
-        model_predictions = no_file_model_predict_AP(num_props, best_batch_size, all_data, all_labels, models, model_predictions, alpha_values)
-
-    # Write SA probability to file
+    all_labels = all_labels[:-1]  
+    sequences = sequences[:-1]
+    
     percentage_filename = MY_MODEL_DATA_PATH+str(test_number)+"_"+"percentage_multiple_properties" + iteration + ".csv"
-    percentage_file = open(percentage_filename, "w", encoding="utf-8")
-    percentage_string_to_write = "Sequence;Multiple properties model;Method without RNN\n"
-    
-    for x in range(len(sequences)):
-        percentage_string_to_write += sequences[x]+";"+str(np.round(model_predictions[x] * 100, 2))+";"+past_grades[x]+"\n"
-    percentage_string_to_write = percentage_string_to_write.replace('.',',')
-    percentage_file.write(percentage_string_to_write)
-    percentage_file.close()
-
-    # Write class based on the threshold of probability to file
-    threshold_amino = 0.5 
-    
-    model_predictions = convert_to_binary(model_predictions, threshold_amino) 
-    
     grade_filename = MY_MODEL_DATA_PATH+str(test_number)+"_"+"grade_multiple_properties" + iteration + ".csv"
-    grade_file = open(grade_filename, "w", encoding="utf-8")
-    grade_string_to_write = "Sequence;Multiple properties model;Method without RNN\n"
-    
-    correct_amino = 0 
-    for x in range(len(sequences)): 
-        if (model_predictions[x] == 1 and past_classes[x] == 'Y') or (model_predictions[x] == 0 and past_classes[x] == 'N'):
-            correct_amino += 1 
-            
-        part1 = sequences[x]+";"+str(model_predictions[x])+";"+past_classes[x]+"\n"
-        part1 = part1.replace(".0",'')
-        part1 = part1.replace('1','Y')
-        part1 = part1.replace('0','N') 
-        grade_string_to_write += part1  
-    last_line = "Number of matches with method without RNN;"+str(correct_amino)+";\n"
-    last_line = last_line.replace(".",',') 
-    grade_string_to_write += last_line
-    grade_file.write(grade_string_to_write)
-    grade_file.close() 
+  
+    common_no_file_after_training(thr, sequences, past_classes, past_grades, percentage_filename, grade_filename, model_predictions)
 
-def generate_predictions(num_props, best_batch_size, best_model_file, test_number, test_data, test_labels, properties, names = ['AP'], offset = 1, masking_value = 2): 
-     # Get predictions from all the models for data that was labeled beforehand
-     model_predictions = model_predict(num_props, best_batch_size, test_data, test_labels, best_model_file) 
-      
-     #Plot ROC curves for all models
-     make_ROC_plots(MODEL_DATA_PATH, test_number, test_labels, model_predictions=model_predictions)
-     
-     #Plot PR curves for all models
-     make_PR_plots(MODEL_DATA_PATH, test_number, test_labels, model_predictions=model_predictions)
-    
-     # Output adjusted accuracy, F1 score and ROC AUC score for all models
-     output_metrics(test_labels, model_predictions) 
-     
-     # Output histograms that show the distribution of predicted probabilities of self-assembly for the SA and NSA class separately and for each model separately
-     hist_predicted(MODEL_DATA_PATH, test_number, test_labels, model_predictions) 
-    
-     # Generate predictions on data that has no label beforehand
-     after_training(num_props, best_batch_size, test_number, best_model_file, properties, names, offset, masking_value)
-     
-def generate_predictions_seq(best_batch_size, best_model_file, test_number, test_data, test_labels, properties, names = ['AP'], offset = 1, masking_value = 2): 
-     # Get predictions from all the models for data that was labeled beforehand
-     model_predictions = model_predict_seq(best_batch_size, test_data, test_labels, best_model_file) 
-      
-     #Plot ROC curves for all models
-     make_ROC_plots(SEQ_MODEL_DATA_PATH, test_number, test_labels, model_predictions=model_predictions)
-     
-     #Plot PR curves for all models
-     make_PR_plots(SEQ_MODEL_DATA_PATH, test_number, test_labels, model_predictions=model_predictions)
-    
-     # Output adjusted accuracy, F1 score and ROC AUC score for all models
-     output_metrics(test_labels, model_predictions) 
-     
-     # Output histograms that show the distribution of predicted probabilities of self-assembly for the SA and NSA class separately and for each model separately
-     hist_predicted(SEQ_MODEL_DATA_PATH, test_number, test_labels, model_predictions) 
-    
-     # Generate predictions on data that has no label beforehand
-     after_training_seq(best_batch_size, test_number, best_model_file, properties, names, offset, masking_value)
-
-def generate_predictions_AP(num_props, best_batch_size, best_model_file, test_number, test_data, test_labels, properties, names = ['AP'], offset = 1, masking_value = 2): 
-    # Get predictions from all the models for data that was labeled beforehand
-    model_predictions = model_predict_AP(num_props, best_batch_size, test_data, test_labels, best_model_file) 
-     
+def common_predict(path, model_predictions, test_number, iteration, test_labels): 
     #Plot ROC curves for all models
-    make_ROC_plots(MY_MODEL_DATA_PATH, test_number, test_labels, model_predictions=model_predictions)
+    make_ROC_plots(path, test_number, iteration, test_labels, model_predictions)
     
     #Plot PR curves for all models
-    make_PR_plots(MY_MODEL_DATA_PATH, test_number, test_labels, model_predictions=model_predictions)
-   
+    make_PR_plots(path, test_number, iteration, test_labels, model_predictions)
+
     # Output adjusted accuracy, F1 score and ROC AUC score for all models
     output_metrics(test_labels, model_predictions) 
     
     # Output histograms that show the distribution of predicted probabilities of self-assembly for the SA and NSA class separately and for each model separately
-    hist_predicted(MY_MODEL_DATA_PATH, test_number, test_labels, model_predictions) 
-   
-    # Generate predictions on data that has no label beforehand
-    after_training_AP(num_props, best_batch_size, test_number, best_model_file, properties, names, offset, masking_value)
-    
-def adaboost_generate_predictions(models, model_predictions, alpha_values, num_props, best_batch_size, test_number, iteration, test_data, test_labels, properties, names = ['AP'], offset = 1): 
-     # Get predictions from all the models for data that was labeled beforehand
-     if len(model_predictions) == 0:
-        model_predictions = no_file_model_predict(num_props, best_batch_size, test_data, test_labels, models, model_predictions, alpha_values) 
-      
-     #Plot ROC curves for all models
-     make_ROC_plots(MODEL_DATA_PATH, test_number, iteration, test_labels, model_predictions=model_predictions)
-     
-     #Plot PR curves for all models
-     make_PR_plots(MODEL_DATA_PATH, test_number, iteration, test_labels, model_predictions=model_predictions)
-    
-     # Output adjusted accuracy, F1 score and ROC AUC score for all models
-     output_metrics(test_labels, model_predictions) 
-     
-     # Output histograms that show the distribution of predicted probabilities of self-assembly for the SA and NSA class separately and for each model separately
-     hist_predicted(MODEL_DATA_PATH, test_number, iteration, test_labels, model_predictions) 
-    
-     # Generate predictions on data that has no label beforehand
-     no_file_after_training(num_props, best_batch_size, test_number, iteration, models, model_predictions, alpha_values, properties, names, offset)
-     
-def adaboost_generate_predictions_seq(models, model_predictions, alpha_values, best_batch_size, test_number, iteration, test_data, test_labels, properties, names = ['AP'], offset = 1):  
-     # Get predictions from all the models for data that was labeled beforehand
-     if len(model_predictions) == 0:   
-        model_predictions = no_file_model_predict_seq(best_batch_size, test_data, test_labels, models, model_predictions, alpha_values) 
-      
-     #Plot ROC curves for all models
-     make_ROC_plots(SEQ_MODEL_DATA_PATH, test_number, iteration, test_labels, model_predictions=model_predictions)
-     
-     #Plot PR curves for all models
-     make_PR_plots(SEQ_MODEL_DATA_PATH, test_number, iteration, test_labels, model_predictions=model_predictions)
-    
-     # Output adjusted accuracy, F1 score and ROC AUC score for all models
-     output_metrics(test_labels, model_predictions) 
-     
-     # Output histograms that show the distribution of predicted probabilities of self-assembly for the SA and NSA class separately and for each model separately
-     hist_predicted(SEQ_MODEL_DATA_PATH, test_number, iteration, test_labels, model_predictions) 
-    
-     # Generate predictions on data that has no label beforehand
-     no_file_after_training_seq(best_batch_size, test_number, iteration, models, model_predictions, alpha_values, properties, names, offset)
+    hist_predicted(path, test_number, iteration, test_labels, model_predictions) 
 
-def adaboost_generate_predictions_AP(models, model_predictions, alpha_values, num_props, best_batch_size, test_number, iteration, test_data, test_labels, properties, names = ['AP'], offset = 1):  
-    # Get predictions from all the models for data that was labeled beforehand
-    if len(model_predictions) == 0:    
-        model_predictions = no_file_model_predict_AP(num_props, best_batch_size, test_data, test_labels, models, model_predictions, alpha_values) 
-     
-    #Plot ROC curves for all models
-    make_ROC_plots(MY_MODEL_DATA_PATH, test_number, iteration, test_labels, model_predictions=model_predictions)
-    
-    #Plot PR curves for all models
-    make_PR_plots(MY_MODEL_DATA_PATH, test_number, iteration, test_labels, model_predictions=model_predictions)
-   
-    # Output adjusted accuracy, F1 score and ROC AUC score for all models
-    output_metrics(test_labels, model_predictions) 
-    
-    # Output histograms that show the distribution of predicted probabilities of self-assembly for the SA and NSA class separately and for each model separately
-    hist_predicted(MY_MODEL_DATA_PATH, test_number, iteration, test_labels, model_predictions) 
-   
-    # Generate predictions on data that has no label beforehand
-    no_file_after_training_AP(num_props, best_batch_size, test_number, iteration, models, model_predictions, alpha_values, properties, names, offset)
-
+def adaboost_generate_predictions(thr, model_predictions, test_number, iteration, test_labels, properties, names = ['AP'], offset = 1, masking_value = 2):
+    # Generate predictions on data that has no label beforehand 
+    common_predict(MODEL_DATA_PATH, model_predictions, test_number, iteration, test_labels)
+    no_file_after_training(thr, test_number, iteration, model_predictions, properties, names, offset, masking_value)
+ 
+def adaboost_generate_predictions_seq(thr, model_predictions, test_number, iteration, test_labels, properties, names = ['AP'], offset = 1, masking_value = 2):
+    # Generate predictions on data that has no label beforehand 
+    common_predict(SEQ_MODEL_DATA_PATH, model_predictions, test_number, iteration, test_labels)
+    no_file_after_training_seq(thr, test_number, iteration, model_predictions, properties, names, offset, masking_value)
+ 
+def adaboost_generate_predictions_AP(thr, model_predictions, test_number, iteration, test_labels, properties, names = ['AP'], offset = 1, masking_value = 2): 
+    # Generate predictions on data that has no label beforehand 
+    common_predict(MY_MODEL_DATA_PATH, model_predictions, test_number, iteration, test_labels)
+    no_file_after_training_AP(thr, test_number, iteration, model_predictions, properties, names, offset, masking_value)
+ 
 def extract_len_from_data_and_labels(data, labels, len_target, padding):
     only_one_len_indices = [] 
     other_len_indices = [] 
@@ -696,16 +348,20 @@ def load_data_AP(name = 'AP', offset = 1):
     scale(tripeptides_AP, offset)
 
     return amino_acids_AP, dipeptides_AP, tripeptides_AP
- 
-def load_data_SA_seq(SA_data, names=['AP'], offset = 1, properties_to_include = [], masking_value=2):
 
+def read_from_npy_SA(SA_data):
     sequences = []
     labels = []
     for peptide in SA_data:
-        if len(peptide[0]) > 24:
+        if len(peptide) > MAXLEN:
             continue
-        sequences.append(peptide[0])
-        labels.append(peptide[1])
+        sequences.append(peptide)
+        labels.append(SA_data[peptide])
+
+    return sequences, labels
+
+def load_data_SA_seq(SA_data, names=['AP'], offset = 1, properties_to_include = [], masking_value=2):
+    sequences, labels = read_from_npy_SA(SA_data)
             
     # Encode sequences
     encoder = SequentialPropertiesEncoder(scaler=MinMaxScaler(feature_range=(-offset, offset)))
@@ -727,10 +383,12 @@ def load_data_SA_seq(SA_data, names=['AP'], offset = 1, properties_to_include = 
             amino_acids_ap_padded = padding(amino_acids_ap, len(encoded_sequences[index]), masking_value)
             dipeptides_acids_ap_padded = padding(dipeptides_ap, len(encoded_sequences[index]), masking_value)
             tripeptides_ap_padded = padding(tripeptides_ap, len(encoded_sequences[index]), masking_value)  
-        
+
             new_props.append(amino_acids_ap_padded)
             new_props.append(dipeptides_acids_ap_padded)
             new_props.append(tripeptides_ap_padded) 
+
+            #new_props = read_mordred(sequences[index], new_props, len(encoded_sequences[index]), masking_value)
         
         other_props = np.reshape(encoded_sequences[index], (len(encoded_sequences[index][0]), len(encoded_sequences[index])))
                                  
@@ -755,14 +413,7 @@ def load_data_SA_seq(SA_data, names=['AP'], offset = 1, properties_to_include = 
     return SA, NSA
 
 def load_data_SA(SA_data, names=['AP'], offset = 1, properties_to_include = [], masking_value=2):
-
-    sequences = []
-    labels = []
-    for peptide in SA_data:
-        if len(peptide[0]) > 24:
-            continue
-        sequences.append(peptide[0])
-        labels.append(peptide[1])
+    sequences, labels = read_from_npy_SA(SA_data)
             
     # Encode sequences
     encoder = SequentialPropertiesEncoder(scaler=MinMaxScaler(feature_range=(-offset, offset)))
@@ -788,6 +439,8 @@ def load_data_SA(SA_data, names=['AP'], offset = 1, properties_to_include = [], 
             new_props.append(amino_acids_ap_padded)
             new_props.append(dipeptides_acids_ap_padded)
             new_props.append(tripeptides_ap_padded)
+
+            #new_props = read_mordred(sequences[index], new_props, len(encoded_sequences[index]), masking_value)
         
         other_props = np.reshape(encoded_sequences[index], (len(encoded_sequences[index][0]), len(encoded_sequences[index])))
                                  
@@ -807,15 +460,7 @@ def load_data_SA(SA_data, names=['AP'], offset = 1, properties_to_include = [], 
     return SA, NSA
 
 def load_data_SA_AP(SA_data, names=['AP'], offset = 1, properties_to_include = [], masking_value=2):
-
-    sequences = []
-    labels = []
-    maxlen = 24
-    for peptide in SA_data:
-        if len(peptide[0]) > 24:
-            continue
-        sequences.append(peptide[0]) 
-        labels.append(peptide[1]) 
+    sequences, labels = read_from_npy_SA(SA_data)
      
     # Split peptides in two bins.
     # SA - has self-assembly, NSA - does not have self-assembly.
@@ -830,13 +475,15 @@ def load_data_SA_AP(SA_data, names=['AP'], offset = 1, properties_to_include = [
             dipeptides_ap = split_dipeptides(sequences[index], dipeptides_AP)
             tripeptides_ap = split_tripeptides(sequences[index], tripeptides_AP)
                     
-            amino_acids_ap_padded = padding(amino_acids_ap, maxlen, masking_value)
-            dipeptides_acids_ap_padded = padding(dipeptides_ap, maxlen, masking_value)
-            tripeptides_ap_padded = padding(tripeptides_ap, maxlen, masking_value)  
+            amino_acids_ap_padded = padding(amino_acids_ap, MAXLEN, masking_value)
+            dipeptides_acids_ap_padded = padding(dipeptides_ap, MAXLEN, masking_value)
+            tripeptides_ap_padded = padding(tripeptides_ap, MAXLEN, masking_value)  
         
             new_props.append(amino_acids_ap_padded)
             new_props.append(dipeptides_acids_ap_padded)
             new_props.append(tripeptides_ap_padded) 
+
+            #new_props = read_mordred(sequences[index], new_props, MAXLEN, masking_value)
         
         if labels[index] == '1':
             SA.append(new_props) 
@@ -891,7 +538,7 @@ def model_training_seq(test_number, train_and_validation_data, train_and_validat
     min_val_loss = 1000
     
     hyperparameter_conv = [5]
-    hyperparameter_numcells = [32, 48, 64]
+    hyperparameter_numcells = [32, 48, 64] 
     hyperparameter_kernel_size = [4, 6, 8]
     hyperparameter_dropout = [0.5]
     hyperparameter_batch_size = [600]
@@ -949,23 +596,9 @@ def model_training_seq(test_number, train_and_validation_data, train_and_validat
                             # Print model summary.
                             model.summary()
                             
-                            callbacks = [
-                                # When validation loss doesn't decrease in 10 consecutive epochs, reduce the learning rate by 90%.
-                                # This is repeated while learning rate is >= 0.000001.
-                                tf.keras.callbacks.ReduceLROnPlateau(
-                                    monitor='val_loss', factor=0.1, patience=10, min_lr=0.000001
-                                ),
-                                # Save the best model (the one with the lowest validation loss).
-                                tf.keras.callbacks.ModelCheckpoint(
-                                    model_file, save_best_only=True, monitor='val_loss', mode='min'
-                                ),
-                                # This callback will stop the training when there is no improvement in
-                                # the loss for three consecutive epochs.
-                                # Restoring best weights in case of performance drop
-                                tf.keras.callbacks.EarlyStopping(monitor='val_loss', patience=10, restore_best_weights=True)
-                            ]
+                            callbacks = return_callbacks(model_file, 'val_loss') 
                     
-                            optimizer = tf.keras.optimizers.Adam(learning_rate=0.01)
+                            optimizer = tf.keras.optimizers.Adam(learning_rate=LEARNING_RATE_SET)
                     
                             model.compile(
                                 optimizer=optimizer,
@@ -1090,31 +723,16 @@ def model_training(num_props, test_number, train_and_validation_data, train_and_
                                         
                                         #  Choose correct model and instantiate model 
                                         model = new_model.amino_di_tri_model(num_props, input_shape=np.shape(train_data[num_props][0]), conv=conv, numcells=numcells, kernel_size=kernel, lstm1=lstm, lstm2=lstm, dense=dense, dropout=dropout, lambda2=my_lambda, mask_value=mask_value)
-
-                                                                             
+                  
                                         # Save graphical representation of the model to a file.
                                         tf.keras.utils.plot_model(model, to_file=model_picture, show_shapes=True)
                                         
                                         # Print model summary.
-                                        model.summary()
-                                        
-                                        callbacks = [
-                                            # When validation loss doesn't decrease in 10 consecutive epochs, reduce the learning rate by 90%.
-                                            # This is repeated while learning rate is >= 0.000001.
-                                            tf.keras.callbacks.ReduceLROnPlateau(
-                                                monitor='val_loss', factor=0.1, patience=10, min_lr=0.000001
-                                            ),
-                                            # Save the best model (the one with the lowest validation loss).
-                                            tf.keras.callbacks.ModelCheckpoint(
-                                                model_file, save_best_only=True, monitor='val_loss', mode='min'
-                                            ),
-                                            # This callback will stop the training when there is no improvement in
-                                            # the loss for three consecutive epochs.
-                                            # Restoring best weights in case of performance drop
-                                            tf.keras.callbacks.EarlyStopping(monitor='val_loss', patience=10, restore_best_weights=True)
-                                        ]
+                                        model.summary() 
+
+                                        callbacks = return_callbacks(model_file, 'val_loss') 
                                 
-                                        optimizer = tf.keras.optimizers.Adam(learning_rate=0.01)
+                                        optimizer = tf.keras.optimizers.Adam(learning_rate=LEARNING_RATE_SET)
                                 
                                         model.compile(
                                             optimizer=optimizer,
@@ -1237,23 +855,9 @@ def model_training_AP(num_props, test_number, train_and_validation_data, train_a
                             # Print model summary.
                             model.summary()
                             
-                            callbacks = [
-                                # When validation loss doesn't decrease in 10 consecutive epochs, reduce the learning rate by 90%.
-                                # This is repeated while learning rate is >= 0.000001.
-                                tf.keras.callbacks.ReduceLROnPlateau(
-                                    monitor='val_loss', factor=0.1, patience=10, min_lr=0.000001
-                                ),
-                                # Save the best model (the one with the lowest validation loss).
-                                tf.keras.callbacks.ModelCheckpoint(
-                                    model_file, save_best_only=True, monitor='val_loss', mode='min'
-                                ),
-                                # This callback will stop the training when there is no improvement in
-                                # the loss for three consecutive epochs.
-                                # Restoring best weights in case of performance drop
-                                tf.keras.callbacks.EarlyStopping(monitor='val_loss', patience=10, restore_best_weights=True)
-                            ]
+                            callbacks = return_callbacks(model_file, 'val_loss') 
                     
-                            optimizer = tf.keras.optimizers.Adam(learning_rate=0.01)
+                            optimizer = tf.keras.optimizers.Adam(learning_rate=LEARNING_RATE_SET)
                     
                             model.compile(
                                 optimizer=optimizer,
@@ -1323,23 +927,9 @@ def final_train_AP(models, model_predictions, alpha_values, sample_weights, iter
     # Print model summary.
     model.summary()
     
-    callbacks = [
-        # When validation loss doesn't decrease in 10 consecutive epochs, reduce the learning rate by 90%.
-        # This is repeated while learning rate is >= 0.000001.
-        tf.keras.callbacks.ReduceLROnPlateau(
-            monitor='loss', factor=0.1, patience=10, min_lr=0.000001
-        ),
-        # Save the best model (the one with the lowest validation loss).
-        tf.keras.callbacks.ModelCheckpoint(
-            model_file, save_best_only=True, monitor='loss', mode='min'
-        ),
-        # This callback will stop the training when there is no improvement in
-        # the loss for three consecutive epochs.
-        # Restoring best weights in case of performance drop
-        tf.keras.callbacks.EarlyStopping(monitor='loss', patience=10, restore_best_weights=True)
-    ]
+    callbacks = return_callbacks(model_file, 'loss') 
 
-    optimizer = tf.keras.optimizers.Adam(learning_rate=0.01)
+    optimizer = tf.keras.optimizers.Adam(learning_rate=LEARNING_RATE_SET)
 
     model.compile(
         optimizer=optimizer,
@@ -1385,13 +975,13 @@ def final_train_AP(models, model_predictions, alpha_values, sample_weights, iter
     
     models.append(model)
     alpha_values.append(alpha1)
-    model_pred = no_file_model_predict_AP(num_props, best_batch_size, test_data, test_labels, [model], [], [alpha1])
-    model_predictions.append(model_pred)
-    model_pred_multiple = no_file_model_predict_AP(num_props, best_batch_size, test_data, test_labels, models, model_predictions, alpha_values)
+    model_pred_single = model_predict_AP(num_props, best_batch_size, test_data, test_labels, '', model) 
+    model_predictions.append(model_pred_single)
+    model_pred_multiple = multiple_model_predict_AP(0.5, num_props, best_batch_size, test_data, test_labels, models, model_predictions, alpha_values)
 
-    adaboost_generate_predictions_AP([model], model_pred, [alpha1], num_props, best_batch_size, test_number, "_weak" + str(iteration), test_data, test_labels, properties, names, offset)
+    adaboost_generate_predictions_AP(0.5, model_pred_single, test_number, "_weak" + str(iteration), test_labels, properties, names, offset, mask_value)
 
-    adaboost_generate_predictions_AP(models, model_pred_multiple, alpha_values, num_props, best_batch_size, test_number, "_iteration" + str(iteration), test_data, test_labels, properties, names, offset)
+    adaboost_generate_predictions_AP(0.5, model_pred_multiple, test_number, "_iteration" + str(iteration), test_labels, properties, names, offset, mask_value)
     
     if iteration < MAX_ITERATIONS:
         final_train_AP(models, model_predictions, alpha_values, sample_weights, iteration + 1, factor_NSA, epochs, test_number, model_name, num_props, data, labels, best_batch_size, best_lstm, best_dense, best_dropout, best_lambda, test_data, test_labels, properties, names, offset,  mask_value)
@@ -1412,23 +1002,9 @@ def final_train(models, model_predictions, alpha_values, sample_weights, iterati
     # Print model summary.
     model.summary()
     
-    callbacks = [
-        # When validation loss doesn't decrease in 10 consecutive epochs, reduce the learning rate by 90%.
-        # This is repeated while learning rate is >= 0.000001.
-        tf.keras.callbacks.ReduceLROnPlateau(
-            monitor='loss', factor=0.1, patience=10, min_lr=0.000001
-        ),
-        # Save the best model (the one with the lowest validation loss).
-        tf.keras.callbacks.ModelCheckpoint(
-            model_file, save_best_only=True, monitor='loss', mode='min'
-        ),
-        # This callback will stop the training when there is no improvement in
-        # the loss for three consecutive epochs.
-        # Restoring best weights in case of performance drop
-        tf.keras.callbacks.EarlyStopping(monitor='loss', patience=10, restore_best_weights=True)
-    ]
+    callbacks = return_callbacks(model_file, 'loss') 
 
-    optimizer = tf.keras.optimizers.Adam(learning_rate=0.01)
+    optimizer = tf.keras.optimizers.Adam(learning_rate=LEARNING_RATE_SET)
 
     model.compile(
         optimizer=optimizer,
@@ -1474,13 +1050,13 @@ def final_train(models, model_predictions, alpha_values, sample_weights, iterati
     
     models.append(model)
     alpha_values.append(alpha1)
-    model_pred = no_file_model_predict(num_props, best_batch_size, test_data, test_labels, [model], [], [alpha1])
-    model_predictions.append(model_pred)
-    model_pred_multiple = no_file_model_predict(num_props, best_batch_size, test_data, test_labels, models, model_predictions, alpha_values)
+    model_pred_single = model_predict(num_props, best_batch_size, test_data, test_labels, '', model) 
+    model_predictions.append(model_pred_single)
+    model_pred_multiple = multiple_model_predict(0.5, num_props, best_batch_size, test_data, test_labels, models, model_predictions, alpha_values)
 
-    adaboost_generate_predictions([model], model_pred, [alpha1], num_props, best_batch_size, test_number, "_weak" + str(iteration), test_data, test_labels, properties, names, offset)
+    adaboost_generate_predictions(0.5, model_pred_single, test_number, "_weak" + str(iteration), test_labels, properties, names, offset, mask_value)
 
-    adaboost_generate_predictions(models, model_pred_multiple, alpha_values, num_props, best_batch_size, test_number, "_iteration" + str(iteration), test_data, test_labels, properties, names, offset)
+    adaboost_generate_predictions(0.5, model_pred_multiple, test_number, "_iteration" + str(iteration), test_labels, properties, names, offset, mask_value)
 
     if iteration < MAX_ITERATIONS:
         final_train(models, model_predictions, alpha_values, sample_weights, iteration + 1, factor_NSA, epochs, test_number, model_name, num_props, data, labels, best_batch_size, best_lstm, best_dense, best_dropout, best_lambda, best_conv, best_numcells, best_kernel, test_data, test_labels, properties, names, offset,  mask_value)
@@ -1501,23 +1077,9 @@ def final_train_seq(models, model_predictions, alpha_values, sample_weights, ite
     # Print model summary.
     model.summary()
     
-    callbacks = [
-        # When validation loss doesn't decrease in 10 consecutive epochs, reduce the learning rate by 90%.
-        # This is repeated while learning rate is >= 0.000001.
-        tf.keras.callbacks.ReduceLROnPlateau(
-            monitor='loss', factor=0.1, patience=10, min_lr=0.000001
-        ),
-        # Save the best model (the one with the lowest validation loss).
-        tf.keras.callbacks.ModelCheckpoint(
-            model_file, save_best_only=True, monitor='loss', mode='min'
-        ),
-        # This callback will stop the training when there is no improvement in
-        # the loss for three consecutive epochs.
-        # Restoring best weights in case of performance drop
-        tf.keras.callbacks.EarlyStopping(monitor='loss', patience=10, restore_best_weights=True)
-    ]
+    callbacks = return_callbacks(model_file, 'loss') 
 
-    optimizer = tf.keras.optimizers.Adam(learning_rate=0.01)
+    optimizer = tf.keras.optimizers.Adam(learning_rate=LEARNING_RATE_SET)
 
     model.compile(
         optimizer=optimizer,
@@ -1563,139 +1125,57 @@ def final_train_seq(models, model_predictions, alpha_values, sample_weights, ite
     
     models.append(model)
     alpha_values.append(alpha1)
-    model_pred = no_file_model_predict_seq(best_batch_size, test_data, test_labels, [model], [], [alpha1])
-    model_predictions.append(model_pred)
-    model_pred_multiple = no_file_model_predict_seq(best_batch_size, test_data, test_labels, models, model_predictions, alpha_values)
+    model_pred_single = model_predict_seq(best_batch_size, test_data, test_labels, '', model) 
+    model_predictions.append(model_pred_single)
+    model_pred_multiple = multiple_model_predict_seq(0.5, best_batch_size, test_data, test_labels, models, model_predictions, alpha_values)
+    adaboost_generate_predictions_seq(0.5, model_pred_single, test_number, "_weak" + str(iteration), test_labels, properties, names, offset, mask_value)
 
-    adaboost_generate_predictions_seq([model], model_pred, [alpha1], best_batch_size, test_number, "_weak" + str(iteration), test_data, test_labels, properties, names, offset)
-
-    adaboost_generate_predictions_seq(models, model_pred_multiple, alpha_values, best_batch_size, test_number, "_iteration" + str(iteration), test_data, test_labels, properties, names, offset)
+    adaboost_generate_predictions_seq(0.5, model_pred_multiple, test_number, "_iteration" + str(iteration), test_labels, properties, names, offset, mask_value)
     
     if iteration < MAX_ITERATIONS:
         final_train_seq(models, model_predictions, alpha_values, sample_weights, iteration + 1, factor_NSA, epochs, test_number, model_name, data, labels, best_batch_size, best_dropout, best_conv, best_numcells, best_kernel, test_data, test_labels, properties, names, offset, mask_value)
     
+def common_boost(train_and_validation_data, batch_size, data, labels, model_file, sample_weights, thr):
+    # Load the best model.
+    best_model = tf.keras.models.load_model(model_file)    
+    # Get model predictions on the data.
+    model_predictions = best_model.predict(train_and_validation_data, batch_size=batch_size) 
+    model_predictions = convert_list(model_predictions)
+    # Calculate error rate base on misclassified samples
+    predicted_classes = []
+    e1 = 0
+    for i in range(len(model_predictions)):
+        if model_predictions[i] >= thr:
+            predicted_classes.append(1)
+        else:
+            predicted_classes.append(0)
+        if labels[i] != predicted_classes[i]:
+            e1 += sample_weights[i] 
+    if e1 <= 0:
+        e1 = pow(10, -18)
+    if e1 >= 1:
+        e1 = 1 - pow(10, -18)
+    alpha1 = 0.5 * np.log((1 - e1) / e1)
+    # Updated weights
+    for i in range(len(model_predictions)): 
+        if labels[i] != predicted_classes[i]:
+            sample_weights[i] = sample_weights[i] * np.exp(alpha1)
+        else:
+            sample_weights[i] = sample_weights[i] * np.exp(-alpha1)
+    sample_weights = sample_weights / sum(sample_weights) 
+    return alpha1, data, labels, sample_weights
+
 def boost_AP(num_props, batch_size, data, labels, model_file, sample_weights, thr):
-    # Load the best model.
-    best_model = tf.keras.models.load_model(model_file)    
-    # Get model predictions on the data.
     train_and_validation_data, train_and_validation_labels = reshape_AP(num_props, data, labels)
-    model_predictions = best_model.predict(train_and_validation_data, batch_size=batch_size) 
-    # Calculate error rate base on misclassified samples
-    predicted_classes = []
-    e1 = 0
-    for i in range(len(model_predictions)):
-        for pred in model_predictions[i]: 
-            if pred >= thr:
-                predicted_classes.append(1)
-            else:
-                predicted_classes.append(0)
-            if labels[i] != predicted_classes[i]:
-                e1 += sample_weights[i] 
-    if e1 <= 0:
-        e1 = pow(10, -18)
-    if e1 >= 1:
-        e1 = 1 - pow(10, -18)
-    alpha1 = 0.5 * np.log((1 - e1) / e1)
-    # Updated weights
-    for i in range(len(model_predictions)):
-        for pred in model_predictions[i]: 
-            if labels[i] != predicted_classes[i]:
-                sample_weights[i] = sample_weights[i] * np.exp(alpha1)
-            else:
-                sample_weights[i] = sample_weights[i] * np.exp(-alpha1)
-    sample_weights = sample_weights / sum(sample_weights) 
-    # Select new samples based on new weights
-    indices = select(sample_weights)
-    new_data = []
-    new_labels = [] 
-    new_weights = [] 
-    for index in indices:
-        new_data.append(data[index])
-        new_labels.append(labels[index])
-        new_weights.append(sample_weights[index])
-    return alpha1, new_data, new_labels, new_weights
-    
+    return common_boost(train_and_validation_data, batch_size, data, labels, model_file, sample_weights, thr)
+
 def boost_seq(batch_size, data, labels, model_file, sample_weights, thr):
-    # Load the best model.
-    best_model = tf.keras.models.load_model(model_file)    
-    # Get model predictions on the data.
     train_and_validation_data, train_and_validation_labels = reshape_seq(data, labels)
-    model_predictions = best_model.predict(train_and_validation_data, batch_size=batch_size) 
-    # Calculate error rate base on misclassified samples
-    predicted_classes = []
-    e1 = 0
-    for i in range(len(model_predictions)):
-        for pred in model_predictions[i]: 
-            if pred >= thr:
-                predicted_classes.append(1)
-            else:
-                predicted_classes.append(0)
-            if labels[i] != predicted_classes[i]:
-                e1 += sample_weights[i] 
-    if e1 <= 0:
-        e1 = pow(10, -18)
-    if e1 >= 1:
-        e1 = 1 - pow(10, -18)
-    alpha1 = 0.5 * np.log((1 - e1) / e1)
-    # Updated weights
-    for i in range(len(model_predictions)):
-        for pred in model_predictions[i]: 
-            if labels[i] != predicted_classes[i]:
-                sample_weights[i] = sample_weights[i] * np.exp(alpha1)
-            else:
-                sample_weights[i] = sample_weights[i] * np.exp(-alpha1)
-    sample_weights = sample_weights / sum(sample_weights) 
-    # Select new samples based on new weights
-    indices = select(sample_weights)
-    new_data = []
-    new_labels = [] 
-    new_weights = [] 
-    for index in indices:
-        new_data.append(data[index])
-        new_labels.append(labels[index])
-        new_weights.append(sample_weights[index])
-    return alpha1, new_data, new_labels, new_weights
+    return common_boost(train_and_validation_data, batch_size, data, labels, model_file, sample_weights, thr)
 
 def boost(num_props, batch_size, data, labels, model_file, sample_weights, thr):
-    # Load the best model.
-    best_model = tf.keras.models.load_model(model_file)    
-    # Get model predictions on the data.
     train_and_validation_data, train_and_validation_labels = reshape(num_props, data, labels)
-    model_predictions = best_model.predict(train_and_validation_data, batch_size=batch_size) 
-    # Calculate error rate base on misclassified samples
-    predicted_classes = []
-    e1 = 0
-    for i in range(len(model_predictions)):
-        for pred in model_predictions[i]: 
-            if pred >= thr:
-                predicted_classes.append(1)
-            else:
-                predicted_classes.append(0)
-            if labels[i] != predicted_classes[i]:
-                e1 += sample_weights[i]
-    if e1 <= 0:
-        e1 = pow(10, -18)
-    if e1 >= 1:
-        e1 = 1 - pow(10, -18)
-    alpha1 = 0.5 * np.log((1 - e1) / e1)
-    # Updated weights
-    for i in range(len(model_predictions)):
-        for pred in model_predictions[i]: 
-            if labels[i] != predicted_classes[i]:
-                sample_weights[i] = sample_weights[i] * np.exp(alpha1)
-            else:
-                sample_weights[i] = sample_weights[i] * np.exp(-alpha1)
-    sample_weights = sample_weights / sum(sample_weights) 
-    # Select new samples based on new weights
-    indices = select(sample_weights)
-    new_data = []
-    new_labels = [] 
-    new_weights = [] 
-    for index in indices:
-        new_data.append(data[index])
-        new_labels.append(labels[index])
-        new_weights.append(sample_weights[index])
-    return alpha1, new_data, new_labels, new_weights
+    return common_boost(train_and_validation_data, batch_size, data, labels, model_file, sample_weights, thr)
 
 def select(sample_weights):
     cumulative = np.cumsum(sample_weights)

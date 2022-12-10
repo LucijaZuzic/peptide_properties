@@ -6,6 +6,12 @@ MODEL_DATA_PATH = '../model_data/'
 SEQ_MODEL_DATA_PATH = '../seq_model_data/'
 MY_MODEL_DATA_PATH = '../only_my_model_data/'
 
+def convert_list(model_predictions): 
+    new_predictions = []
+    for j in range(len(model_predictions)): 
+        new_predictions.append(model_predictions[j][0]) 
+    return new_predictions
+
 def scale(AP_dictionary, offset = 1):
     data = [AP_dictionary[key] for key in AP_dictionary]
 

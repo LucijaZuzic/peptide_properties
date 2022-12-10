@@ -2,7 +2,7 @@ import numpy as np
 from utils import DATA_PATH  
 import matplotlib.pyplot as plt
  
-SA_data = np.load(DATA_PATH+'data_SA.npy')
+SA_data = np.load(DATA_PATH+'data_SA_updated.npy', allow_pickle=True).item()
 
 suma = 0
 
@@ -30,7 +30,8 @@ yes_len_list = []
 no_lens = {}
 no_len_list = []
 
-for peptide in SA_data:
+for pep in SA_data:
+    peptide = [pep, SA_data[pep]]
     if len(peptide[0]) not in all_lens:
         all_lens[len(peptide[0])] = 1
         all_len_list.append(len(peptide[0]))

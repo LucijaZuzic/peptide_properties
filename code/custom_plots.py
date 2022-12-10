@@ -65,8 +65,7 @@ def weird_division(n, d):
     return n / d if d else 0
 
 def make_a_PR_plot(test_labels, model_predictions, pattern, label):
-
-   # Get recall and precision.
+    # Get recall and precision.
     precision, recall, thresholds = precision_recall_curve(test_labels, model_predictions)
 
     # Plot PR curve.
@@ -171,7 +170,6 @@ def output_metrics(test_labels, model_predictions, threshold=0.5):
                         f1_score(test_labels, model_predictions_binary)))
 
 def hist_predicted(MODEL_DATA_PATH, test_number, iteration, test_labels, model_predictions):
-
     # Create a histogram of the predicted probabilities only for the peptides that show self-assembly
 
     model_predictions_true = []
