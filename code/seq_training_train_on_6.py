@@ -1,8 +1,9 @@
 import numpy as np
 from automate_training import load_data_SA_seq, model_training_seq, merge_data_seq, data_and_labels_from_indices, extract_len_from_data_and_labels
-from utils import DATA_PATH, SEQ_MODEL_DATA_PATH
+from utils import DATA_PATH, SEQ_MODEL_DATA_PATH, results_name, log_name, basic_dir
 import sys 
 from sklearn.model_selection import StratifiedKFold
+import os
 
 # Algorithm settings 
 N_FOLDS_SECOND = 5
@@ -53,8 +54,18 @@ factor_NSA = count_len_SA / count_len_NSA
 
 #train_and_validation_data, test_data, train_and_validation_labels, test_labels = train_test_split(all_data, all_labels, test_size= 1 / N_FOLDS_FIRST, random_state=seed, stratify = all_labels)
  
+#python program to check if a path exists
+#if it doesn’t exist we create one
+if not os.path.exists(basic_dir(SEQ_MODEL_DATA_PATH, test_number)):
+    os.makedirs(basic_dir(SEQ_MODEL_DATA_PATH, test_number))
+
 # Write output to file
-sys.stdout = open(SEQ_MODEL_DATA_PATH+str(test_number)+"_training_log_multiple_properties.txt", "w", encoding="utf-8")
+other_output = open(results_name(SEQ_MODEL_DATA_PATH, test_number), "w", encoding="utf-8") 
+other_output.write("")
+other_output.close()
+
+# Write output to file
+sys.stdout = open(log_name(SEQ_MODEL_DATA_PATH, test_number), "w", encoding="utf-8")
 
 # Train the ansamble model
 model_training_seq(test_number, train_and_validation_data, train_and_validation_labels, kfold_second, EPOCHS, factor_NSA, test_data, test_labels, properties, names, offset, mask_value=masking_value)

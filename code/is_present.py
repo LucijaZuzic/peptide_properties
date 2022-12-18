@@ -14,8 +14,7 @@ original_dict = {}
 for i in range(len(original_seq)):
     original_dict[original_seq[i]] = original_labels[i]
 
-SA_data_old = np.load(DATA_PATH+'data_SA.npy') 
-SA_data_new = np.load(DATA_PATH+'data_SA_updated.npy', allow_pickle=True).item()
+SA_data_old = np.load(DATA_PATH+'data_SA.npy')
 
 peptides = []
 molecules = []

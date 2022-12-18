@@ -1,10 +1,89 @@
-#!/usr/bin/env python3
-# -*- coding: utf-8 -*-
- 
 DATA_PATH = '../data/'
 MODEL_DATA_PATH = '../model_data/'
 SEQ_MODEL_DATA_PATH = '../seq_model_data/'
 MY_MODEL_DATA_PATH = '../only_my_model_data/'
+
+PATH_TO_NAME = { 
+    MODEL_DATA_PATH: 'Seq. props. and AP',
+    SEQ_MODEL_DATA_PATH: 'Seq. props.',
+    MY_MODEL_DATA_PATH: 'AP',
+}
+
+PATH_TO_EXTENSION = { 
+    MODEL_DATA_PATH: 'all',
+    SEQ_MODEL_DATA_PATH: 'seq',
+    MY_MODEL_DATA_PATH: 'AP',
+}
+
+def name_plus_test(some_path, test_number):
+    return PATH_TO_EXTENSION[some_path] +  "_test_" + str(test_number)
+
+def basic_dir(some_path, test_number):
+    return some_path + name_plus_test(some_path, test_number) + "/"
+
+def basic_path(some_path, test_number):
+    return some_path + name_plus_test(some_path, test_number) + "/" + name_plus_test(some_path, test_number) + "_"
+
+def params_plus_fold(params_nr, fold_nr):
+    return '_params_' + str(params_nr) + '_fold_' + str(fold_nr) 
+
+def final_model_type_plus_iteration(final_model_type, iteration):
+    return "_" + final_model_type + '_' + str(iteration)
+
+def h5_and_png(some_path, test_number, params_nr, fold_nr): 
+    start = basic_path(some_path, test_number) + 'rnn' + params_plus_fold(params_nr, fold_nr)
+    return start + ".h5", start + ".png"   
+
+def final_h5_and_png(some_path, test_number, iteration):       
+    start = basic_path(some_path, test_number) + 'rnn' + final_model_type_plus_iteration('weak', iteration)
+    return start + ".h5", start + ".png"   
+    
+def percent_grade_names(some_path, test_number, final_model_type, iteration):
+    start = basic_path(some_path, test_number)
+    end = final_model_type_plus_iteration(final_model_type, iteration) + ".csv"
+    return start + "percentage" + end, start + "grade" + end 
+     
+def hist_names(some_path, test_number, final_model_type, iteration):       
+    start = basic_path(some_path, test_number) + 'hist_' 
+    end = "SA_" + final_model_type_plus_iteration(final_model_type, iteration) + ".png"
+    return start + end, start + "N" + end
+
+def ROC_name(some_path, test_number, final_model_type, iteration):     
+    return basic_path(some_path, test_number) + "ROC_" + final_model_type_plus_iteration(final_model_type, iteration) + ".png"  
+
+def PR_name(some_path, test_number, final_model_type, iteration):    
+    return basic_path(some_path, test_number) + "PR_" + final_model_type_plus_iteration(final_model_type, iteration) + ".png"
+
+def final_loss_name(some_path, test_number, iteration):     
+    return basic_path(some_path, test_number) + "loss_" + final_model_type_plus_iteration('weak', iteration) + ".png"  
+
+def final_acc_name(some_path, test_number, iteration):    
+    return basic_path(some_path, test_number) + "acc_" + final_model_type_plus_iteration('weak', iteration) + ".png"
+
+def loss_name(some_path, test_number, params_nr, fold_nr): 
+    return basic_path(some_path, test_number) + 'loss' + params_plus_fold(params_nr, fold_nr) + ".png"  
+
+def acc_name(some_path, test_number, params_nr, fold_nr): 
+    return basic_path(some_path, test_number) + 'acc' + params_plus_fold(params_nr, fold_nr) + ".png" 
+
+def log_name(some_path, test_number):       
+    return basic_path(some_path, test_number) + "log.txt"   
+
+def results_name(some_path, test_number):       
+    return basic_path(some_path, test_number) + "results.txt"   
+
+def predictions_name(some_path, test_number, final_model_type, iteration):        
+    return basic_path(some_path, test_number) + 'predictions' + final_model_type_plus_iteration(final_model_type, iteration) + ".txt"
+
+def history_name(some_path, test_number, params_nr, fold_nr): 
+    start = basic_path(some_path, test_number) 
+    end = params_plus_fold(params_nr, fold_nr) + ".txt"
+    return start + "acc" + end, start + "val_acc" + end, start + "loss" + end, start + "val_loss" + end
+
+def final_history_name(some_path, test_number, iteration): 
+    start = basic_path(some_path, test_number)  
+    end = final_model_type_plus_iteration('weak', iteration)
+    return start + "acc" + end, start + "loss" + end 
 
 def convert_list(model_predictions): 
     new_predictions = []

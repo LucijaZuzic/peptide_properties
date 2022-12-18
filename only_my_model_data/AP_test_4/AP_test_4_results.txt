@@ -1,0 +1,92 @@
+Model AP Test 4 Params 1 Fold 1: lstm: 5 dense: 64 lambda: 0.00 dropout: 0.50 batch: 600
+Model AP Test 4 Params 1 Fold 1: Maximum accuracy = 73.31% Maximum validation accuracy = 76.27% Minimal loss = 71.77% Minimal validation loss = 51.09%
+Model AP Test 4 Params 1 Fold 1: Accuracy = 67.10% (6.56%) Validation accuracy = 69.47% (5.25%) Loss = 76.97% (6.26%) Validation loss = 54.13% (4.87%)
+Model AP Test 4 Params 1 Fold 2: lstm: 5 dense: 64 lambda: 0.00 dropout: 0.50 batch: 600
+Model AP Test 4 Params 1 Fold 2: Maximum accuracy = 72.88% Maximum validation accuracy = 71.19% Minimal loss = 73.55% Minimal validation loss = 55.52%
+Model AP Test 4 Params 1 Fold 2: Accuracy = 66.26% (5.56%) Validation accuracy = 67.07% (6.74%) Loss = 79.01% (5.49%) Validation loss = 58.37% (4.00%)
+Model AP Test 4 Params 1 Fold 3: lstm: 5 dense: 64 lambda: 0.00 dropout: 0.50 batch: 600
+Model AP Test 4 Params 1 Fold 3: Maximum accuracy = 73.31% Maximum validation accuracy = 76.27% Minimal loss = 72.65% Minimal validation loss = 53.33%
+Model AP Test 4 Params 1 Fold 3: Accuracy = 65.36% (7.29%) Validation accuracy = 71.16% (5.72%) Loss = 79.64% (6.35%) Validation loss = 56.78% (4.81%)
+Model AP Test 4 Params 1 Fold 4: lstm: 5 dense: 64 lambda: 0.00 dropout: 0.50 batch: 600
+Model AP Test 4 Params 1 Fold 4: Maximum accuracy = 74.58% Maximum validation accuracy = 71.19% Minimal loss = 68.70% Minimal validation loss = 65.13%
+Model AP Test 4 Params 1 Fold 4: Accuracy = 65.81% (6.79%) Validation accuracy = 64.24% (6.27%) Loss = 75.36% (7.11%) Validation loss = 66.54% (1.34%)
+Model AP Test 4 Params 1 Fold 5: lstm: 5 dense: 64 lambda: 0.00 dropout: 0.50 batch: 600
+Model AP Test 4 Params 1 Fold 5: Maximum accuracy = 75.42% Maximum validation accuracy = 66.10% Minimal loss = 69.37% Minimal validation loss = 56.03%
+Model AP Test 4 Params 1 Fold 5: Accuracy = 68.36% (6.77%) Validation accuracy = 60.48% (3.99%) Loss = 76.95% (6.91%) Validation loss = 58.92% (4.03%)
+Model AP Test 4 Params 1 average: Maximum accuracy = 75.42% (0.00%) Maximum validation accuracy = 76.27% (0.00%) Minimal loss = 0.69% (0.00%) Minimal validation loss = 0.51% (0.00%)
+Model AP Test 4 Params 1 average: Accuracy = 66.58% (6.70%) Validation accuracy = 66.48% (6.83%) Loss = 0.78% (6.63%) Validation loss = 0.59% (5.77%)
+Model AP Test 4 Params 2 Fold 1: lstm: 5 dense: 96 lambda: 0.00 dropout: 0.50 batch: 600
+Model AP Test 4 Params 2 Fold 1: Maximum accuracy = 72.46% Maximum validation accuracy = 74.58% Minimal loss = 71.58% Minimal validation loss = 52.01%
+Model AP Test 4 Params 2 Fold 1: Accuracy = 67.34% (5.30%) Validation accuracy = 70.85% (4.46%) Loss = 77.31% (5.41%) Validation loss = 54.72% (4.33%)
+Model AP Test 4 Params 2 Fold 2: lstm: 5 dense: 96 lambda: 0.00 dropout: 0.50 batch: 600
+Model AP Test 4 Params 2 Fold 2: Maximum accuracy = 73.31% Maximum validation accuracy = 74.58% Minimal loss = 71.25% Minimal validation loss = 53.42%
+Model AP Test 4 Params 2 Fold 2: Accuracy = 66.33% (5.67%) Validation accuracy = 67.99% (7.46%) Loss = 77.63% (5.77%) Validation loss = 56.94% (4.59%)
+Model AP Test 4 Params 2 Fold 3: lstm: 5 dense: 96 lambda: 0.00 dropout: 0.50 batch: 600
+Model AP Test 4 Params 2 Fold 3: Maximum accuracy = 73.73% Maximum validation accuracy = 77.97% Minimal loss = 70.33% Minimal validation loss = 51.59%
+Model AP Test 4 Params 2 Fold 3: Accuracy = 66.79% (7.15%) Validation accuracy = 71.31% (6.29%) Loss = 77.14% (6.66%) Validation loss = 55.03% (4.58%)
+Model AP Test 4 Params 2 Fold 4: lstm: 5 dense: 96 lambda: 0.00 dropout: 0.50 batch: 600
+Model AP Test 4 Params 2 Fold 4: Maximum accuracy = 75.85% Maximum validation accuracy = 72.88% Minimal loss = 65.38% Minimal validation loss = 60.23%
+Model AP Test 4 Params 2 Fold 4: Accuracy = 69.00% (7.23%) Validation accuracy = 67.34% (5.52%) Loss = 72.07% (7.83%) Validation loss = 62.43% (2.37%)
+Model AP Test 4 Params 2 Fold 5: lstm: 5 dense: 96 lambda: 0.00 dropout: 0.50 batch: 600
+Model AP Test 4 Params 2 Fold 5: Maximum accuracy = 74.58% Maximum validation accuracy = 72.88% Minimal loss = 69.53% Minimal validation loss = 55.61%
+Model AP Test 4 Params 2 Fold 5: Accuracy = 69.40% (5.83%) Validation accuracy = 67.24% (6.90%) Loss = 75.65% (5.99%) Validation loss = 57.81% (3.45%)
+Model AP Test 4 Params 2 average: Maximum accuracy = 75.85% (0.00%) Maximum validation accuracy = 77.97% (0.00%) Minimal loss = 0.65% (0.00%) Minimal validation loss = 0.52% (0.00%)
+Model AP Test 4 Params 2 average: Accuracy = 67.77% (6.40%) Validation accuracy = 68.94% (6.46%) Loss = 0.76% (6.72%) Validation loss = 0.57% (4.83%)
+Model AP Test 4 Params 3 Fold 1: lstm: 5 dense: 128 lambda: 0.00 dropout: 0.50 batch: 600
+Model AP Test 4 Params 3 Fold 1: Maximum accuracy = 70.34% Maximum validation accuracy = 67.80% Minimal loss = 74.51% Minimal validation loss = 54.64%
+Model AP Test 4 Params 3 Fold 1: Accuracy = 63.55% (5.35%) Validation accuracy = 65.08% (3.71%) Loss = 80.06% (5.44%) Validation loss = 57.79% (4.15%)
+Model AP Test 4 Params 3 Fold 2: lstm: 5 dense: 128 lambda: 0.00 dropout: 0.50 batch: 600
+Model AP Test 4 Params 3 Fold 2: Maximum accuracy = 71.61% Maximum validation accuracy = 72.88% Minimal loss = 74.35% Minimal validation loss = 56.26%
+Model AP Test 4 Params 3 Fold 2: Accuracy = 64.26% (6.96%) Validation accuracy = 65.79% (8.09%) Loss = 79.96% (5.70%) Validation loss = 59.26% (4.12%)
+Model AP Test 4 Params 3 Fold 3: lstm: 5 dense: 128 lambda: 0.00 dropout: 0.50 batch: 600
+Model AP Test 4 Params 3 Fold 3: Maximum accuracy = 75.42% Maximum validation accuracy = 77.97% Minimal loss = 68.63% Minimal validation loss = 48.09%
+Model AP Test 4 Params 3 Fold 3: Accuracy = 69.03% (6.65%) Validation accuracy = 73.22% (6.58%) Loss = 74.97% (6.54%) Validation loss = 51.88% (5.17%)
+Model AP Test 4 Params 3 Fold 4: lstm: 5 dense: 128 lambda: 0.00 dropout: 0.50 batch: 600
+Model AP Test 4 Params 3 Fold 4: Maximum accuracy = 75.42% Maximum validation accuracy = 74.58% Minimal loss = 66.35% Minimal validation loss = 59.35%
+Model AP Test 4 Params 3 Fold 4: Accuracy = 67.83% (6.78%) Validation accuracy = 68.16% (6.74%) Loss = 73.34% (7.61%) Validation loss = 62.20% (3.19%)
+Model AP Test 4 Params 3 Fold 5: lstm: 5 dense: 128 lambda: 0.00 dropout: 0.50 batch: 600
+Model AP Test 4 Params 3 Fold 5: Maximum accuracy = 73.31% Maximum validation accuracy = 66.10% Minimal loss = 71.93% Minimal validation loss = 56.94%
+Model AP Test 4 Params 3 Fold 5: Accuracy = 66.61% (6.18%) Validation accuracy = 60.48% (4.11%) Loss = 78.25% (6.27%) Validation loss = 59.88% (3.86%)
+Model AP Test 4 Params 3 average: Maximum accuracy = 75.42% (0.00%) Maximum validation accuracy = 77.97% (0.00%) Minimal loss = 0.66% (0.00%) Minimal validation loss = 0.48% (0.00%)
+Model AP Test 4 Params 3 average: Accuracy = 66.26% (6.74%) Validation accuracy = 66.55% (7.37%) Loss = 0.77% (6.91%) Validation loss = 0.58% (5.40%)
+Model AP Test 4 Best params: lstm: 5 dense: 96 lambda: 0.00 dropout: 0.50 batch: 600
+Model AP Test 4 Weak 1: Maximum accuracy = 67.46% Minimal loss = 0.20%
+Model AP Test 4 Weak 1: Accuracy = 67.41% (0.40%) Loss = 0.20% (0.01%)
+Model AP Test 4 Weak 1 ROC curve: Threshold = 0.639227, Geometric mean = 0.822
+Model AP Test 4 Weak 1 PR curve: Threshold = 0.636053, F1 = 0.835
+Model AP Test 4 Weak 1: Accuracy: 68.49% Area under ROC curve: 0.8287 Area under PR curve: 0.9330 F1: 0.8130
+Model AP Test 4 Iteration 1 ROC curve: Threshold = 2.000000, Geometric mean = 0.000
+Model AP Test 4 Iteration 1 PR curve: Threshold = 1.000000, F1 = 0.813
+Model AP Test 4 Iteration 1: Accuracy: 68.49% Area under ROC curve: 0.5000 Area under PR curve: 0.8425 F1: 0.8130
+Model AP Test 4 Weak 2: Maximum accuracy = 74.58% Minimal loss = 68.90%
+Model AP Test 4 Weak 2: Accuracy = 67.33% (7.58%) Loss = 76.07% (6.90%)
+Model AP Test 4 Weak 2 ROC curve: Threshold = 0.419796, Geometric mean = 0.865
+Model AP Test 4 Weak 2 PR curve: Threshold = 0.419796, F1 = 0.896
+Model AP Test 4 Weak 2: Accuracy: 80.82% Area under ROC curve: 0.9139 Area under PR curve: 0.9641 F1: 0.8409
+Model AP Test 4 Iteration 2 ROC curve: Threshold = 1.000000, Geometric mean = 0.841
+Model AP Test 4 Iteration 2 PR curve: Threshold = 1.000000, F1 = 0.841
+Model AP Test 4 Iteration 2: Accuracy: 80.82% Area under ROC curve: 0.8483 Area under PR curve: 0.9459 F1: 0.8409
+Model AP Test 4 Weak 3: Maximum accuracy = 75.25% Minimal loss = 69.24%
+Model AP Test 4 Weak 3: Accuracy = 68.21% (6.57%) Loss = 75.67% (7.07%)
+Model AP Test 4 Weak 3 ROC curve: Threshold = 0.484288, Geometric mean = 0.875
+Model AP Test 4 Weak 3 PR curve: Threshold = 0.345434, F1 = 0.911
+Model AP Test 4 Weak 3: Accuracy: 80.82% Area under ROC curve: 0.9165 Area under PR curve: 0.9645 F1: 0.8409
+Model AP Test 4 Iteration 3 ROC curve: Threshold = 1.000000, Geometric mean = 0.841
+Model AP Test 4 Iteration 3 PR curve: Threshold = 1.000000, F1 = 0.841
+Model AP Test 4 Iteration 3: Accuracy: 80.82% Area under ROC curve: 0.8483 Area under PR curve: 0.9459 F1: 0.8409
+Model AP Test 4 Weak 4: Maximum accuracy = 74.58% Minimal loss = 69.00%
+Model AP Test 4 Weak 4: Accuracy = 68.84% (6.41%) Loss = 75.00% (6.59%)
+Model AP Test 4 Weak 4 ROC curve: Threshold = 0.468766, Geometric mean = 0.875
+Model AP Test 4 Weak 4 PR curve: Threshold = 0.379376, F1 = 0.889
+Model AP Test 4 Weak 4: Accuracy: 80.82% Area under ROC curve: 0.9070 Area under PR curve: 0.9613 F1: 0.8409
+Model AP Test 4 Iteration 4 ROC curve: Threshold = 1.000000, Geometric mean = 0.841
+Model AP Test 4 Iteration 4 PR curve: Threshold = 1.000000, F1 = 0.841
+Model AP Test 4 Iteration 4: Accuracy: 80.82% Area under ROC curve: 0.8483 Area under PR curve: 0.9459 F1: 0.8409
+Model AP Test 4 Weak 5: Maximum accuracy = 74.92% Minimal loss = 69.61%
+Model AP Test 4 Weak 5: Accuracy = 67.82% (6.68%) Loss = 76.04% (6.63%)
+Model AP Test 4 Weak 5 ROC curve: Threshold = 0.473950, Geometric mean = 0.855
+Model AP Test 4 Weak 5 PR curve: Threshold = 0.331519, F1 = 0.887
+Model AP Test 4 Weak 5: Accuracy: 79.45% Area under ROC curve: 0.9113 Area under PR curve: 0.9624 F1: 0.8276
+Model AP Test 4 Iteration 5 ROC curve: Threshold = 1.000000, Geometric mean = 0.841
+Model AP Test 4 Iteration 5 PR curve: Threshold = 1.000000, F1 = 0.841
+Model AP Test 4 Iteration 5: Accuracy: 80.82% Area under ROC curve: 0.8483 Area under PR curve: 0.9459 F1: 0.8409
