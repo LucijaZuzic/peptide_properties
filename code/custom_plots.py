@@ -418,10 +418,10 @@ def decorate_stats(some_path, test_number, history, params_nr="", fold_nr=""):
             np.std(accuracy) * 100,
             np.mean(val_acc) * 100,
             np.std(val_acc) * 100,
-            np.mean(loss) * 100,
-            np.std(loss) * 100,
-            np.mean(val_loss) * 100,
-            np.std(val_loss) * 100,
+            np.mean(loss),
+            np.std(loss),
+            np.mean(val_loss),
+            np.std(val_loss),
         )
     )
     other_output.write("\n")
@@ -475,8 +475,8 @@ def decorate_stats_final(some_path, test_number, history, iteration):
             merge_type_iteration(some_path, "weak", iteration, test_number),
             np.mean(accuracy) * 100,
             np.std(accuracy) * 100,
-            np.mean(loss) * 100,
-            np.std(loss) * 100,
+            np.mean(loss),
+            np.std(loss),
         )
     )
     other_output.write("\n")
@@ -515,9 +515,9 @@ def decorate_stats_avg(
             np.mean(val_acc_max) * 100,
             np.std(val_acc_max) * 100,
             np.mean(loss_min),
-            np.std(loss_min) * 100,
+            np.std(loss_min),
             np.mean(val_loss_min),
-            np.std(val_loss_min) * 100,
+            np.std(val_loss_min),
         )
     )
     other_output.write("\n")
@@ -531,9 +531,9 @@ def decorate_stats_avg(
             np.mean(val_acc) * 100,
             np.std(val_acc) * 100,
             np.mean(loss),
-            np.std(loss) * 100,
+            np.std(loss),
             np.mean(val_loss),
-            np.std(val_loss) * 100,
+            np.std(val_loss),
         )
     )
     other_output.write("\n")
