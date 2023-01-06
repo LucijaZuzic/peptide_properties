@@ -1,11 +1,11 @@
 DATA_PATH = '../data/'
 MODEL_DATA_PATH = '../model_data/'
 SEQ_MODEL_DATA_PATH = '../seq_model_data/'
-MY_MODEL_DATA_PATH = '../only_my_model_data/'
+MY_MODEL_DATA_PATH = '../only_my_model_data/' 
 
 PATH_TO_NAME = { 
-    MODEL_DATA_PATH: 'Seq. props. and AP',
-    SEQ_MODEL_DATA_PATH: 'Seq. props.',
+    MODEL_DATA_PATH: 'SP and AP',
+    SEQ_MODEL_DATA_PATH: 'SP',
     MY_MODEL_DATA_PATH: 'AP',
 }
 
@@ -13,16 +13,27 @@ PATH_TO_EXTENSION = {
     MODEL_DATA_PATH: 'all',
     SEQ_MODEL_DATA_PATH: 'seq',
     MY_MODEL_DATA_PATH: 'AP',
-}
+} 
+
+def setSeed(x):
+    seed_file = open(DATA_PATH + "seed.txt", "w")
+    seed_file.write(str(x))
+    seed_file.close()
+ 
+def getSeed():
+    seed_file = open(DATA_PATH + "seed.txt", "r")
+    line = seed_file.readlines()[0].replace("\n", "")
+    seed_file.close()
+    return int(line)
 
 def name_plus_test(some_path, test_number):
     return PATH_TO_EXTENSION[some_path] +  "_test_" + str(test_number)
 
-def basic_dir(some_path, test_number):
-    return some_path + name_plus_test(some_path, test_number) + "/"
+def basic_dir(some_path, test_number): 
+    return "../seeds/seed_" + str(getSeed()) + some_path.replace("..", "") + name_plus_test(some_path, test_number) + "/"
 
 def basic_path(some_path, test_number):
-    return some_path + name_plus_test(some_path, test_number) + "/" + name_plus_test(some_path, test_number) + "_"
+    return basic_dir(some_path, test_number) + name_plus_test(some_path, test_number) + "_"
 
 def params_plus_fold(params_nr, fold_nr):
     return '_params_' + str(params_nr) + '_fold_' + str(fold_nr) 

@@ -1,10 +1,10 @@
 import numpy as np 
-from utils import DATA_PATH 
+from utils import DATA_PATH, getSeed
 from sklearn.model_selection import StratifiedKFold
 from plot_similarities_seqprops import main_sim, double_sim
+import os
 
-# Define random seed
-seed = 42
+SEED = getSeed()
 # Algorithm settings 
 N_FOLDS_FIRST = 5
 SA_data = np.load(DATA_PATH+'data_SA_updated.npy', allow_pickle=True).item()
@@ -15,6 +15,9 @@ sequences_6 = []
 labels_6 = []
 sequences_not_6 = []
 labels_not_6 = []
+
+if not os.path.exists("../seeds/seed_" + str(SEED) + "/similarity/"):
+    os.makedirs("../seeds/seed_" + str(SEED) + "/similarity/")
 
 for peptide in SA_data:
     if len(peptide) > MAXLEN or SA_data[peptide] == '-1':
@@ -29,7 +32,7 @@ for peptide in SA_data:
         labels_not_6.append(SA_data[peptide])
 
 # Define N-fold cross validation test harness for splitting the test data from the train and validation data
-kfold_first = StratifiedKFold(n_splits=N_FOLDS_FIRST, shuffle=True, random_state=seed)
+kfold_first = StratifiedKFold(n_splits=N_FOLDS_FIRST, shuffle=True, random_state=SEED)
 
 test_number = 0
 for train_and_validation_data_indices, test_data_indices in kfold_first.split(sequences, labels):
@@ -42,10 +45,13 @@ for train_and_validation_data_indices, test_data_indices in kfold_first.split(se
         train_save += sequences[i] + "," + labels[i] + "\n" 
         train_test_save += sequences[i] + "," + labels[i] + "\n"
 
-    train_output = open(DATA_PATH + 'train_fold_' + str(test_number) + ".csv", "w", encoding="utf-8") 
+    train_name = "../seeds/seed_" + str(SEED) + "/similarity/" + 'train_fold_' + str(test_number)  
+    train_csv = train_name + ".csv"
+    train_png = train_name + ".png"
+    train_output = open(train_csv, "w", encoding="utf-8") 
     train_output.write(train_save)
     train_output.close()
-    main_sim('train_fold_' + str(test_number))
+    main_sim(train_csv, train_png)
          
     # Convert test indices to test data and test labels
     test_save = "sequence,label\n"
@@ -55,16 +61,22 @@ for train_and_validation_data_indices, test_data_indices in kfold_first.split(se
         test_save += sequences[i] + "," + labels[i] + "\n" 
         train_test_save += sequences[i] + "," + labels[i] + "\n" 
 
-    test_output = open(DATA_PATH + 'test_fold_' + str(test_number) + ".csv", "w", encoding="utf-8") 
+    test_name = "../seeds/seed_" + str(SEED) + "/similarity/" + 'test_fold_' + str(test_number)  
+    test_csv = test_name + ".csv"
+    test_png = test_name + ".png"
+    test_output = open(test_csv, "w", encoding="utf-8") 
     test_output.write(test_save)
     test_output.close()
-    main_sim('test_fold_' + str(test_number))
+    main_sim(test_csv, test_png)
 
-    train_test_output = open(DATA_PATH + 'train_test_fold_' + str(test_number) + ".csv", "w", encoding="utf-8") 
+    train_test_name = "../seeds/seed_" + str(SEED) + "/similarity/" + 'train_test_fold_' + str(test_number)  
+    train_test_csv = train_test_name + ".csv"
+    train_test_png = train_test_name + ".png"
+    train_test_output = open(train_test_csv, "w", encoding="utf-8") 
     train_test_output.write(train_test_save)
-    train_test_output.close()
-    double_sim('train_test_fold_' + str(test_number), len(train_and_validation_data_indices))
- 
+    train_test_output.close() 
+    double_sim(train_test_csv, train_test_png, len(train_and_validation_data_indices))
+'''
 all_save = "sequence,label\n"
 only_6_save = "sequence,label\n"
 only_6_data = []
@@ -75,7 +87,7 @@ for i in range(len(sequences_6)):
     only_6_save += only_6_data[-1] + "," + only_6_labels[-1] + "\n" 
     all_save += only_6_data[-1] + "," + only_6_labels[-1] + "\n" 
 
-only_6_output = open(DATA_PATH + 'only_6.csv', "w", encoding="utf-8") 
+only_6_output = open("../seeds/seed_" + str(SEED) + "/similarity/" + 'only_6.csv', "w", encoding="utf-8") 
 only_6_output.write(only_6_save)
 only_6_output.close()
 main_sim('only_6')
@@ -89,17 +101,18 @@ for i in range(len(sequences_not_6)):
     only_not_6_save += only_not_6_data[-1] + "," + only_not_6_labels[-1] + "\n" 
     all_save += only_not_6_data[-1] + "," + only_not_6_labels[-1] + "\n" 
 
-only_not_6_output = open(DATA_PATH + 'only_not_6.csv', "w", encoding="utf-8") 
+only_not_6_output = open("../seeds/seed_" + str(SEED) + "/similarity/" + 'only_not_6.csv', "w", encoding="utf-8") 
 only_not_6_output.write(only_not_6_save)
 only_not_6_output.close()
 main_sim('only_not_6')
 
-all_output = open(DATA_PATH + "all_similarity.csv", "w", encoding="utf-8") 
+all_output = open("../seeds/seed_" + str(SEED) + "/similarity/" + "all_similarity.csv", "w", encoding="utf-8") 
 all_output.write(all_save)
 all_output.close()
 main_sim('all_similarity')
 
-divide_by_6_output = open(DATA_PATH + "divide_by_6.csv", "w", encoding="utf-8") 
+divide_by_6_output = open("../seeds/seed_" + str(SEED) + "/similarity/" + "divide_by_6.csv", "w", encoding="utf-8") 
 divide_by_6_output.write(all_save)
 divide_by_6_output.close()
 double_sim('divide_by_6', len(only_6_data))
+'''

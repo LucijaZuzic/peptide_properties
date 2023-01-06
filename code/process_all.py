@@ -536,7 +536,9 @@ def merge_all(paths, include_avg, filter = None):
     if filter == None:
         return header, merge_all(paths, include_avg, max_index)
     return header
+
 #all_predictions, all_labels = read_all_model_predictions(SEQ_MODEL_DATA_PATH, 1, NUM_FOLDS_FIRST)
+
 '''
 for test_number in range(-1, NUM_FOLDS_FIRST + 1):
     rewrite(MODEL_DATA_PATH, test_number, "Weak", "Test " + str(test_number) + " Weak")

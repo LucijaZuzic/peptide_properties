@@ -25,9 +25,9 @@ def compute_similarity(seq1, seq2):
     seq1, seq2 = aln
     return seq1.match_frequency(seq2, relative=True)
 
-def main_sim(dataset_name):
+def main_sim(read_from, save_to):
     # Load sequences from a CSV file
-    data = pd.read_csv(DATA_PATH+dataset_name+'.csv')
+    data = pd.read_csv(read_from)
     sequences = data["sequence"].to_numpy()
 
     tasks = []
@@ -42,11 +42,12 @@ def main_sim(dataset_name):
 
     plt.ylabel("Frequency")
     plt.xlabel("Similarity") 
-    plt.savefig(DATA_PATH+dataset_name+"_similarity.png") 
+    plt.savefig(save_to) 
+    plt.close()
 
-def double_sim(dataset_name, divider):
+def double_sim(read_from, save_to, divider):
     # Load sequences from a CSV file
-    data = pd.read_csv(DATA_PATH+dataset_name+'.csv')
+    data = pd.read_csv(read_from)
     sequences = data["sequence"].to_numpy()
 
     tasks = []
@@ -61,4 +62,5 @@ def double_sim(dataset_name, divider):
 
     plt.ylabel("Frequency")
     plt.xlabel("Similarity") 
-    plt.savefig(DATA_PATH+dataset_name+"_similarity.png") 
+    plt.savefig(save_to) 
+    plt.close()

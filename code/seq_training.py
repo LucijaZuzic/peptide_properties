@@ -1,6 +1,6 @@
 import numpy as np
 from automate_training import load_data_SA_seq, model_training_seq, merge_data_seq, data_and_labels_from_indices
-from utils import DATA_PATH, SEQ_MODEL_DATA_PATH, results_name, log_name, basic_dir
+from utils import getSeed, DATA_PATH, SEQ_MODEL_DATA_PATH, results_name, log_name, basic_dir
 import sys 
 from sklearn.model_selection import StratifiedKFold
 import os
@@ -12,7 +12,7 @@ EPOCHS = 70
 names = ['AP', 'logP', 'APH', 'polarity_selu']
 offset = 1
 # Define random seed
-seed = 42
+seed = getSeed()
 SA_data = np.load(DATA_PATH+'data_SA_updated.npy', allow_pickle=True).item()
   
 properties = np.ones(95) 
@@ -22,11 +22,8 @@ SA, NSA = load_data_SA_seq(SA_data, names, offset, properties, masking_value)
 # Calculate weight factor for NSA peptides.
 # In our data, there are more peptides that do exhibit self assembly property than are those that do not. Therefore,
 # during model training, we must adjust weight factors to combat this data imbalance.
-factor_NSA = len(SA) / len(NSA)
+factor_NSA = len(SA) / len(NSA) 
 
-# Define random seed
-seed = 42
- 
 # Merge SA nad NSA data the train and validation subsets.
 all_data, all_labels = merge_data_seq(SA, NSA) 
 

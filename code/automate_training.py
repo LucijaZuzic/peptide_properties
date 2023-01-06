@@ -10,7 +10,7 @@ import random
 from custom_plots import convert_to_binary, make_ROC_plots, make_PR_plots, output_metrics, hist_predicted
 
 LEARNING_RATE_SET = 0.01
-MAX_ITERATIONS = 5
+MAX_ITERATIONS = 1
 MAXLEN = 24
 
 # This function keeps the initial learning rate for the first ten epochs

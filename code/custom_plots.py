@@ -146,18 +146,41 @@ def make_a_PR_plot(
 
     # Locate the index of the largest F1 score
     ix = np.argmax(fscore)
+    model_predictions_binary_thr = convert_to_binary(model_predictions, thresholds[ix])
+    model_predictions_binary = convert_to_binary(model_predictions, 0.5)
     other_output = open(results_name(some_path, test_number), "a", encoding="utf-8")
     other_output.write(
         merge_type_iteration(some_path, final_model_type, iteration, test_number)
         + " "
         + label
-        + ": Threshold = %f, F1 = %.3f" % (thresholds[ix], fscore[ix])
+        + ": PR thr = %.12f PR AUC = %.12f F1 = %.12f F1 (0.5) = %.12f F1 (thr) = %.12f" % 
+        (thresholds[ix], auc(recall, precision), fscore[ix], 
+        f1_score(test_labels, model_predictions_binary), 
+        f1_score(test_labels, model_predictions_binary_thr))
     )
     other_output.write("\n")
     other_output.close()
     plt.plot(
         recall[ix], precision[ix], "o", markerfacecolor=pattern, markeredgecolor="k"
     )
+
+def getPRthr(test_labels, model_predictions):
+    # Get recall and precision.
+    precision, recall, thresholds = precision_recall_curve(
+        test_labels, model_predictions
+    ) 
+
+    # Calculate the F1 score for each threshold
+    fscore = []
+    for i in range(len(precision)):
+        fscore.append(
+            weird_division(2 * precision[i] * recall[i], precision[i] + recall[i])
+        )
+
+    # Locate the index of the largest F1 score
+    ix = np.argmax(fscore)
+
+    return thresholds[ix], fscore[ix]
 
 
 def make_PR_plots(
@@ -233,11 +256,24 @@ def make_a_ROC_plot(
         merge_type_iteration(some_path, final_model_type, iteration, test_number)
         + " "
         + label
-        + ": Threshold = %f, Geometric mean = %.3f" % (thresholds[ix], gmeans[ix])
+        + ": ROC thr = %f gmean = %.12f ROC AUC = %.12f" % (thresholds[ix], gmeans[ix], roc_auc_score(test_labels, model_predictions))
     )
     other_output.write("\n")
     other_output.close()
     plt.plot(fpr[ix], tpr[ix], "o", markerfacecolor=pattern, markeredgecolor="k")
+
+
+def getROCthr(test_labels, model_predictions):
+    # Get false positive rate and true positive rate.
+    fpr, tpr, thresholds = roc_curve(test_labels, model_predictions)
+
+    # Calculate the g-mean for each threshold
+    gmeans = np.sqrt(tpr * (1 - fpr))
+
+    # Locate the index of the largest g-mean
+    ix = np.argmax(gmeans)
+
+    return thresholds[ix], gmeans[ix]
 
 
 def make_ROC_plots(
@@ -305,19 +341,45 @@ def output_metrics(
 ):
     # Get recall and precision.
     precision, recall, _ = precision_recall_curve(test_labels, model_predictions)
+    thresholdPR, f1 = getPRthr(test_labels, model_predictions)
 
     # Convert probabilities to predictions
     model_predictions_binary = convert_to_binary(model_predictions, threshold)
+    model_predictions_binary_thr = convert_to_binary(model_predictions, thresholdPR)
+
+    # Get ROC
+    thresholdROC, gmean = getROCthr(test_labels, model_predictions)
 
     other_output = open(results_name(some_path, test_number), "a", encoding="utf-8")
     other_output.write(
-        "%s: Accuracy: %.2f%% Area under ROC curve: %.4f Area under PR curve: %.4f F1: %.4f"
+        "%s: Accuracy (0.5) = %.12f%% Accuracy (ROC thr) = %.12f%% Accuracy (PR thr) = %.12f%%"
         % (
             merge_type_iteration(some_path, final_model_type, iteration, test_number),
             my_accuracy_calculate(test_labels, model_predictions, threshold),
+            my_accuracy_calculate(test_labels, model_predictions, thresholdROC),
+            my_accuracy_calculate(test_labels, model_predictions, thresholdPR)
+        )
+    )
+    other_output.write("\n")
+    other_output.write(
+        "%s: ROC thr = %.12f ROC AUC = %.12f gmean = %.12f"
+        % (
+            merge_type_iteration(some_path, final_model_type, iteration, test_number),
+            thresholdROC,
             roc_auc_score(test_labels, model_predictions),
+            gmean
+        )
+    )
+    other_output.write("\n")
+    other_output.write(
+        "%s: PR thr = %.12f PR AUC %.12f F1 = %.12f F1 (thr) = %.12f F1 (0.5) = %.12f"
+        % ( 
+            merge_type_iteration(some_path, final_model_type, iteration, test_number), 
+            thresholdPR,  
             auc(recall, precision),
-            f1_score(test_labels, model_predictions_binary),
+            f1,
+            f1_score(test_labels, model_predictions_binary_thr),
+            f1_score(test_labels, model_predictions_binary)
         )
     )
     other_output.write("\n")
@@ -400,7 +462,7 @@ def decorate_stats(some_path, test_number, history, params_nr="", fold_nr=""):
 
     other_output = open(results_name(some_path, test_number), "a", encoding="utf-8")
     other_output.write(
-        "%s: Maximum accuracy = %.2f%% Maximum validation accuracy = %.2f%% Minimal loss = %.2f%% Minimal validation loss = %.2f%%"
+        "%s: Maximum accuracy = %.12f%% Maximum validation accuracy = %.12f%% Minimal loss = %.12f Minimal validation loss = %.12f"
         % (
             merge_type_params(some_path, fold_nr, params_nr, test_number),
             accuracy_max * 100,
@@ -411,7 +473,7 @@ def decorate_stats(some_path, test_number, history, params_nr="", fold_nr=""):
     )
     other_output.write("\n")
     other_output.write(
-        "%s: Accuracy = %.2f%% (%.2f%%) Validation accuracy = %.2f%% (%.2f%%) Loss = %.2f%% (%.2f%%) Validation loss = %.2f%% (%.2f%%)"
+        "%s: Accuracy = %.12f%% (%.12f%%) Validation accuracy = %.12f%% (%.12f%%) Loss = %.12f (%.12f) Validation loss = %.12f (%.12f)"
         % (
             merge_type_params(some_path, fold_nr, params_nr, test_number),
             np.mean(accuracy) * 100,
@@ -461,7 +523,7 @@ def decorate_stats_final(some_path, test_number, history, iteration):
 
     other_output = open(results_name(some_path, test_number), "a", encoding="utf-8")
     other_output.write(
-        "%s: Maximum accuracy = %.2f%% Minimal loss = %.2f%%"
+        "%s: Maximum accuracy = %.12f%% Minimal loss = %.12f"
         % (
             merge_type_iteration(some_path, "weak", iteration, test_number),
             accuracy_max * 100,
@@ -470,7 +532,7 @@ def decorate_stats_final(some_path, test_number, history, iteration):
     )
     other_output.write("\n")
     other_output.write(
-        "%s: Accuracy = %.2f%% (%.2f%%) Loss = %.2f%% (%.2f%%)"
+        "%s: Accuracy = %.12f%% (%.12f%%) Loss = %.12f (%.12f)"
         % (
             merge_type_iteration(some_path, "weak", iteration, test_number),
             np.mean(accuracy) * 100,
@@ -506,7 +568,7 @@ def decorate_stats_avg(
 
     other_output = open(results_name(some_path, test_number), "a", encoding="utf-8")
     other_output.write(
-        "%s Params %d average: Maximum accuracy = %.2f%% (%.2f%%) Maximum validation accuracy = %.2f%% (%.2f%%) Minimal loss = %.2f%% (%.2f%%) Minimal validation loss = %.2f%% (%.2f%%)"
+        "%s Params %d average: Maximum accuracy = %.12f%% (%.12f%%) Maximum validation accuracy = %.12f%% (%.12f%%) Minimal loss = %.12f (%.12f) Minimal validation loss = %.12f (%.12f)"
         % (
             merge_type_test_number(some_path, test_number),
             params_nr,
@@ -522,7 +584,7 @@ def decorate_stats_avg(
     )
     other_output.write("\n")
     other_output.write(
-        "%s Params %d average: Accuracy = %.2f%% (%.2f%%) Validation accuracy = %.2f%% (%.2f%%) Loss = %.2f%% (%.2f%%) Validation loss = %.2f%% (%.2f%%)"
+        "%s Params %d average: Accuracy = %.12f%% (%.12f%%) Validation accuracy = %.12f%% (%.12f%%) Loss = %.12f (%.12f) Validation loss = %.12f (%.12f)"
         % (
             merge_type_test_number(some_path, test_number),
             params_nr,

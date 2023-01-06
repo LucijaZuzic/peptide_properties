@@ -1,6 +1,6 @@
 import numpy as np 
 from automate_training import load_data_SA, model_training, merge_data, data_and_labels_from_indices, extract_len_from_data_and_labels
-from utils import DATA_PATH, MODEL_DATA_PATH, results_name, log_name, basic_dir
+from utils import getSeed, DATA_PATH, MODEL_DATA_PATH, results_name, log_name, basic_dir
 import sys  
 from sklearn.model_selection import StratifiedKFold
 import os
@@ -11,7 +11,7 @@ EPOCHS = 70
 names = ['AP']
 offset = 1
 # Define random seed
-seed = 42
+seed = getSeed()
 SA_data = np.load(DATA_PATH+'data_SA_updated.npy', allow_pickle=True).item()
   
 properties = np.ones(95)
