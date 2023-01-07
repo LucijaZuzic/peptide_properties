@@ -140,7 +140,7 @@ def model_predict_AP(num_props, best_batch_size, test_data, test_labels, best_mo
     model_predictions = convert_list(model_predictions)  
     return model_predictions
 
-def common_no_file_after_training(thr, test_number, some_path, final_model_type, iteration, model_predictions, properties, names=['AP'], offset = 1, masking_value=2):
+def common_no_file_after_training(thr, test_number, some_path, final_model_type, iteration, properties, model_file, model, names=['AP'], offset = 1, masking_value=2):
     # Get sequences for peptides with no labels and predictions from the model without machine learning 
     resulteval = DATA_PATH+'RESULTEVAL.csv' 
     df = pd.read_csv(resulteval, skipinitialspace=True, sep=';')
@@ -158,11 +158,16 @@ def common_no_file_after_training(thr, test_number, some_path, final_model_type,
 
     if some_path == SEQ_MODEL_DATA_PATH:
         SA, NSA = load_data_SA_seq(SA_data, names, offset, properties, masking_value)
+        all_data, all_labels = merge_data_seq(SA, NSA)
+        model_predictions = model_predict_seq(600, all_data, all_labels, model_file, model)
     if some_path == MY_MODEL_DATA_PATH:
         SA, NSA = load_data_SA_AP(SA_data, names, offset, properties, masking_value)
+        all_data, all_labels = merge_data_AP(SA, NSA)
+        model_predictions = model_predict_AP(3, 600, all_data, all_labels, model_file, model)
     if some_path == MODEL_DATA_PATH:
         SA, NSA = load_data_SA(SA_data, names, offset, properties, masking_value)
-    all_data, all_labels = merge_data_seq(SA, NSA)
+        all_data, all_labels = merge_data(SA, NSA)
+        model_predictions = model_predict(3, 600, all_data, all_labels, model_file, model)
     
     all_data = all_data[:-1] 
     all_labels = all_labels[:-1]  
@@ -217,10 +222,11 @@ def common_predict(final_model_type, path, model_predictions, test_number, itera
     # Output histograms that show the distribution of predicted probabilities of self-assembly for the SA and NSA class separately and for each model separately
     hist_predicted(path, test_number, final_model_type, iteration, test_labels, model_predictions) 
 
-def adaboost_generate_predictions(thr, model_predictions, test_number, some_path, final_model_type, iteration, test_labels, properties, names = ['AP'], offset = 1, masking_value = 2):
+def adaboost_generate_predictions(thr, model_predictions, model, test_number, some_path, final_model_type, iteration, test_labels, properties, names = ['AP'], offset = 1, masking_value = 2):
     # Generate predictions on data that has no label beforehand 
     common_predict(final_model_type, some_path, model_predictions, test_number, iteration, test_labels)
-    common_no_file_after_training(thr, test_number, some_path, final_model_type, iteration, model_predictions, properties, names=['AP'], offset = 1, masking_value=2)
+    if final_model_type == 'weak':
+        common_no_file_after_training(thr, test_number, some_path, final_model_type, iteration, properties, '', model, names, offset, masking_value)
     
 def extract_len_from_data_and_labels(data, labels, len_target, padding):
     only_one_len_indices = [] 
@@ -348,7 +354,7 @@ def load_data_SA_seq(SA_data, names=['AP'], offset = 1, properties_to_include = 
             new_props.append(tripeptides_ap_padded) 
 
             #new_props = read_mordred(sequences[index], new_props, len(encoded_sequences[index]), masking_value)
-        
+
         other_props = np.reshape(encoded_sequences[index], (len(encoded_sequences[index][0]), len(encoded_sequences[index])))
                                  
         for prop_index in range(len(properties_to_include)):
@@ -356,7 +362,7 @@ def load_data_SA_seq(SA_data, names=['AP'], offset = 1, properties_to_include = 
                 array = other_props[prop_index]
                 for i in range(len(array)):
                     if array[i] == 0.0:
-                        array[i] = 2.0
+                        array[i] = masking_value
                 new_props.append(array)
                  
         new_props = np.reshape(new_props, (len(encoded_sequences[index]), len(new_props))) 
@@ -408,7 +414,7 @@ def load_data_SA(SA_data, names=['AP'], offset = 1, properties_to_include = [], 
                 array = other_props[prop_index]
                 for i in range(len(array)):
                     if array[i] == 0.0:
-                        array[i] = 2.0
+                        array[i] = masking_value
                 new_props.append(array) 
         
         if labels[index] == '1':
@@ -889,9 +895,9 @@ def final_train_AP(models, model_predictions, alpha_values, sample_weights, iter
     model_predictions.append(model_pred_single)
     model_pred_multiple = multiple_model_predict_AP(0.5, num_props, best_batch_size, test_data, test_labels, models, model_predictions, alpha_values)
 
-    adaboost_generate_predictions(0.5, model_pred_single, test_number, MY_MODEL_DATA_PATH, 'weak', iteration, test_labels, properties, names, offset, mask_value)
+    adaboost_generate_predictions(0.5, model_pred_single, model, test_number, MY_MODEL_DATA_PATH, 'weak', iteration, test_labels, properties, names, offset, mask_value)
 
-    adaboost_generate_predictions(0.5, model_pred_multiple, test_number, MY_MODEL_DATA_PATH, 'iteration', iteration, test_labels, properties, names, offset, mask_value)
+    adaboost_generate_predictions(0.5, model_pred_multiple, model, test_number, MY_MODEL_DATA_PATH, 'iteration', iteration, test_labels, properties, names, offset, mask_value)
   
     if iteration < MAX_ITERATIONS:
         final_train_AP(models, model_predictions, alpha_values, sample_weights, iteration + 1, factor_NSA, epochs, test_number, num_props, data, labels, best_batch_size, best_lstm, best_dense, best_dropout, best_lambda, test_data, test_labels, properties, names, offset,  mask_value)
@@ -922,9 +928,9 @@ def final_train(models, model_predictions, alpha_values, sample_weights, iterati
     model_predictions.append(model_pred_single)
     model_pred_multiple = multiple_model_predict(0.5, num_props, best_batch_size, test_data, test_labels, models, model_predictions, alpha_values)
 
-    adaboost_generate_predictions(0.5, model_pred_single, test_number, MODEL_DATA_PATH, 'weak', iteration, test_labels, properties, names, offset, mask_value)
+    adaboost_generate_predictions(0.5, model_pred_single, model, test_number, MODEL_DATA_PATH, 'weak', iteration, test_labels, properties, names, offset, mask_value)
 
-    adaboost_generate_predictions(0.5, model_pred_multiple, test_number, MODEL_DATA_PATH, 'iteration', iteration, test_labels, properties, names, offset, mask_value)
+    adaboost_generate_predictions(0.5, model_pred_multiple, model, test_number, MODEL_DATA_PATH, 'iteration', iteration, test_labels, properties, names, offset, mask_value)
 
     if iteration < MAX_ITERATIONS:
         final_train(models, model_predictions, alpha_values, sample_weights, iteration + 1, factor_NSA, epochs, test_number, num_props, data, labels, best_batch_size, best_lstm, best_dense, best_dropout, best_lambda, best_conv, best_numcells, best_kernel, test_data, test_labels, properties, names, offset,  mask_value)
@@ -955,9 +961,9 @@ def final_train_seq(models, model_predictions, alpha_values, sample_weights, ite
     model_predictions.append(model_pred_single)
     model_pred_multiple = multiple_model_predict_seq(0.5, best_batch_size, test_data, test_labels, models, model_predictions, alpha_values)
   
-    adaboost_generate_predictions(0.5, model_pred_single, test_number, SEQ_MODEL_DATA_PATH, 'weak', iteration, test_labels, properties, names, offset, mask_value)
+    adaboost_generate_predictions(0.5, model_pred_single, model, test_number, SEQ_MODEL_DATA_PATH, 'weak', iteration, test_labels, properties, names, offset, mask_value)
 
-    adaboost_generate_predictions(0.5, model_pred_multiple, test_number, SEQ_MODEL_DATA_PATH, 'iteration', iteration, test_labels, properties, names, offset, mask_value)
+    adaboost_generate_predictions(0.5, model_pred_multiple, model, test_number, SEQ_MODEL_DATA_PATH, 'iteration', iteration, test_labels, properties, names, offset, mask_value)
 
     if iteration < MAX_ITERATIONS:
         final_train_seq(models, model_predictions, alpha_values, sample_weights, iteration + 1, factor_NSA, epochs, test_number, data, labels, best_batch_size, best_dropout, best_conv, best_numcells, best_kernel, test_data, test_labels, properties, names, offset, mask_value)
