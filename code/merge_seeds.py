@@ -211,9 +211,7 @@ def findValInLine(line, name):
             isFloat = True
         end += 1
 
-    if isFloat:
-        if name == 'Minimal loss = ':
-            return float(line[start:end]) / 100.0
+    if isFloat: 
         return float(line[start:end])
     else:
         return int(line[start:end])  

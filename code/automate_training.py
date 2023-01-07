@@ -257,17 +257,16 @@ def data_and_labels_from_indices(all_data, all_labels, indices):
 def reshape_seq(all_data, all_labels):
     data = []
     labels = []
-
     for i in range(len(all_data)):
-        data.append(all_data[i])
-        labels.append(all_labels[i]) 
+        data.append(np.array(all_data[i]))
+        labels.append(all_labels[i])  
     if len(data) > 0:
-        data = np.reshape(data, (len(data), np.shape(data[0])[0], np.shape(data[0])[1]))
-    labels = np.array(labels)
-    
-    return data, labels 
+        data = np.array(data)
+    if len(labels) > 0:
+        labels = np.array(labels)
+    return data, labels
 
-def reshape_AP(num_props, all_data, all_labels):
+def reshape_AP(num_props, all_data, all_labels):  
     data = [[] for i in range(len(all_data[0]))]
     labels = []
     for i in range(len(all_data)):
@@ -276,12 +275,12 @@ def reshape_AP(num_props, all_data, all_labels):
         labels.append(all_labels[i])  
     new_data = []   
     for i in range(len(data)):
-        if len(data[i]) > 0 and i < num_props:
-            new_data.append(np.array(data[i]).reshape(len(labels), -1))  
+        if len(data[i]) > 0 and i < num_props:  
+            new_data.append(np.array(data[i]))
     labels = np.array(labels) 
     return new_data, labels 
 
-def reshape(num_props, all_data, all_labels):
+def reshape(num_props, all_data, all_labels):   
     data = [[] for i in range(len(all_data[0]))]
     labels = []
     for i in range(len(all_data)):
@@ -291,11 +290,12 @@ def reshape(num_props, all_data, all_labels):
     new_data = []
     last_data = []    
     for i in range(len(data)):
-        if len(data[i]) > 0 and i < num_props:
-            new_data.append(np.array(data[i]).reshape(len(labels), -1))
-        if len(data[i]) > 0 and i >= num_props:
-           last_data.append(np.array(data[i]).reshape(len(labels), -1))
-    last_data = np.array(last_data).reshape(len(last_data[0]), len(last_data[0][0]), len(last_data))
+        if len(data[i]) > 0 and i < num_props: 
+            new_data.append(np.array(data[i]))
+        if len(data[i]) > 0 and i >= num_props: 
+            last_data.append(np.array(data[i])) 
+    if len(last_data) > 0:
+        last_data = np.array(last_data).transpose(1, 2, 0)
     new_data.append(last_data)
     labels = np.array(labels) 
     return new_data, labels 
@@ -355,26 +355,26 @@ def load_data_SA_seq(SA_data, names=['AP'], offset = 1, properties_to_include = 
 
             #new_props = read_mordred(sequences[index], new_props, len(encoded_sequences[index]), masking_value)
 
-        other_props = np.reshape(encoded_sequences[index], (len(encoded_sequences[index][0]), len(encoded_sequences[index])))
-                                 
+        other_props = np.transpose(encoded_sequences[index])  
+
         for prop_index in range(len(properties_to_include)):
             if prop_index < len(other_props) and properties_to_include[prop_index] == 1:
                 array = other_props[prop_index]
                 for i in range(len(array)):
-                    if array[i] == 0.0:
+                    if i >= len(sequences[index]):
                         array[i] = masking_value
                 new_props.append(array)
                  
-        new_props = np.reshape(new_props, (len(encoded_sequences[index]), len(new_props))) 
-        
+        new_props = np.transpose(new_props) 
+
         if labels[index] == '1':
             SA.append(new_props) 
         elif labels[index] == '0':
             NSA.append(new_props) 
     if len(SA) > 0:
-        SA = np.reshape(SA, (len(SA), np.shape(SA[0])[0], np.shape(SA[0])[1]))
+        SA = np.array(SA)
     if len(NSA) > 0:
-        NSA = np.reshape(NSA, (len(NSA), np.shape(NSA[0])[0], np.shape(NSA[0])[1]))
+        NSA = np.array(NSA)
     return SA, NSA
 
 def load_data_SA(SA_data, names=['AP'], offset = 1, properties_to_include = [], masking_value=2):
@@ -407,13 +407,13 @@ def load_data_SA(SA_data, names=['AP'], offset = 1, properties_to_include = [], 
 
             #new_props = read_mordred(sequences[index], new_props, len(encoded_sequences[index]), masking_value)
         
-        other_props = np.reshape(encoded_sequences[index], (len(encoded_sequences[index][0]), len(encoded_sequences[index])))
-                                 
+        other_props = np.transpose(encoded_sequences[index])  
+
         for prop_index in range(len(properties_to_include)):
             if prop_index < len(other_props) and properties_to_include[prop_index] == 1:
                 array = other_props[prop_index]
                 for i in range(len(array)):
-                    if array[i] == 0.0:
+                    if i >= len(sequences[index]):
                         array[i] = masking_value
                 new_props.append(array) 
         
@@ -489,7 +489,8 @@ def merge_data_seq(SA, NSA):
     for i in NSA:
         merged_data.append(i)
     if len(merged_data) > 0:
-        merged_data = np.reshape(merged_data, (len(merged_data), np.shape(merged_data[0])[0], np.shape(merged_data[0])[1]))
+        merged_data = np.array(merged_data)
+        #merged_data = np.reshape(merged_data, (len(merged_data), np.shape(merged_data[0])[0], np.shape(merged_data[0])[1]))
     merged_labels = np.ones(len(SA) + len(NSA))
     merged_labels[len(SA):] *= 0
 
@@ -657,10 +658,10 @@ def model_training(num_props, test_number, train_and_validation_data, train_and_
                                         
                                         # Save model to correct file based on number of fold
                                         model_file, model_picture = h5_and_png(MODEL_DATA_PATH, test_number, params_nr, fold_nr)
-
+                                        
                                         # Choose correct model and instantiate model 
                                         model = new_model.amino_di_tri_model(num_props, input_shape=np.shape(train_data[num_props][0]), conv=conv, numcells=numcells, kernel_size=kernel, lstm1=lstm, lstm2=lstm, dense=dense, dropout=dropout, lambda2=my_lambda, mask_value=mask_value)
-                  
+ 
                                         history = common_final_train('val_loss', model, model_picture, model_file, 0, batch, epochs, [], train_data, train_labels, val_data, val_labels)
                                         
                                         history_val_loss += history.history['val_loss']
@@ -851,7 +852,7 @@ def common_final_train(metric, model, model_picture, model_file, iteration, best
                 train_and_validation_data, 
                 train_and_validation_labels,
                 #validation_split = 0.1,  
-                sample_weight=np.reshape(sample_weights, (len(sample_weights), )),
+                sample_weight=np.array(sample_weights),#np.reshape(sample_weights, (len(sample_weights), )),
                 epochs=epochs,
                 batch_size = best_batch_size,
                 callbacks=callbacks,

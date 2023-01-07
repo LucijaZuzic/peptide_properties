@@ -93,7 +93,7 @@ def history_name(some_path, test_number, params_nr, fold_nr):
 
 def final_history_name(some_path, test_number, iteration): 
     start = basic_path(some_path, test_number)  
-    end = final_model_type_plus_iteration('weak', iteration) #+ ".txt"
+    end = final_model_type_plus_iteration('weak', iteration) + ".txt"
     return start + "acc" + end, start + "loss" + end 
 
 def convert_list(model_predictions): 
