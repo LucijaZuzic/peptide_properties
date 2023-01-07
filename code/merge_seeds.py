@@ -1,9 +1,86 @@
-from utils import predictions_name, DATA_PATH, SEQ_MODEL_DATA_PATH, MODEL_DATA_PATH, MY_MODEL_DATA_PATH, setSeed, PATH_TO_EXTENSION
-from custom_plots import merge_type_iteration, results_name
+from utils import predictions_name, final_history_name, DATA_PATH, SEQ_MODEL_DATA_PATH, MODEL_DATA_PATH, MY_MODEL_DATA_PATH, setSeed, getSeed, PATH_TO_EXTENSION
+from custom_plots import merge_type_iteration, results_name,my_accuracy_calculate, weird_division, convert_to_binary
 import matplotlib.pyplot as plt
 import os
 import numpy as np
+from sklearn.metrics import (
+    roc_curve,
+    precision_recall_curve,
+    roc_auc_score,
+    auc,
+    f1_score,
+)
 
+def read_one_final_history(some_path, test_number, iteration):
+    acc_path, loss_path = final_history_name(some_path, test_number, iteration)
+    acc_file = open(acc_path, "r")
+    acc_lines = acc_file.readlines()
+    acc = eval(acc_lines[0]) 
+    acc_file.close() 
+    loss_file = open(loss_path, "r")
+    loss_lines = loss_file.readlines()
+    loss = eval(loss_lines[0]) 
+    loss_file.close() 
+    return acc, loss  
+
+def read_all_final_history(some_path, iteration, lines_dict, sd_dict): 
+    all_acc = []
+    all_loss = []
+    for test_number in range(1, NUM_TESTS + 1):
+        acc, loss = read_one_final_history(some_path, test_number, iteration)
+        for a in acc:
+            all_acc.append(float(a))
+        for l in loss:
+            all_loss.append(float(l))
+
+    lines_dict['Maximum accuracy = '].append(np.max(all_acc) * 100)
+    lines_dict['Minimal loss = '].append(np.min(all_loss) * 100)
+    lines_dict['Accuracy = '].append(np.mean(all_acc) * 100)
+    lines_dict['Loss = '].append(np.mean(all_loss))
+    sd_dict['Accuracy = '].append(np.std(all_acc) * 100)
+    sd_dict['Loss = '].append(np.std(all_loss)) 
+
+def read_ROC(test_labels, model_predictions, lines_dict): 
+    # Get false positive rate and true positive rate.
+    fpr, tpr, thresholds = roc_curve(test_labels, model_predictions) 
+
+    # Calculate the g-mean for each threshold
+    gmeans = np.sqrt(tpr * (1 - fpr))
+
+    # Locate the index of the largest g-mean
+    ix = np.argmax(gmeans) 
+
+    lines_dict['ROC thr = '].append(thresholds[ix])
+    lines_dict['gmean = '].append(gmeans[ix])
+    lines_dict['ROC AUC = '].append(roc_auc_score(test_labels, model_predictions))
+    lines_dict['Accuracy (ROC thr) = '].append(my_accuracy_calculate(test_labels, model_predictions, thresholds[ix]))
+   
+def read_PR(test_labels, model_predictions, lines_dict):  
+    # Get recall and precision.
+    precision, recall, thresholds = precision_recall_curve(
+        test_labels, model_predictions
+    ) 
+
+    # Calculate the F1 score for each threshold
+    fscore = []
+    for i in range(len(precision)):
+        fscore.append(
+            weird_division(2 * precision[i] * recall[i], precision[i] + recall[i])
+        )
+
+    # Locate the index of the largest F1 score
+    ix = np.argmax(fscore)
+    model_predictions_binary_thr = convert_to_binary(model_predictions, thresholds[ix])
+    model_predictions_binary = convert_to_binary(model_predictions, 0.5)
+ 
+    lines_dict['PR thr = '].append(thresholds[ix])
+    lines_dict['PR AUC = '].append(auc(recall, precision))
+    lines_dict['F1 = '].append(fscore[ix])
+    lines_dict['F1 (0.5) = '].append(f1_score(test_labels, model_predictions_binary))
+    lines_dict['F1 (thr) = '].append(f1_score(test_labels, model_predictions_binary_thr))
+    lines_dict['Accuracy (PR thr) = '].append(my_accuracy_calculate(test_labels, model_predictions, thresholds[ix]))
+    lines_dict['Accuracy (0.5) = '].append(my_accuracy_calculate(test_labels, model_predictions, 0.5))
+  
 def read_one_prediction(some_path, test_number, final_model_type, iteration):
     file = open(predictions_name(some_path, test_number, final_model_type, iteration), "r")
     lines = file.readlines()
@@ -133,7 +210,10 @@ def findValInLine(line, name):
         if line[end] == '.':
             isFloat = True
         end += 1
+
     if isFloat:
+        if name == 'Minimal loss = ':
+            return float(line[start:end]) / 100.0
         return float(line[start:end])
     else:
         return int(line[start:end])  
@@ -167,16 +247,62 @@ def arrayToTable(array, addArray, addAvg, addMostFrequent):
             freqdict[i] = freqdict[i] + 1
         else:
             freqdict[i] = 1
-    most_freq = array[0]
-    num_most = freqdict[most_freq]
+    most_freq = []
+    num_most = 0
     for i in freqdict:
-        if freqdict[i] > num_most:
-            most_freq = i
-            num_most = freqdict[i]
+        if freqdict[i] >= num_most:
+            if freqdict[i] > num_most:
+                most_freq = []
+            most_freq.append(i)
+            num_most = freqdict[i] 
     if addAvg:
         retstr += " & %.5f" %(np.mean(array))
-    if addMostFrequent:
-        retstr += " & %d (%d/%d)" %(most_freq, num_most, len(array)) 
+    if addMostFrequent: 
+        most_freq_str = str(sorted(most_freq)[0])
+        for i in sorted(most_freq[1:]):
+            most_freq_str += ", " + str(i)
+        retstr += " & %s (%d/%d)" %(most_freq_str, num_most, len(array)) 
+    return retstr + " \\\\"
+
+def arrayToTableOnlyFreq(array):
+    retstr = "" 
+    all_freqdict = dict()
+    all_most_freq = []
+    all_num_most = 0
+    for start in range(0, len(array), NUM_TESTS): 
+        freqdict = dict()
+        end = start + NUM_TESTS
+        for i in array[start:end]: 
+            if i in freqdict:
+                freqdict[i] = freqdict[i] + 1
+            else:
+                freqdict[i] = 1
+            if i in all_freqdict:
+                all_freqdict[i] = all_freqdict[i] + 1
+            else:
+                all_freqdict[i] = 1
+        most_freq = []
+        num_most = 0
+        for i in freqdict:
+            if freqdict[i] >= num_most:
+                if freqdict[i] > num_most:
+                    most_freq = []
+                most_freq.append(i)
+                num_most = freqdict[i] 
+        for i in all_freqdict:
+            if all_freqdict[i] >= all_num_most:
+                if all_freqdict[i] > all_num_most:
+                    all_most_freq = []
+                all_most_freq.append(i)
+                all_num_most = all_freqdict[i]
+        most_freq_str = str(sorted(most_freq)[0])
+        for i in sorted(most_freq)[1:]:
+            most_freq_str += ", " + str(i)
+        retstr += " & %s (%d/%d)" %(most_freq_str, num_most, len(array[start:end])) 
+    all_most_freq_str = str(sorted(all_most_freq)[0])
+    for i in sorted(all_most_freq[1:]):
+        all_most_freq_str += ", " + str(i)
+    retstr += " & %s (%d/%d)" %(all_most_freq_str, all_num_most, len(array))  
     return retstr + " \\\\"
 
 vals_in_lines = ['num_cells: ', 'kernel_size: ', 'dense: ',
@@ -195,7 +321,7 @@ for some_path in paths:
         lines_dict[val] = [] 
         sd_dict[val] = []  
 
-    for seed in [305475974]:
+    for seed in seed_list:
         setSeed(seed)
         interesting_lines_list = []
         for test_number in range(1, NUM_TESTS + 1):
@@ -227,4 +353,51 @@ for some_path in paths:
                 print(val.replace(" = ", "") + arrayToTable(lines_dict[val], True, True, False))
             else:
                 print(val.replace(": ", "") + arrayToTable(lines_dict[val], True, False, True))
+  
+for some_path in paths:
 
+    lines_dict = dict()
+    sd_dict = dict()
+
+    for val in vals_in_lines:
+        lines_dict[val] = [] 
+        sd_dict[val] = []   
+
+    for seed in seed_list:
+        setSeed(seed)
+        interesting_lines_list = []
+        for test_number in range(1, NUM_TESTS + 1):
+            for line in interesting_lines(some_path, test_number, "Test"):
+                interesting_lines_list.append(line)
+        for i in range(len(interesting_lines_list)):
+            if i == 3 or i == 7:
+                continue
+            for val in vals_in_lines:
+                if val.find(":") == -1:
+                    continue
+                res = findValInLine(interesting_lines_list[i], val)
+                if res != False:
+                    lines_dict[val].append(res)
+                    if val == 'Loss = ' or val == 'Accuracy = ':
+                        index = interesting_lines_list[i].find(val)
+                        sd_dict[val].append(findValInLine(interesting_lines_list[i][index:], '('))
+        read_all_final_history(some_path, 1, lines_dict, sd_dict)
+        model_predictions, test_labels = read_all_model_predictions(some_path, 1, 5, "weak", 1)
+        read_PR(test_labels, model_predictions, lines_dict)
+        read_ROC(test_labels, model_predictions, lines_dict)
+
+    print(some_path)
+    for val in vals_in_lines:
+        if len(lines_dict[val]) == 0:
+            continue
+        if val == 'Loss = ':
+            print(val.replace(" = ", "") + doubleArrayToTable(lines_dict[val], sd_dict[val], True, False))
+            continue
+        if val == 'Accuracy = ':
+            print(val.replace(" = ", "") + doubleArrayToTable(lines_dict[val], sd_dict[val], True, True))
+            continue
+        else:
+            if val.find(":") == -1:
+                print(val.replace(" = ", "") + arrayToTable(lines_dict[val], True, True, False))
+            else: 
+                print(val.replace(": ", "") + arrayToTableOnlyFreq(lines_dict[val]))

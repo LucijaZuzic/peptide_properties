@@ -256,7 +256,7 @@ def make_a_ROC_plot(
         merge_type_iteration(some_path, final_model_type, iteration, test_number)
         + " "
         + label
-        + ": ROC thr = %f gmean = %.12f ROC AUC = %.12f" % (thresholds[ix], gmeans[ix], roc_auc_score(test_labels, model_predictions))
+        + ": ROC thr = %.12f gmean = %.12f ROC AUC = %.12f" % (thresholds[ix], gmeans[ix], roc_auc_score(test_labels, model_predictions))
     )
     other_output.write("\n")
     other_output.close()
@@ -467,8 +467,8 @@ def decorate_stats(some_path, test_number, history, params_nr="", fold_nr=""):
             merge_type_params(some_path, fold_nr, params_nr, test_number),
             accuracy_max * 100,
             val_acc_max * 100,
-            loss_min * 100,
-            val_loss_min * 100,
+            loss_min,
+            val_loss_min,
         )
     )
     other_output.write("\n")
@@ -527,7 +527,7 @@ def decorate_stats_final(some_path, test_number, history, iteration):
         % (
             merge_type_iteration(some_path, "weak", iteration, test_number),
             accuracy_max * 100,
-            loss_min * 100,
+            loss_min,
         )
     )
     other_output.write("\n")
