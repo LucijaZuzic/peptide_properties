@@ -8,7 +8,7 @@ import os
 # Algorithm settings 
 N_FOLDS_SECOND = 5
 EPOCHS = 70
-names = ['AP']
+names = ['AP', 'logP', 'APH', 'polarity_selu']
 offset = 1
 # Define random seed
 seed = getSeed()

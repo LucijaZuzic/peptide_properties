@@ -38,7 +38,7 @@ for seed in seed_list:
         common_no_file_after_training(0.5, number, MODEL_DATA_PATH, 'weak', 1, properties, best_model_file, '', names=['AP'], offset = 1, masking_value=2)
     
         best_model_file, best_model_image = final_h5_and_png(SEQ_MODEL_DATA_PATH, number, 1)
-        common_no_file_after_training(0.5, number, SEQ_MODEL_DATA_PATH, 'weak', 1, properties, best_model_file, '', names= ['AP'], offset = 1, masking_value=2)
+        common_no_file_after_training(0.5, number, SEQ_MODEL_DATA_PATH, 'weak', 1, properties, best_model_file, '', names= ['AP', 'logP', 'APH', 'polarity_selu'], offset = 1, masking_value=2)
 
 names = ['AP']
 num_props= len(names) * 3
@@ -65,7 +65,7 @@ for seed in seed_list:
         print(number)
         
         best_model_file, best_model_image = final_h5_and_png(SEQ_MODEL_DATA_PATH, number, 1)
-        common_no_file_after_training(0.5, number, SEQ_MODEL_DATA_PATH, 'weak', 1, properties, best_model_file, '', names= ['AP'], offset = 1, masking_value=2)
+        common_no_file_after_training(0.5, number, SEQ_MODEL_DATA_PATH, 'weak', 1, properties, best_model_file, '', names= ['AP', 'logP', 'APH', 'polarity_selu'], offset = 1, masking_value=2)
 
         model_predictions_seq_hex = model_predict_seq(best_batch_size, all_data_SEQ, all_labels_SEQ, best_model_file, best_model)
 
