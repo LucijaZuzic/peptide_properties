@@ -25,7 +25,7 @@ offset = 1
   
 properties = np.ones(95)
 masking_value = 2
-
+'''
 for seed in seed_list:
     setSeed(seed)
     print(seed)
@@ -39,7 +39,7 @@ for seed in seed_list:
     
         best_model_file, best_model_image = final_h5_and_png(SEQ_MODEL_DATA_PATH, number, 1)
         common_no_file_after_training(0.5, number, SEQ_MODEL_DATA_PATH, 'weak', 1, properties, best_model_file, '', names= ['AP', 'logP', 'APH', 'polarity_selu'], offset = 1, masking_value=2)
-
+'''
 names = ['AP']
 num_props= len(names) * 3
 SA_AP, NSA_AP = load_data_SA_AP(dict_hex, names, offset, properties, masking_value)
