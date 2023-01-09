@@ -2,6 +2,7 @@ print(2 == 2.0)
 from seqprops import SequentialPropertiesEncoder 
 from sklearn.preprocessing import MinMaxScaler 
 import numpy as np
+import pandas as pd
 from utils import DATA_PATH
 from automate_training import reshape, reshape_AP, reshape_seq, load_data_SA_seq, load_data_SA, load_data_SA_AP, load_data_AP, split_amino_acids, split_dipeptides, split_tripeptides, padding
 seq = ''
@@ -62,13 +63,15 @@ for i in range(len(header)):
         print(i, header[i]) 
         indexes[header[i]] = i
 print(indexes)
+print()
+
 for i in range(index, index + 1):
     print(seqs[i]) 
     for j in range(0, len(seqs[i])):
         for k in indexes:
             print(encoded_sequences[i][j][indexes[k]])
         print(" ")
-        
+      
     for name in ['AP', 'logP', 'APH', 'polarity_selu']:
         amino_acids_AP, dipeptides_AP, tripeptides_AP = load_data_AP(name, offset)  
         amino_acids_ap = split_amino_acids(seqs[index], amino_acids_AP)
@@ -78,14 +81,13 @@ for i in range(index, index + 1):
         amino_acids_ap_padded = padding(amino_acids_ap, len(encoded_sequences[index]), masking_value)
         dipeptides_acids_ap_padded = padding(dipeptides_ap, len(encoded_sequences[index]), masking_value)
         tripeptides_ap_padded = padding(tripeptides_ap, len(encoded_sequences[index]), masking_value)  
- 
+        print(name)
         print(amino_acids_ap_padded)
         print(dipeptides_acids_ap_padded)
         print(tripeptides_ap_padded)
- 
+''' 
 resulteval = DATA_PATH+'RESULTEVAL.csv' 
 
-import pandas as pd
 df = pd.read_csv(resulteval, skipinitialspace=True, sep=';')
 sequences = list(df['Dizajnirani peptid'])
 seq_example = ''
@@ -148,3 +150,4 @@ for i in range(index, index + 1):
 print(len(header))
 print(len(SA[0])) 
 print(len(SA[0][0]))
+'''

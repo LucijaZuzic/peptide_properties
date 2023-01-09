@@ -109,9 +109,9 @@ def scale(AP_dictionary, offset = 1):
     min_val = min(data)
     max_val = max(data)
 
-    # Scale AP scores to range [- offset, 1 - offset].
+    # Scale AP scores to range [- offset, offset].
     for key in AP_dictionary:
-        AP_dictionary[key] = (AP_dictionary[key] - min_val) / (max_val - min_val) - offset
+        AP_dictionary[key] = (AP_dictionary[key] - min_val) / (max_val - min_val) * 2 * offset - offset
    
 def split_amino_acids(sequence, amino_acids_AP_scores):
     ap_list = []
