@@ -350,7 +350,7 @@ for some_path in paths:
             if val.find(":") == -1:
                 print(val.replace(" = ", "") + arrayToTable(lines_dict[val], True, True, False))
             else:
-                print(val.replace(": ", "") + arrayToTable(lines_dict[val], True, False, True))
+                print(val.replace(": ", "").replace("_", " ") + arrayToTable(lines_dict[val], True, False, True))
   
 for some_path in paths:
 
@@ -398,4 +398,4 @@ for some_path in paths:
             if val.find(":") == -1:
                 print(val.replace(" = ", "") + arrayToTable(lines_dict[val], True, True, False))
             else: 
-                print(val.replace(": ", "") + arrayToTableOnlyFreq(lines_dict[val]))
+                print(val.replace(": ", "").replace("_", " ") + arrayToTableOnlyFreq(lines_dict[val]))

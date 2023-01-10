@@ -84,7 +84,37 @@ for i in range(index, index + 1):
         print(name)
         print(amino_acids_ap_padded)
         print(dipeptides_acids_ap_padded)
-        print(tripeptides_ap_padded)
+        print(tripeptides_ap_padded) 
+
+# Choose loading AP, APH, logP or polarity
+def load_data_AP_no_scale(name = 'AP', offset = 1):
+    # Load AP scores. 
+    amino_acids_AP = np.load(DATA_PATH+'amino_acids_'+name+'.npy', allow_pickle=True).item()
+    dipeptides_AP = np.load(DATA_PATH+'dipeptides_'+name+'.npy', allow_pickle=True).item()
+    tripeptides_AP = np.load(DATA_PATH+'tripeptides_'+name+'.npy', allow_pickle=True).item() 
+
+    return amino_acids_AP, dipeptides_AP, tripeptides_AP
+
+for i in range(index, index + 1):
+    print(seqs[i]) 
+    for j in range(0, len(seqs[i])):
+        for k in indexes:
+            print(encoded_sequences[i][j][indexes[k]])
+        print(" ")
+      
+    for name in ['AP', 'logP', 'APH', 'polarity_selu']:
+        amino_acids_AP, dipeptides_AP, tripeptides_AP = load_data_AP_no_scale(name, offset)  
+        amino_acids_ap = split_amino_acids(seqs[index], amino_acids_AP)
+        dipeptides_ap = split_dipeptides(seqs[index], dipeptides_AP)
+        tripeptides_ap = split_tripeptides(seqs[index], tripeptides_AP)
+                
+        amino_acids_ap_padded = padding(amino_acids_ap, len(encoded_sequences[index]), masking_value)
+        dipeptides_acids_ap_padded = padding(dipeptides_ap, len(encoded_sequences[index]), masking_value)
+        tripeptides_ap_padded = padding(tripeptides_ap, len(encoded_sequences[index]), masking_value)  
+        print(name)
+        print(amino_acids_ap_padded)
+        print(dipeptides_acids_ap_padded)
+        print(tripeptides_ap_padded) 
 ''' 
 resulteval = DATA_PATH+'RESULTEVAL.csv' 
 
