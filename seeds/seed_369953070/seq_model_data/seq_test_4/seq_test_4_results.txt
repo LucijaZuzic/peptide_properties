@@ -1,164 +1,164 @@
 Model SP Test 4 Params 1 Fold 1: conv: 5 num_cells: 32 kernel_size: 4 batch_size: 600 dropout: 0.50
-Model SP Test 4 Params 1 Fold 1: Maximum accuracy = 91.525423526764% Maximum validation accuracy = 88.135594129562% Minimal loss = 0.322786957026 Minimal validation loss = 0.322443485260
-Model SP Test 4 Params 1 Fold 1: Accuracy = 84.394673492227% (7.276713749014%) Validation accuracy = 84.721549238477% (4.046482297642%) Loss = 0.451958449398 (0.142986686061) Validation loss = 0.368934501920 (0.073565825584)
+Model SP Test 4 Params 1 Fold 1: Maximum accuracy = 86.864405870438% Maximum validation accuracy = 89.830505847931% Minimal loss = 0.442435622215 Minimal validation loss = 0.299392342567
+Model SP Test 4 Params 1 Fold 1: Accuracy = 80.562953948975% (6.559266370272%) Validation accuracy = 86.440676535879% (5.570058858129%) Loss = 0.557624521000 (0.131995864682) Validation loss = 0.362360814214 (0.090588733173)
 Model SP Test 4 Params 1 Fold 2: conv: 5 num_cells: 32 kernel_size: 4 batch_size: 600 dropout: 0.50
-Model SP Test 4 Params 1 Fold 2: Maximum accuracy = 94.915252923965% Maximum validation accuracy = 79.661017656326% Minimal loss = 0.217600226402 Minimal validation loss = 0.558290898800
-Model SP Test 4 Params 1 Fold 2: Accuracy = 88.232446014881% (8.826579544919%) Validation accuracy = 75.230023690632% (3.782280265194%) Loss = 0.355802811044 (0.188530710495) Validation loss = 0.683652676003 (0.040072741932)
+Model SP Test 4 Params 1 Fold 2: Maximum accuracy = 94.915252923965% Maximum validation accuracy = 79.661017656326% Minimal loss = 0.210116118193 Minimal validation loss = 0.505735039711
+Model SP Test 4 Params 1 Fold 2: Accuracy = 87.548426645143% (9.450005976643%) Validation accuracy = 77.699758069856% (3.839814972180%) Loss = 0.363655220611 (0.188550561995) Validation loss = 0.567683308465 (0.039078722666)
 Model SP Test 4 Params 1 Fold 3: conv: 5 num_cells: 32 kernel_size: 4 batch_size: 600 dropout: 0.50
-Model SP Test 4 Params 1 Fold 3: Maximum accuracy = 93.220341205597% Maximum validation accuracy = 77.966099977493% Minimal loss = 0.287594944239 Minimal validation loss = 0.524794340134
-Model SP Test 4 Params 1 Fold 3: Accuracy = 87.608958908490% (7.764248631700%) Validation accuracy = 74.213075041771% (2.083590882043%) Loss = 0.413870361022 (0.153161358101) Validation loss = 0.580788706030 (0.024903724866)
+Model SP Test 4 Params 1 Fold 3: Maximum accuracy = 91.525423526764% Maximum validation accuracy = 79.661017656326% Minimal loss = 0.283142209053 Minimal validation loss = 0.525596141815
+Model SP Test 4 Params 1 Fold 3: Accuracy = 85.599273954119% (5.944079106367%) Validation accuracy = 76.876513191632% (3.520900285062%) Loss = 0.402751441939 (0.151158008080) Validation loss = 0.638551397835 (0.039974000064)
 Model SP Test 4 Params 1 Fold 4: conv: 5 num_cells: 32 kernel_size: 4 batch_size: 600 dropout: 0.50
-Model SP Test 4 Params 1 Fold 4: Maximum accuracy = 95.338982343674% Maximum validation accuracy = 86.440676450729% Minimal loss = 0.198797613382 Minimal validation loss = 0.417757093906
-Model SP Test 4 Params 1 Fold 4: Accuracy = 88.880145166601% (8.993619539212%) Validation accuracy = 82.687652366502% (4.961317745705%) Loss = 0.355164608998 (0.190811703136) Validation loss = 0.454923315133 (0.053821858907)
+Model SP Test 4 Params 1 Fold 4: Maximum accuracy = 93.644070625305% Maximum validation accuracy = 83.050847053528% Minimal loss = 0.255363613367 Minimal validation loss = 0.426023602486
+Model SP Test 4 Params 1 Fold 4: Accuracy = 88.299031853676% (7.277532494300%) Validation accuracy = 80.145277551242% (4.374465131482%) Loss = 0.383791268723 (0.170297349941) Validation loss = 0.477180240410 (0.051488676037)
 Model SP Test 4 Params 1 Fold 5: conv: 5 num_cells: 32 kernel_size: 4 batch_size: 600 dropout: 0.50
-Model SP Test 4 Params 1 Fold 5: Maximum accuracy = 96.610170602798% Maximum validation accuracy = 79.661017656326% Minimal loss = 0.183480381966 Minimal validation loss = 0.455952972174
-Model SP Test 4 Params 1 Fold 5: Accuracy = 89.400726216180% (7.079656957859%) Validation accuracy = 75.835351603372% (2.697992677679%) Loss = 0.339910895484 (0.171895958606) Validation loss = 0.526834292497 (0.035674846486)
-Model SP Test 4 Params 1 average: Maximum accuracy = 96.610170602798% (0.000000000000%) Maximum validation accuracy = 88.135594129562% (0.000000000000%) Minimal loss = 0.183480381966 (0.000000000000) Minimal validation loss = 0.322443485260 (0.000000000000)
-Model SP Test 4 Params 1 average: Accuracy = 87.703389959676% (8.217681993109%) Validation accuracy = 78.537530388151% (5.644869149489%) Loss = 0.383341425189 (0.175774617354) Validation loss = 0.523026698317 (0.117763802442)
+Model SP Test 4 Params 1 Fold 5: Maximum accuracy = 93.220341205597% Maximum validation accuracy = 74.576270580292% Minimal loss = 0.297921717167 Minimal validation loss = 0.448049753904
+Model SP Test 4 Params 1 Fold 5: Accuracy = 87.269975628172% (7.150652538267%) Validation accuracy = 70.968522940363% (2.064369260581%) Loss = 0.415624574253 (0.147658916681) Validation loss = 0.493518645423 (0.040697420688)
+Model SP Test 4 Params 1 average: Maximum accuracy = 94.915252923965% (0.000000000000%) Maximum validation accuracy = 89.830505847931% (0.000000000000%) Minimal loss = 0.210116118193 (0.000000000000) Minimal validation loss = 0.299392342567 (0.000000000000)
+Model SP Test 4 Params 1 average: Accuracy = 85.855932406017% (7.882477529667%) Validation accuracy = 78.426149657794% (6.438902004503%) Loss = 0.424689405305 (0.173355316539) Validation loss = 0.507858881269 (0.108272576857)
 Model SP Test 4 Params 2 Fold 1: conv: 5 num_cells: 32 kernel_size: 6 batch_size: 600 dropout: 0.50
-Model SP Test 4 Params 2 Fold 1: Maximum accuracy = 94.067794084549% Maximum validation accuracy = 89.830505847931% Minimal loss = 0.287502884865 Minimal validation loss = 0.228267922997
-Model SP Test 4 Params 2 Fold 1: Accuracy = 87.911622822285% (7.902196754875%) Validation accuracy = 86.658595544951% (3.668020863594%) Loss = 0.410846142684 (0.153992253481) Validation loss = 0.286742301498 (0.088740892321)
+Model SP Test 4 Params 2 Fold 1: Maximum accuracy = 94.067794084549% Maximum validation accuracy = 93.220341205597% Minimal loss = 0.246733129025 Minimal validation loss = 0.328799307346
+Model SP Test 4 Params 2 Fold 1: Accuracy = 88.874092612948% (7.075740894201%) Validation accuracy = 86.561742595264% (5.460839971265%) Loss = 0.372657506807 (0.156260567891) Validation loss = 0.378033639278 (0.056262615915)
 Model SP Test 4 Params 2 Fold 2: conv: 5 num_cells: 32 kernel_size: 6 batch_size: 600 dropout: 0.50
-Model SP Test 4 Params 2 Fold 2: Maximum accuracy = 95.762711763382% Maximum validation accuracy = 77.966099977493% Minimal loss = 0.185173481703 Minimal validation loss = 0.533000051975
-Model SP Test 4 Params 2 Fold 2: Accuracy = 89.661016549383% (7.583071603053%) Validation accuracy = 73.825666223254% (1.533090765901%) Loss = 0.325360422262 (0.175029840698) Validation loss = 0.823444981234 (0.135650969572)
+Model SP Test 4 Params 2 Fold 2: Maximum accuracy = 94.067794084549% Maximum validation accuracy = 79.661017656326% Minimal loss = 0.209823608398 Minimal validation loss = 0.543973684311
+Model SP Test 4 Params 2 Fold 2: Accuracy = 90.012107576643% (6.178131792621%) Validation accuracy = 77.723971264703% (2.676612859499%) Loss = 0.330128867924 (0.155633325583) Validation loss = 0.777391369854 (0.102781135910)
 Model SP Test 4 Params 2 Fold 3: conv: 5 num_cells: 32 kernel_size: 6 batch_size: 600 dropout: 0.50
-Model SP Test 4 Params 2 Fold 3: Maximum accuracy = 93.644070625305% Maximum validation accuracy = 84.745764732361% Minimal loss = 0.228414550424 Minimal validation loss = 0.440821737051
-Model SP Test 4 Params 2 Fold 3: Accuracy = 88.607748406274% (7.087279832908%) Validation accuracy = 79.515737124852% (3.350164620792%) Loss = 0.357982706385 (0.171105823643) Validation loss = 0.491154023579 (0.042718692296)
+Model SP Test 4 Params 2 Fold 3: Maximum accuracy = 93.644070625305% Maximum validation accuracy = 83.050847053528% Minimal loss = 0.246764302254 Minimal validation loss = 0.437992185354
+Model SP Test 4 Params 2 Fold 3: Accuracy = 87.978208831378% (6.731888383988%) Validation accuracy = 78.401937655040% (3.211861819011%) Loss = 0.383866464666 (0.157252783437) Validation loss = 0.503357215439 (0.039097443155)
 Model SP Test 4 Params 2 Fold 4: conv: 5 num_cells: 32 kernel_size: 6 batch_size: 600 dropout: 0.50
-Model SP Test 4 Params 2 Fold 4: Maximum accuracy = 92.796611785889% Maximum validation accuracy = 86.440676450729% Minimal loss = 0.284716308117 Minimal validation loss = 0.456348270178
-Model SP Test 4 Params 2 Fold 4: Accuracy = 86.495157395090% (8.837542484597%) Validation accuracy = 81.355932269778% (5.801040474308%) Loss = 0.418424196754 (0.159353811867) Validation loss = 0.487435799837 (0.048549205950)
+Model SP Test 4 Params 2 Fold 4: Maximum accuracy = 91.525423526764% Maximum validation accuracy = 83.050847053528% Minimal loss = 0.328440934420 Minimal validation loss = 0.453349471092
+Model SP Test 4 Params 2 Fold 4: Accuracy = 86.246973020690% (7.106124826074%) Validation accuracy = 78.837772267205% (3.862269530206%) Loss = 0.443162450620 (0.138362776909) Validation loss = 0.493599348835 (0.042881223529)
 Model SP Test 4 Params 2 Fold 5: conv: 5 num_cells: 32 kernel_size: 6 batch_size: 600 dropout: 0.50
-Model SP Test 4 Params 2 Fold 5: Maximum accuracy = 92.796611785889% Maximum validation accuracy = 79.661017656326% Minimal loss = 0.291559845209 Minimal validation loss = 0.462664276361
-Model SP Test 4 Params 2 Fold 5: Accuracy = 87.391040878636% (7.212085460519%) Validation accuracy = 76.319612605231% (5.266886493281%) Loss = 0.401394398298 (0.148613921072) Validation loss = 0.501524214234 (0.032436294613)
-Model SP Test 4 Params 2 average: Maximum accuracy = 95.762711763382% (0.000000000000%) Maximum validation accuracy = 89.830505847931% (0.000000000000%) Minimal loss = 0.185173481703 (0.000000000000) Minimal validation loss = 0.228267922997 (0.000000000000)
-Model SP Test 4 Params 2 average: Accuracy = 88.013317210334% (7.823863471986%) Validation accuracy = 79.535108753613% (6.089622292843%) Loss = 0.382801573277 (0.165784571868) Validation loss = 0.518060264077 (0.189849006640)
+Model SP Test 4 Params 2 Fold 5: Maximum accuracy = 95.762711763382% Maximum validation accuracy = 79.661017656326% Minimal loss = 0.208528846502 Minimal validation loss = 0.442932009697
+Model SP Test 4 Params 2 Fold 5: Accuracy = 90.084745628493% (7.842466731800%) Validation accuracy = 77.893462691988% (2.784082184750%) Loss = 0.334609963638 (0.170153093686) Validation loss = 0.522105591212 (0.034483431207)
+Model SP Test 4 Params 2 average: Maximum accuracy = 95.762711763382% (0.000000000000%) Maximum validation accuracy = 93.220341205597% (0.000000000000%) Minimal loss = 0.208528846502 (0.000000000000) Minimal validation loss = 0.328799307346 (0.000000000000)
+Model SP Test 4 Params 2 average: Accuracy = 88.639225534030% (7.151843797321%) Validation accuracy = 79.883777294840% (5.029525535614%) Loss = 0.372885050731 (0.161131311642) Validation loss = 0.534897432923 (0.144609451805)
 Model SP Test 4 Params 3 Fold 1: conv: 5 num_cells: 32 kernel_size: 8 batch_size: 600 dropout: 0.50
-Model SP Test 4 Params 3 Fold 1: Maximum accuracy = 95.762711763382% Maximum validation accuracy = 94.915252923965% Minimal loss = 0.161471813917 Minimal validation loss = 0.161141410470
-Model SP Test 4 Params 3 Fold 1: Accuracy = 90.217917391232% (7.472107274623%) Validation accuracy = 90.363195964268% (3.222795659472%) Loss = 0.304910455006 (0.185993328870) Validation loss = 0.213787173799 (0.086690445607)
+Model SP Test 4 Params 3 Fold 1: Maximum accuracy = 92.796611785889% Maximum validation accuracy = 88.135594129562% Minimal loss = 0.318205773830 Minimal validation loss = 0.298029690981
+Model SP Test 4 Params 3 Fold 1: Accuracy = 86.991525377546% (7.077430736991%) Validation accuracy = 85.108958738191% (3.070863047664%) Loss = 0.440292078257 (0.138644771998) Validation loss = 0.330364999601 (0.059076907171)
 Model SP Test 4 Params 3 Fold 2: conv: 5 num_cells: 32 kernel_size: 8 batch_size: 600 dropout: 0.50
-Model SP Test 4 Params 3 Fold 2: Maximum accuracy = 95.762711763382% Maximum validation accuracy = 81.355929374695% Minimal loss = 0.163883045316 Minimal validation loss = 0.525488615036
-Model SP Test 4 Params 3 Fold 2: Accuracy = 90.617433105196% (5.990412040184%) Validation accuracy = 78.740920509611% (1.781924162105%) Loss = 0.290157944815 (0.169902456601) Validation loss = 0.687701706375 (0.078621636456)
+Model SP Test 4 Params 3 Fold 2: Maximum accuracy = 97.033900022507% Maximum validation accuracy = 77.966099977493% Minimal loss = 0.141805753112 Minimal validation loss = 0.534105539322
+Model SP Test 4 Params 3 Fold 2: Accuracy = 90.768765296255% (9.861897043542%) Validation accuracy = 74.552058151790% (1.607755363598%) Loss = 0.296671752632 (0.208350513423) Validation loss = 0.776196201359 (0.114417693385)
 Model SP Test 4 Params 3 Fold 3: conv: 5 num_cells: 32 kernel_size: 8 batch_size: 600 dropout: 0.50
-Model SP Test 4 Params 3 Fold 3: Maximum accuracy = 94.067794084549% Maximum validation accuracy = 83.050847053528% Minimal loss = 0.240523383021 Minimal validation loss = 0.393235325813
-Model SP Test 4 Params 3 Fold 3: Accuracy = 88.286925000804% (8.321879981690%) Validation accuracy = 80.290556592601% (5.110278046699%) Loss = 0.372590246584 (0.161614517554) Validation loss = 0.441522557821 (0.055344578070)
+Model SP Test 4 Params 3 Fold 3: Maximum accuracy = 94.067794084549% Maximum validation accuracy = 83.050847053528% Minimal loss = 0.240779846907 Minimal validation loss = 0.378366112709
+Model SP Test 4 Params 3 Fold 3: Accuracy = 87.857142644269% (8.602212327746%) Validation accuracy = 79.346245442118% (3.155232891427%) Loss = 0.378191727187 (0.172006413974) Validation loss = 0.441561258691 (0.071537197513)
 Model SP Test 4 Params 3 Fold 4: conv: 5 num_cells: 32 kernel_size: 8 batch_size: 600 dropout: 0.50
-Model SP Test 4 Params 3 Fold 4: Maximum accuracy = 95.338982343674% Maximum validation accuracy = 83.050847053528% Minimal loss = 0.183283284307 Minimal validation loss = 0.473079472780
-Model SP Test 4 Params 3 Fold 4: Accuracy = 91.549636210714% (6.719574754534%) Validation accuracy = 82.033897553171% (2.812888237626%) Loss = 0.299736761834 (0.162670704828) Validation loss = 0.552973502874 (0.028114796160)
+Model SP Test 4 Params 3 Fold 4: Maximum accuracy = 93.220341205597% Maximum validation accuracy = 83.050847053528% Minimal loss = 0.283346503973 Minimal validation loss = 0.450713992119
+Model SP Test 4 Params 3 Fold 4: Accuracy = 86.682808271476% (8.265139306149%) Validation accuracy = 78.280870403562% (3.393373977945%) Loss = 0.418387348737 (0.151458566879) Validation loss = 0.485909764682 (0.042040057609)
 Model SP Test 4 Params 3 Fold 5: conv: 5 num_cells: 32 kernel_size: 8 batch_size: 600 dropout: 0.50
-Model SP Test 4 Params 3 Fold 5: Maximum accuracy = 93.644070625305% Maximum validation accuracy = 81.355929374695% Minimal loss = 0.239267095923 Minimal validation loss = 0.447694301605
-Model SP Test 4 Params 3 Fold 5: Accuracy = 89.025424463408% (6.886697093156%) Validation accuracy = 74.745762944221% (3.769860356926%) Loss = 0.361440652183 (0.159653758303) Validation loss = 0.507411560416 (0.034538125987)
-Model SP Test 4 Params 3 average: Maximum accuracy = 95.762711763382% (0.000000000000%) Maximum validation accuracy = 94.915252923965% (0.000000000000%) Minimal loss = 0.161471813917 (0.000000000000) Minimal validation loss = 0.161141410470 (0.000000000000)
-Model SP Test 4 Params 3 average: Accuracy = 89.939467234271% (7.214521163100%) Validation accuracy = 81.234866712775% (6.244767358979%) Loss = 0.325767212084 (0.171683601801) Validation loss = 0.480679300257 (0.167515337241)
+Model SP Test 4 Params 3 Fold 5: Maximum accuracy = 92.372882366180% Maximum validation accuracy = 76.271188259125% Minimal loss = 0.298469603062 Minimal validation loss = 0.443972378969
+Model SP Test 4 Params 3 Fold 5: Accuracy = 86.622275752681% (7.656176869946%) Validation accuracy = 70.702179414885% (1.492595012513%) Loss = 0.428265470692 (0.159489977037) Validation loss = 0.473371138743 (0.043058246086)
+Model SP Test 4 Params 3 average: Maximum accuracy = 97.033900022507% (0.000000000000%) Maximum validation accuracy = 88.135594129562% (0.000000000000%) Minimal loss = 0.141805753112 (0.000000000000) Minimal validation loss = 0.298029690981 (0.000000000000)
+Model SP Test 4 Params 3 average: Accuracy = 87.784503468445% (8.489747734882%) Validation accuracy = 77.598062430109% (5.522330615554%) Loss = 0.392361675501 (0.175622524984) Validation loss = 0.501480672615 (0.164129564470)
 Model SP Test 4 Params 4 Fold 1: conv: 5 num_cells: 48 kernel_size: 4 batch_size: 600 dropout: 0.50
-Model SP Test 4 Params 4 Fold 1: Maximum accuracy = 94.067794084549% Maximum validation accuracy = 88.135594129562% Minimal loss = 0.257799744606 Minimal validation loss = 0.291944175959
-Model SP Test 4 Params 4 Fold 1: Accuracy = 87.590799246516% (8.734848146438%) Validation accuracy = 84.818401762417% (5.363127918721%) Loss = 0.388843436326 (0.163287607254) Validation loss = 0.344430402773 (0.079288257804)
+Model SP Test 4 Params 4 Fold 1: Maximum accuracy = 90.254235267639% Maximum validation accuracy = 88.135594129562% Minimal loss = 0.367527663708 Minimal validation loss = 0.295769035816
+Model SP Test 4 Params 4 Fold 1: Accuracy = 83.753026723862% (6.771668163247%) Validation accuracy = 84.552057385445% (4.925203121101%) Loss = 0.484751961061 (0.139486742942) Validation loss = 0.339914266126 (0.075189474314)
 Model SP Test 4 Params 4 Fold 2: conv: 5 num_cells: 48 kernel_size: 4 batch_size: 600 dropout: 0.50
-Model SP Test 4 Params 4 Fold 2: Maximum accuracy = 88.135594129562% Maximum validation accuracy = 76.271188259125% Minimal loss = 0.372416943312 Minimal validation loss = 0.552756249905
-Model SP Test 4 Params 4 Fold 2: Accuracy = 82.421307478632% (6.641966770462%) Validation accuracy = 72.953995381083% (2.648095311540%) Loss = 0.469468749421 (0.128138015317) Validation loss = 0.641240812199 (0.035773658362)
+Model SP Test 4 Params 4 Fold 2: Maximum accuracy = 91.949152946472% Maximum validation accuracy = 77.966099977493% Minimal loss = 0.271555215120 Minimal validation loss = 0.561233639717
+Model SP Test 4 Params 4 Fold 2: Accuracy = 85.805084875652% (7.478971635585%) Validation accuracy = 75.593219825200% (3.064268824439%) Loss = 0.393050721288 (0.163037197443) Validation loss = 0.638421387332 (0.030329638065)
 Model SP Test 4 Params 4 Fold 3: conv: 5 num_cells: 48 kernel_size: 4 batch_size: 600 dropout: 0.50
-Model SP Test 4 Params 4 Fold 3: Maximum accuracy = 93.220341205597% Maximum validation accuracy = 81.355929374695% Minimal loss = 0.296787798405 Minimal validation loss = 0.452350497246
-Model SP Test 4 Params 4 Fold 3: Accuracy = 87.814769744873% (6.727034134918%) Validation accuracy = 77.869249667440% (2.877589277970%) Loss = 0.407596790365 (0.133416845841) Validation loss = 0.496683540940 (0.033024075402)
+Model SP Test 4 Params 4 Fold 3: Maximum accuracy = 88.559323549271% Maximum validation accuracy = 77.966099977493% Minimal loss = 0.367049694061 Minimal validation loss = 0.510717093945
+Model SP Test 4 Params 4 Fold 3: Accuracy = 82.282082310745% (7.534850988626%) Validation accuracy = 72.639226572854% (4.242473832774%) Loss = 0.492696589231 (0.145597447448) Validation loss = 0.556642980235 (0.028864147467)
 Model SP Test 4 Params 4 Fold 4: conv: 5 num_cells: 48 kernel_size: 4 batch_size: 600 dropout: 0.50
-Model SP Test 4 Params 4 Fold 4: Maximum accuracy = 83.474576473236% Maximum validation accuracy = 79.661017656326% Minimal loss = 0.510539770126 Minimal validation loss = 0.460275292397
-Model SP Test 4 Params 4 Fold 4: Accuracy = 77.602905758790% (7.657085700318%) Validation accuracy = 76.222759400095% (4.767946976990%) Loss = 0.602475047112 (0.109927004737) Validation loss = 0.504635626929 (0.067481913800)
+Model SP Test 4 Params 4 Fold 4: Maximum accuracy = 94.915252923965% Maximum validation accuracy = 84.745764732361% Minimal loss = 0.271608084440 Minimal validation loss = 0.431142121553
+Model SP Test 4 Params 4 Fold 4: Accuracy = 86.222760421889% (9.169381475143%) Validation accuracy = 79.733655708177% (6.363986211353%) Loss = 0.429079169035 (0.174273407302) Validation loss = 0.465915191174 (0.066428727037)
 Model SP Test 4 Params 4 Fold 5: conv: 5 num_cells: 48 kernel_size: 4 batch_size: 600 dropout: 0.50
-Model SP Test 4 Params 4 Fold 5: Maximum accuracy = 90.677964687347% Maximum validation accuracy = 79.661017656326% Minimal loss = 0.361309796572 Minimal validation loss = 0.435248583555
-Model SP Test 4 Params 4 Fold 5: Accuracy = 85.714285799435% (6.725397182484%) Validation accuracy = 77.336561764990% (3.866821030111%) Loss = 0.468630736215 (0.134232557256) Validation loss = 0.473921574014 (0.046869194354)
-Model SP Test 4 Params 4 average: Maximum accuracy = 94.067794084549% (0.000000000000%) Maximum validation accuracy = 88.135594129562% (0.000000000000%) Minimal loss = 0.257799744606 (0.000000000000) Minimal validation loss = 0.291944175959 (0.000000000000)
-Model SP Test 4 Params 4 average: Accuracy = 84.228813605649% (8.283315777784%) Validation accuracy = 77.840193595205% (5.606827944969%) Loss = 0.467402951888 (0.154261592451) Validation loss = 0.492182391371 (0.109512890485)
+Model SP Test 4 Params 4 Fold 5: Maximum accuracy = 87.711864709854% Maximum validation accuracy = 76.271188259125% Minimal loss = 0.409131139517 Minimal validation loss = 0.473607778549
+Model SP Test 4 Params 4 Fold 5: Accuracy = 82.923728738512% (6.177623787817%) Validation accuracy = 73.171913538660% (3.278704412859%) Loss = 0.514013530527 (0.117228829387) Validation loss = 0.507388665421 (0.046539793339)
+Model SP Test 4 Params 4 average: Maximum accuracy = 94.915252923965% (0.000000000000%) Maximum validation accuracy = 88.135594129562% (0.000000000000%) Minimal loss = 0.271555215120 (0.000000000000) Minimal validation loss = 0.295769035816 (0.000000000000)
+Model SP Test 4 Params 4 average: Accuracy = 84.197336614132% (7.654801912262%) Validation accuracy = 77.138014606067% (6.371138077056%) Loss = 0.462718394228 (0.155788740426) Validation loss = 0.501656498058 (0.112413707040)
 Model SP Test 4 Params 5 Fold 1: conv: 5 num_cells: 48 kernel_size: 6 batch_size: 600 dropout: 0.50
-Model SP Test 4 Params 5 Fold 1: Maximum accuracy = 91.525423526764% Maximum validation accuracy = 91.525423526764% Minimal loss = 0.328422665596 Minimal validation loss = 0.316752284765
-Model SP Test 4 Params 5 Fold 1: Accuracy = 86.392251593726% (7.401333017117%) Validation accuracy = 86.489104117666% (4.180946692183%) Loss = 0.436064908334 (0.137174467820) Validation loss = 0.368533637268 (0.054139064544)
+Model SP Test 4 Params 5 Fold 1: Maximum accuracy = 96.610170602798% Maximum validation accuracy = 88.135594129562% Minimal loss = 0.164653405547 Minimal validation loss = 0.308217078447
+Model SP Test 4 Params 5 Fold 1: Accuracy = 89.933413692883% (8.947011365276%) Validation accuracy = 83.268766318049% (3.989577354511%) Loss = 0.321422290589 (0.198810456507) Validation loss = 0.349158874154 (0.071810380745)
 Model SP Test 4 Params 5 Fold 2: conv: 5 num_cells: 48 kernel_size: 6 batch_size: 600 dropout: 0.50
-Model SP Test 4 Params 5 Fold 2: Maximum accuracy = 94.915252923965% Maximum validation accuracy = 79.661017656326% Minimal loss = 0.175836622715 Minimal validation loss = 0.546287000179
-Model SP Test 4 Params 5 Fold 2: Accuracy = 89.921307606356% (7.619680680743%) Validation accuracy = 76.101694958551% (2.240330525272%) Loss = 0.300533661672 (0.169569391661) Validation loss = 0.738627534253 (0.098200444641)
+Model SP Test 4 Params 5 Fold 2: Maximum accuracy = 94.915252923965% Maximum validation accuracy = 81.355929374695% Minimal loss = 0.184262424707 Minimal validation loss = 0.551845431328
+Model SP Test 4 Params 5 Fold 2: Accuracy = 89.533897808620% (8.251715250577%) Validation accuracy = 78.426149572645% (3.303021191666%) Loss = 0.314621627969 (0.177580832382) Validation loss = 0.765122146266 (0.097625760262)
 Model SP Test 4 Params 5 Fold 3: conv: 5 num_cells: 48 kernel_size: 6 batch_size: 600 dropout: 0.50
-Model SP Test 4 Params 5 Fold 3: Maximum accuracy = 93.644070625305% Maximum validation accuracy = 83.050847053528% Minimal loss = 0.227918103337 Minimal validation loss = 0.467964082956
-Model SP Test 4 Params 5 Fold 3: Accuracy = 88.280872276851% (7.658291918512%) Validation accuracy = 79.322031906673% (4.057694113159%) Loss = 0.366105418972 (0.173111908990) Validation loss = 0.518880028384 (0.034598541465)
+Model SP Test 4 Params 5 Fold 3: Maximum accuracy = 86.440676450729% Maximum validation accuracy = 79.661017656326% Minimal loss = 0.447214722633 Minimal validation loss = 0.523757278919
+Model SP Test 4 Params 5 Fold 3: Accuracy = 80.684019242014% (5.717532843763%) Validation accuracy = 75.254237396376% (3.984209472828%) Loss = 0.539011986341 (0.119721119573) Validation loss = 0.569529845033 (0.029709083796)
 Model SP Test 4 Params 5 Fold 4: conv: 5 num_cells: 48 kernel_size: 6 batch_size: 600 dropout: 0.50
-Model SP Test 4 Params 5 Fold 4: Maximum accuracy = 91.949152946472% Maximum validation accuracy = 83.050847053528% Minimal loss = 0.313071459532 Minimal validation loss = 0.463539928198
-Model SP Test 4 Params 5 Fold 4: Accuracy = 85.956416385514% (6.049211413747%) Validation accuracy = 79.443098221506% (4.267893227123%) Loss = 0.432466010536 (0.148461537319) Validation loss = 0.503023277436 (0.046139278233)
+Model SP Test 4 Params 5 Fold 4: Maximum accuracy = 94.915252923965% Maximum validation accuracy = 86.440676450729% Minimal loss = 0.228874787688 Minimal validation loss = 0.403919309378
+Model SP Test 4 Params 5 Fold 4: Accuracy = 88.087166803224% (9.742220717934%) Validation accuracy = 81.573849916458% (6.545103625885%) Loss = 0.371442170228 (0.189617025263) Validation loss = 0.560650941730 (0.073038956601)
 Model SP Test 4 Params 5 Fold 5: conv: 5 num_cells: 48 kernel_size: 6 batch_size: 600 dropout: 0.50
-Model SP Test 4 Params 5 Fold 5: Maximum accuracy = 91.101694107056% Maximum validation accuracy = 79.661017656326% Minimal loss = 0.289300411940 Minimal validation loss = 0.415568619967
-Model SP Test 4 Params 5 Fold 5: Accuracy = 86.446730749948% (7.108581359960%) Validation accuracy = 74.261501261166% (3.282724626804%) Loss = 0.418233026777 (0.158619875917) Validation loss = 0.460678227033 (0.054151796030)
-Model SP Test 4 Params 5 average: Maximum accuracy = 94.915252923965% (0.000000000000%) Maximum validation accuracy = 91.525423526764% (0.000000000000%) Minimal loss = 0.175836622715 (0.000000000000) Minimal validation loss = 0.316752284765 (0.000000000000)
-Model SP Test 4 Params 5 average: Accuracy = 87.399515722479% (7.345130720445%) Validation accuracy = 79.123486093112% (5.569910063873%) Loss = 0.390680605258 (0.166153387900) Validation loss = 0.517948540875 (0.136645692403)
+Model SP Test 4 Params 5 Fold 5: Maximum accuracy = 92.796611785889% Maximum validation accuracy = 83.050847053528% Minimal loss = 0.240953177214 Minimal validation loss = 0.438691556454
+Model SP Test 4 Params 5 Fold 5: Accuracy = 87.330508572715% (7.652684667609%) Validation accuracy = 78.038741094725% (4.224540071955%) Loss = 0.395224453722 (0.160600380986) Validation loss = 0.494933256081 (0.035107061264)
+Model SP Test 4 Params 5 average: Maximum accuracy = 96.610170602798% (0.000000000000%) Maximum validation accuracy = 88.135594129562% (0.000000000000%) Minimal loss = 0.164653405547 (0.000000000000) Minimal validation loss = 0.308217078447 (0.000000000000)
+Model SP Test 4 Params 5 average: Accuracy = 87.113801223891% (8.836832315038%) Validation accuracy = 79.312348859651% (5.348439820645%) Loss = 0.388344505770 (0.189783114469) Validation loss = 0.547879012653 (0.149837746141)
 Model SP Test 4 Params 6 Fold 1: conv: 5 num_cells: 48 kernel_size: 8 batch_size: 600 dropout: 0.50
-Model SP Test 4 Params 6 Fold 1: Maximum accuracy = 90.254235267639% Maximum validation accuracy = 93.220341205597% Minimal loss = 0.361047446728 Minimal validation loss = 0.286588579416
-Model SP Test 4 Params 6 Fold 1: Accuracy = 84.219128659793% (7.087964172824%) Validation accuracy = 88.595641681126% (5.420106826873%) Loss = 0.482433829563 (0.131905235426) Validation loss = 0.332702124119 (0.080823164088)
+Model SP Test 4 Params 6 Fold 1: Maximum accuracy = 94.067794084549% Maximum validation accuracy = 86.440676450729% Minimal loss = 0.280253291130 Minimal validation loss = 0.335310131311
+Model SP Test 4 Params 6 Fold 1: Accuracy = 86.519370462213% (8.936070606297%) Validation accuracy = 81.113799980709% (3.307544887455%) Loss = 0.425720983744 (0.163595992789) Validation loss = 0.407372996211 (0.049914329649)
 Model SP Test 4 Params 6 Fold 2: conv: 5 num_cells: 48 kernel_size: 8 batch_size: 600 dropout: 0.50
-Model SP Test 4 Params 6 Fold 2: Maximum accuracy = 95.338982343674% Maximum validation accuracy = 81.355929374695% Minimal loss = 0.187547743320 Minimal validation loss = 0.526322066784
-Model SP Test 4 Params 6 Fold 2: Accuracy = 89.999999446528% (8.235862471422%) Validation accuracy = 78.498789582934% (2.886945378855%) Loss = 0.309342881611 (0.173802623873) Validation loss = 0.695271033900 (0.085170049769)
+Model SP Test 4 Params 6 Fold 2: Maximum accuracy = 96.610170602798% Maximum validation accuracy = 79.661017656326% Minimal loss = 0.160391926765 Minimal validation loss = 0.532192468643
+Model SP Test 4 Params 6 Fold 2: Accuracy = 89.594430880887% (9.031243177016%) Validation accuracy = 75.593220591545% (1.728481008490%) Loss = 0.321496831519 (0.190502582894) Validation loss = 0.770314427785 (0.146086355789)
 Model SP Test 4 Params 6 Fold 3: conv: 5 num_cells: 48 kernel_size: 8 batch_size: 600 dropout: 0.50
-Model SP Test 4 Params 6 Fold 3: Maximum accuracy = 96.186441183090% Maximum validation accuracy = 86.440676450729% Minimal loss = 0.155305758119 Minimal validation loss = 0.376640290022
-Model SP Test 4 Params 6 Fold 3: Accuracy = 90.302663147449% (8.203454340684%) Validation accuracy = 82.493947403772% (3.609372831120%) Loss = 0.291597005299 (0.179471586481) Validation loss = 0.494926545024 (0.040565838370)
+Model SP Test 4 Params 6 Fold 3: Maximum accuracy = 91.525423526764% Maximum validation accuracy = 79.661017656326% Minimal loss = 0.297507137060 Minimal validation loss = 0.441691368818
+Model SP Test 4 Params 6 Fold 3: Accuracy = 87.221548983029% (6.322200662384%) Validation accuracy = 76.852300592831% (3.667621411256%) Loss = 0.413478106686 (0.141997197401) Validation loss = 0.490237105744 (0.059421644676)
 Model SP Test 4 Params 6 Fold 4: conv: 5 num_cells: 48 kernel_size: 8 batch_size: 600 dropout: 0.50
-Model SP Test 4 Params 6 Fold 4: Maximum accuracy = 96.186441183090% Maximum validation accuracy = 81.355929374695% Minimal loss = 0.165548384190 Minimal validation loss = 0.511964917183
-Model SP Test 4 Params 6 Fold 4: Accuracy = 91.483050542218% (8.097909045655%) Validation accuracy = 78.305085045951% (3.053536558373%) Loss = 0.285811666293 (0.177008082098) Validation loss = 0.602012648753 (0.030969040411)
+Model SP Test 4 Params 6 Fold 4: Maximum accuracy = 96.186441183090% Maximum validation accuracy = 83.050847053528% Minimal loss = 0.175381630659 Minimal validation loss = 0.465554922819
+Model SP Test 4 Params 6 Fold 4: Accuracy = 90.345036131995% (7.291827289619%) Validation accuracy = 79.854720320020% (2.695818478974%) Loss = 0.308954368745 (0.176152076918) Validation loss = 0.576947209239 (0.046619809141)
 Model SP Test 4 Params 6 Fold 5: conv: 5 num_cells: 48 kernel_size: 8 batch_size: 600 dropout: 0.50
-Model SP Test 4 Params 6 Fold 5: Maximum accuracy = 94.491523504257% Maximum validation accuracy = 79.661017656326% Minimal loss = 0.241313248873 Minimal validation loss = 0.486632645130
-Model SP Test 4 Params 6 Fold 5: Accuracy = 88.129540681839% (9.742734035712%) Validation accuracy = 74.285714413439% (6.444317798784%) Loss = 0.379101681284 (0.177076942677) Validation loss = 0.560381178345 (0.031204572466)
-Model SP Test 4 Params 6 average: Maximum accuracy = 96.186441183090% (0.000000000000%) Maximum validation accuracy = 93.220341205597% (0.000000000000%) Minimal loss = 0.155305758119 (0.000000000000) Minimal validation loss = 0.286588579416 (0.000000000000)
-Model SP Test 4 Params 6 average: Accuracy = 88.826876495566% (8.697003724349%) Validation accuracy = 80.435835625444% (6.611011973335%) Loss = 0.349657412810 (0.184430795581) Validation loss = 0.537058706028 (0.134681505725)
+Model SP Test 4 Params 6 Fold 5: Maximum accuracy = 91.949152946472% Maximum validation accuracy = 83.050847053528% Minimal loss = 0.306044161320 Minimal validation loss = 0.420334160328
+Model SP Test 4 Params 6 Fold 5: Accuracy = 87.100483519690% (6.487988590509%) Validation accuracy = 78.910410148757% (4.303459740979%) Loss = 0.423480528593 (0.133488840470) Validation loss = 0.452071617331 (0.046268507534)
+Model SP Test 4 Params 6 average: Maximum accuracy = 96.610170602798% (0.000000000000%) Maximum validation accuracy = 86.440676450729% (0.000000000000%) Minimal loss = 0.160391926765 (0.000000000000) Minimal validation loss = 0.335310131311 (0.000000000000)
+Model SP Test 4 Params 6 average: Accuracy = 88.156173995563% (7.850840795901%) Validation accuracy = 78.464890326772% (3.825177643044%) Loss = 0.378626163857 (0.170663016152) Validation loss = 0.539388671262 (0.150919454320)
 Model SP Test 4 Params 7 Fold 1: conv: 5 num_cells: 64 kernel_size: 4 batch_size: 600 dropout: 0.50
-Model SP Test 4 Params 7 Fold 1: Maximum accuracy = 91.101694107056% Maximum validation accuracy = 88.135594129562% Minimal loss = 0.347568362951 Minimal validation loss = 0.293283402920
-Model SP Test 4 Params 7 Fold 1: Accuracy = 83.964891178267% (6.306765655218%) Validation accuracy = 83.849879247802% (3.840731115857%) Loss = 0.479422591840 (0.132824954199) Validation loss = 0.337916116204 (0.067603203684)
+Model SP Test 4 Params 7 Fold 1: Maximum accuracy = 81.779658794403% Maximum validation accuracy = 88.135594129562% Minimal loss = 0.526034832001 Minimal validation loss = 0.337435841560
+Model SP Test 4 Params 7 Fold 1: Accuracy = 76.561743702207% (6.429973744452%) Validation accuracy = 83.389830759593% (7.182921947453%) Loss = 0.635285363027 (0.144108485684) Validation loss = 0.391606897541 (0.088849042513)
 Model SP Test 4 Params 7 Fold 2: conv: 5 num_cells: 64 kernel_size: 4 batch_size: 600 dropout: 0.50
-Model SP Test 4 Params 7 Fold 2: Maximum accuracy = 94.067794084549% Maximum validation accuracy = 81.355929374695% Minimal loss = 0.213935405016 Minimal validation loss = 0.559054374695
-Model SP Test 4 Params 7 Fold 2: Accuracy = 88.190073711531% (10.056862666082%) Validation accuracy = 77.651331978185% (5.095169834281%) Loss = 0.357902882993 (0.180155468921) Validation loss = 0.650040997778 (0.040232121935)
+Model SP Test 4 Params 7 Fold 2: Maximum accuracy = 92.372882366180% Maximum validation accuracy = 81.355929374695% Minimal loss = 0.238427802920 Minimal validation loss = 0.450446009636
+Model SP Test 4 Params 7 Fold 2: Accuracy = 85.665859835488% (9.136377586706%) Validation accuracy = 76.803873521941% (5.790721968562%) Loss = 0.380199592241 (0.178282946636) Validation loss = 0.507253066983 (0.057743336306)
 Model SP Test 4 Params 7 Fold 3: conv: 5 num_cells: 64 kernel_size: 4 batch_size: 600 dropout: 0.50
-Model SP Test 4 Params 7 Fold 3: Maximum accuracy = 93.644070625305% Maximum validation accuracy = 86.440676450729% Minimal loss = 0.256737917662 Minimal validation loss = 0.361532449722
-Model SP Test 4 Params 7 Fold 3: Accuracy = 88.565375294004% (6.048027556046%) Validation accuracy = 81.210653781891% (4.581584765389%) Loss = 0.374350246361 (0.148657950480) Validation loss = 0.420684733135 (0.072577221466)
+Model SP Test 4 Params 7 Fold 3: Maximum accuracy = 94.491523504257% Maximum validation accuracy = 81.355929374695% Minimal loss = 0.205391466618 Minimal validation loss = 0.502683222294
+Model SP Test 4 Params 7 Fold 3: Accuracy = 88.238499122007% (8.633627723598%) Validation accuracy = 77.675545300756% (3.202722530290%) Loss = 0.336388303127 (0.180078485411) Validation loss = 0.571284183434 (0.036249889497)
 Model SP Test 4 Params 7 Fold 4: conv: 5 num_cells: 64 kernel_size: 4 batch_size: 600 dropout: 0.50
-Model SP Test 4 Params 7 Fold 4: Maximum accuracy = 88.983052968979% Maximum validation accuracy = 84.745764732361% Minimal loss = 0.392608046532 Minimal validation loss = 0.455829262733
-Model SP Test 4 Params 7 Fold 4: Accuracy = 82.717917263508% (7.035463574007%) Validation accuracy = 80.145277891840% (6.165544812272%) Loss = 0.501882600359 (0.139214531464) Validation loss = 0.489835995861 (0.070616454769)
+Model SP Test 4 Params 7 Fold 4: Maximum accuracy = 92.372882366180% Maximum validation accuracy = 81.355929374695% Minimal loss = 0.282723844051 Minimal validation loss = 0.463923156261
+Model SP Test 4 Params 7 Fold 4: Accuracy = 86.198547014168% (8.658290417111%) Validation accuracy = 76.585955406938% (6.212953783708%) Loss = 0.418361716185 (0.169696268775) Validation loss = 0.497702909793 (0.054980689011)
 Model SP Test 4 Params 7 Fold 5: conv: 5 num_cells: 64 kernel_size: 4 batch_size: 600 dropout: 0.50
-Model SP Test 4 Params 7 Fold 5: Maximum accuracy = 87.288135290146% Maximum validation accuracy = 79.661017656326% Minimal loss = 0.383352249861 Minimal validation loss = 0.420295208693
-Model SP Test 4 Params 7 Fold 5: Accuracy = 82.717917391232% (6.391704159845%) Validation accuracy = 75.230025393622% (2.767184904052%) Loss = 0.488283389381 (0.134648135937) Validation loss = 0.456047362089 (0.057448607842)
-Model SP Test 4 Params 7 average: Maximum accuracy = 94.067794084549% (0.000000000000%) Maximum validation accuracy = 88.135594129562% (0.000000000000%) Minimal loss = 0.213935405016 (0.000000000000) Minimal validation loss = 0.293283402920 (0.000000000000)
-Model SP Test 4 Params 7 average: Accuracy = 85.231234967709% (7.771157223272%) Validation accuracy = 79.617433658668% (5.499447570347%) Loss = 0.440368342187 (0.160295031128) Validation loss = 0.470905041013 (0.120515768439)
+Model SP Test 4 Params 7 Fold 5: Maximum accuracy = 93.644070625305% Maximum validation accuracy = 79.661017656326% Minimal loss = 0.269526600838 Minimal validation loss = 0.399766504765
+Model SP Test 4 Params 7 Fold 5: Accuracy = 87.173123444830% (8.330469880149%) Validation accuracy = 76.561743872506% (5.397723896639%) Loss = 0.414524943062 (0.160353155601) Validation loss = 0.439561714445 (0.056516621096)
+Model SP Test 4 Params 7 average: Maximum accuracy = 94.491523504257% (0.000000000000%) Maximum validation accuracy = 88.135594129562% (0.000000000000%) Minimal loss = 0.205391466618 (0.000000000000) Minimal validation loss = 0.337435841560 (0.000000000000)
+Model SP Test 4 Params 7 average: Accuracy = 84.767554623740% (9.292410324775%) Validation accuracy = 78.203389772347% (6.285984553459%) Loss = 0.436951983528 (0.196473342265) Validation loss = 0.481481754439 (0.086701841614)
 Model SP Test 4 Params 8 Fold 1: conv: 5 num_cells: 64 kernel_size: 6 batch_size: 600 dropout: 0.50
-Model SP Test 4 Params 8 Fold 1: Maximum accuracy = 93.644070625305% Maximum validation accuracy = 91.525423526764% Minimal loss = 0.251862376928 Minimal validation loss = 0.236004129052
-Model SP Test 4 Params 8 Fold 1: Accuracy = 87.814770255770% (7.717196196975%) Validation accuracy = 89.612590415137% (4.200043608025%) Loss = 0.380478795086 (0.157338736671) Validation loss = 0.275162470554 (0.074571063280)
+Model SP Test 4 Params 8 Fold 1: Maximum accuracy = 93.220341205597% Maximum validation accuracy = 91.525423526764% Minimal loss = 0.247701287270 Minimal validation loss = 0.255544602871
+Model SP Test 4 Params 8 Fold 1: Accuracy = 87.046004874366% (7.331005782976%) Validation accuracy = 84.769976394517% (3.285224158500%) Loss = 0.381955607874 (0.169836968215) Validation loss = 0.305194092223 (0.072669863175)
 Model SP Test 4 Params 8 Fold 2: conv: 5 num_cells: 64 kernel_size: 6 batch_size: 600 dropout: 0.50
-Model SP Test 4 Params 8 Fold 2: Maximum accuracy = 96.186441183090% Maximum validation accuracy = 81.355929374695% Minimal loss = 0.167007744312 Minimal validation loss = 0.546210229397
-Model SP Test 4 Params 8 Fold 2: Accuracy = 89.455205798149% (7.926768869851%) Validation accuracy = 78.135593278067% (3.602869403981%) Loss = 0.312601362807 (0.175802162291) Validation loss = 0.639180812665 (0.049272349968)
+Model SP Test 4 Params 8 Fold 2: Maximum accuracy = 93.644070625305% Maximum validation accuracy = 79.661017656326% Minimal loss = 0.243227958679 Minimal validation loss = 0.552185475826
+Model SP Test 4 Params 8 Fold 2: Accuracy = 87.360775130136% (7.371619311397%) Validation accuracy = 77.433414714677% (4.046989507117%) Loss = 0.378234498841 (0.159542435664) Validation loss = 0.594611407178 (0.023326084311)
 Model SP Test 4 Params 8 Fold 3: conv: 5 num_cells: 64 kernel_size: 6 batch_size: 600 dropout: 0.50
-Model SP Test 4 Params 8 Fold 3: Maximum accuracy = 83.050847053528% Maximum validation accuracy = 77.966099977493% Minimal loss = 0.509942173958 Minimal validation loss = 0.518256723881
-Model SP Test 4 Params 8 Fold 3: Accuracy = 77.378934621811% (7.224471962497%) Validation accuracy = 71.646490991116% (4.437604045731%) Loss = 0.615434059926 (0.137369693110) Validation loss = 0.552738149677 (0.072876913844)
+Model SP Test 4 Params 8 Fold 3: Maximum accuracy = 93.644070625305% Maximum validation accuracy = 83.050847053528% Minimal loss = 0.235995218158 Minimal validation loss = 0.437357157469
+Model SP Test 4 Params 8 Fold 3: Accuracy = 87.760291142123% (9.367472312248%) Validation accuracy = 74.721549749374% (5.170724644259%) Loss = 0.375929532732 (0.172932486555) Validation loss = 0.484855918373 (0.055343284032)
 Model SP Test 4 Params 8 Fold 4: conv: 5 num_cells: 64 kernel_size: 6 batch_size: 600 dropout: 0.50
-Model SP Test 4 Params 8 Fold 4: Maximum accuracy = 94.915252923965% Maximum validation accuracy = 83.050847053528% Minimal loss = 0.224602073431 Minimal validation loss = 0.502089023590
-Model SP Test 4 Params 8 Fold 4: Accuracy = 88.305085343974% (8.840003005450%) Validation accuracy = 77.215495279857% (4.312986522763%) Loss = 0.355598716012 (0.169653849264) Validation loss = 0.562206910338 (0.030629176413)
+Model SP Test 4 Params 8 Fold 4: Maximum accuracy = 95.338982343674% Maximum validation accuracy = 84.745764732361% Minimal loss = 0.192018732429 Minimal validation loss = 0.482809424400
+Model SP Test 4 Params 8 Fold 4: Accuracy = 89.376512382712% (8.896379538785%) Validation accuracy = 76.876512680735% (3.072771432931%) Loss = 0.328499968137 (0.179967768172) Validation loss = 0.672640636989 (0.099176244173)
 Model SP Test 4 Params 8 Fold 5: conv: 5 num_cells: 64 kernel_size: 6 batch_size: 600 dropout: 0.50
-Model SP Test 4 Params 8 Fold 5: Maximum accuracy = 88.983052968979% Maximum validation accuracy = 81.355929374695% Minimal loss = 0.383784025908 Minimal validation loss = 0.463057696819
-Model SP Test 4 Params 8 Fold 5: Accuracy = 84.376513276781% (6.067686163678%) Validation accuracy = 74.043583614486% (2.456881304372%) Loss = 0.490957972407 (0.145285218186) Validation loss = 0.499224988478 (0.046508541831)
-Model SP Test 4 Params 8 average: Maximum accuracy = 96.186441183090% (0.000000000000%) Maximum validation accuracy = 91.525423526764% (0.000000000000%) Minimal loss = 0.167007744312 (0.000000000000) Minimal validation loss = 0.236004129052 (0.000000000000)
-Model SP Test 4 Params 8 average: Accuracy = 85.466101859297% (8.782058339784%) Validation accuracy = 78.130750715733% (7.298936913598%) Loss = 0.431014181248 (0.191984060315) Validation loss = 0.505702666342 (0.136244682425)
+Model SP Test 4 Params 8 Fold 5: Maximum accuracy = 94.067794084549% Maximum validation accuracy = 79.661017656326% Minimal loss = 0.241374716163 Minimal validation loss = 0.438692986965
+Model SP Test 4 Params 8 Fold 5: Accuracy = 87.191283575126% (10.461449624690%) Validation accuracy = 73.244552314281% (5.967675525468%) Loss = 0.386544570965 (0.176739041976) Validation loss = 0.483197130901 (0.047086104701)
+Model SP Test 4 Params 8 average: Maximum accuracy = 95.338982343674% (0.000000000000%) Maximum validation accuracy = 91.525423526764% (0.000000000000%) Minimal loss = 0.192018732429 (0.000000000000) Minimal validation loss = 0.255544602871 (0.000000000000)
+Model SP Test 4 Params 8 average: Accuracy = 87.746973420892% (8.809385035840%) Validation accuracy = 77.409201170717% (5.966496729636%) Loss = 0.370232835710 (0.173245908059) Validation loss = 0.508099837133 (0.139878529731)
 Model SP Test 4 Params 9 Fold 1: conv: 5 num_cells: 64 kernel_size: 8 batch_size: 600 dropout: 0.50
-Model SP Test 4 Params 9 Fold 1: Maximum accuracy = 94.915252923965% Maximum validation accuracy = 89.830505847931% Minimal loss = 0.236296281219 Minimal validation loss = 0.303965061903
-Model SP Test 4 Params 9 Fold 1: Accuracy = 87.530267068318% (10.255280853508%) Validation accuracy = 85.738498100213% (7.517330695731%) Loss = 0.373783032809 (0.185998039230) Validation loss = 0.353437407528 (0.080938674186)
+Model SP Test 4 Params 9 Fold 1: Maximum accuracy = 91.525423526764% Maximum validation accuracy = 86.440676450729% Minimal loss = 0.337585121393 Minimal validation loss = 0.354423642159
+Model SP Test 4 Params 9 Fold 1: Accuracy = 84.364406807082% (6.879616259904%) Validation accuracy = 82.590798224722% (4.920022467278%) Loss = 0.465417041949 (0.146854496763) Validation loss = 0.394500896760 (0.061519214279)
 Model SP Test 4 Params 9 Fold 2: conv: 5 num_cells: 64 kernel_size: 8 batch_size: 600 dropout: 0.50
-Model SP Test 4 Params 9 Fold 2: Maximum accuracy = 90.677964687347% Maximum validation accuracy = 79.661017656326% Minimal loss = 0.292767792940 Minimal validation loss = 0.526597857475
-Model SP Test 4 Params 9 Fold 2: Accuracy = 85.629539915494% (5.918673185350%) Validation accuracy = 75.641646300043% (3.416017197335%) Loss = 0.412560034224 (0.131387265119) Validation loss = 0.669418783699 (0.054947349693)
+Model SP Test 4 Params 9 Fold 2: Maximum accuracy = 91.949152946472% Maximum validation accuracy = 79.661017656326% Minimal loss = 0.283412247896 Minimal validation loss = 0.545621395111
+Model SP Test 4 Params 9 Fold 2: Accuracy = 87.046004108020% (7.745771870009%) Validation accuracy = 77.506053362574% (3.265534710559%) Loss = 0.392728564143 (0.151408293075) Validation loss = 0.590460102899 (0.022461400489)
 Model SP Test 4 Params 9 Fold 3: conv: 5 num_cells: 64 kernel_size: 8 batch_size: 600 dropout: 0.50
-Model SP Test 4 Params 9 Fold 3: Maximum accuracy = 92.796611785889% Maximum validation accuracy = 84.745764732361% Minimal loss = 0.300005793571 Minimal validation loss = 0.513096928596
-Model SP Test 4 Params 9 Fold 3: Accuracy = 86.361985206604% (9.323215007744%) Validation accuracy = 78.523002437183% (6.974920623984%) Loss = 0.423330583317 (0.157379852607) Validation loss = 0.557513684034 (0.034378306811)
+Model SP Test 4 Params 9 Fold 3: Maximum accuracy = 91.949152946472% Maximum validation accuracy = 81.355929374695% Minimal loss = 0.286677598953 Minimal validation loss = 0.509706795216
+Model SP Test 4 Params 9 Fold 3: Accuracy = 85.187651089260% (8.451674603476%) Validation accuracy = 77.070217260293% (6.000788884243%) Loss = 0.437885997125 (0.170568293025) Validation loss = 0.548983930690 (0.042734196327)
 Model SP Test 4 Params 9 Fold 4: conv: 5 num_cells: 64 kernel_size: 8 batch_size: 600 dropout: 0.50
-Model SP Test 4 Params 9 Fold 4: Maximum accuracy = 94.915252923965% Maximum validation accuracy = 84.745764732361% Minimal loss = 0.213940083981 Minimal validation loss = 0.489111840725
-Model SP Test 4 Params 9 Fold 4: Accuracy = 89.358353316784% (8.592861782223%) Validation accuracy = 80.096850565502% (3.914438044938%) Loss = 0.344377756119 (0.175439329473) Validation loss = 0.580139158453 (0.038055930604)
+Model SP Test 4 Params 9 Fold 4: Maximum accuracy = 97.457629442215% Maximum validation accuracy = 83.050847053528% Minimal loss = 0.113470450044 Minimal validation loss = 0.489267557859
+Model SP Test 4 Params 9 Fold 4: Accuracy = 91.228813486440% (8.636869406698%) Validation accuracy = 80.266342163086% (2.822147259503%) Loss = 0.275842030134 (0.204638405361) Validation loss = 0.608162939123 (0.055239856714)
 Model SP Test 4 Params 9 Fold 5: conv: 5 num_cells: 64 kernel_size: 8 batch_size: 600 dropout: 0.50
-Model SP Test 4 Params 9 Fold 5: Maximum accuracy = 94.491523504257% Maximum validation accuracy = 76.271188259125% Minimal loss = 0.178990766406 Minimal validation loss = 0.486652493477
-Model SP Test 4 Params 9 Fold 5: Accuracy = 89.776029459068% (7.905831368236%) Validation accuracy = 72.227604133742% (3.194016039344%) Loss = 0.317679426074 (0.169436828850) Validation loss = 0.581798100471 (0.030161011456)
-Model SP Test 4 Params 9 average: Maximum accuracy = 94.915252923965% (0.000000000000%) Maximum validation accuracy = 89.830505847931% (0.000000000000%) Minimal loss = 0.178990766406 (0.000000000000) Minimal validation loss = 0.303965061903 (0.000000000000)
-Model SP Test 4 Params 9 average: Accuracy = 87.731234993253% (8.678989718884%) Validation accuracy = 78.445520307337% (6.997115503400%) Loss = 0.374346166509 (0.169754772731) Validation loss = 0.548461426837 (0.116594935395)
+Model SP Test 4 Params 9 Fold 5: Maximum accuracy = 94.491523504257% Maximum validation accuracy = 84.745764732361% Minimal loss = 0.207806810737 Minimal validation loss = 0.341593891382
+Model SP Test 4 Params 9 Fold 5: Accuracy = 88.541162950652% (8.892663808652%) Validation accuracy = 80.363195793969% (5.031952464774%) Loss = 0.341008974612 (0.187492688674) Validation loss = 0.390191315327 (0.072441586702)
+Model SP Test 4 Params 9 average: Maximum accuracy = 97.457629442215% (0.000000000000%) Maximum validation accuracy = 86.440676450729% (0.000000000000%) Minimal loss = 0.113470450044 (0.000000000000) Minimal validation loss = 0.341593891382 (0.000000000000)
+Model SP Test 4 Params 9 average: Accuracy = 87.273607688291% (8.515265180248%) Validation accuracy = 79.559321360929% (4.998246876877%) Loss = 0.382576521592 (0.186418619653) Validation loss = 0.506459836960 (0.109247977240)
 Model SP Test 4 Best params: conv: 5 num_cells: 64 kernel_size: 4 batch_size: 600 dropout: 0.50
-Model SP Test 4 Weak 1: Maximum accuracy = 89.152544736862% Minimal loss = 0.000996834831
-Model SP Test 4 Weak 1: Accuracy = 84.411622583866% (6.491830486651%) Loss = 0.001212711912 (0.000295482606)
-Model SP Test 4 Weak 1 ROC curve: ROC thr = 0.844588160515 gmean = 0.781859544820 ROC AUC = 0.817391304348
-Model SP Test 4 Weak 1 PR curve: PR thr = 0.345146447420 PR AUC = 0.909940571250 F1 = 0.841121495327 F1 (0.5) = 0.834951456311 F1 (thr) = 0.841121495327
-Model SP Test 4 Weak 1: Accuracy (0.5) = 76.712328767123% Accuracy (ROC thr) = 76.712328767123% Accuracy (PR thr) = 76.712328767123%
-Model SP Test 4 Weak 1: ROC thr = 0.844588160515 ROC AUC = 0.817391304348 gmean = 0.781859544820
-Model SP Test 4 Weak 1: PR thr = 0.345146447420 PR AUC 0.909940571250 F1 = 0.841121495327 F1 (thr) = 0.841121495327 F1 (0.5) = 0.834951456311
+Model SP Test 4 Weak 1: Maximum accuracy = 90.169489383698% Minimal loss = 0.000803659554
+Model SP Test 4 Weak 1: Accuracy = 84.038740949971% (7.966924485043%) Loss = 0.001120688772 (0.000387309811)
+Model SP Test 4 Weak 1 ROC curve: ROC thr = 0.555130541325 gmean = 0.723517975499 ROC AUC = 0.784347826087
+Model SP Test 4 Weak 1 PR curve: PR thr = 0.494755566120 PR AUC = 0.875729679407 F1 = 0.846153846154 F1 (0.5) = 0.834951456311 F1 (thr) = 0.846153846154
+Model SP Test 4 Weak 1: Accuracy (0.5) = 76.712328767123% Accuracy (ROC thr) = 78.082191780822% Accuracy (PR thr) = 78.082191780822%
+Model SP Test 4 Weak 1: ROC thr = 0.555130541325 ROC AUC = 0.784347826087 gmean = 0.723517975499
+Model SP Test 4 Weak 1: PR thr = 0.494755566120 PR AUC 0.875729679407 F1 = 0.846153846154 F1 (thr) = 0.846153846154 F1 (0.5) = 0.834951456311
 Model SP Test 4 Iteration 1 ROC curve: ROC thr = 1.000000000000 gmean = 0.697199366409 ROC AUC = 0.712608695652
 Model SP Test 4 Iteration 1 PR curve: PR thr = 1.000000000000 PR AUC = 0.883605582838 F1 = 0.834951456311 F1 (0.5) = 0.834951456311 F1 (thr) = 0.834951456311
 Model SP Test 4 Iteration 1: Accuracy (0.5) = 76.712328767123% Accuracy (ROC thr) = 76.712328767123% Accuracy (PR thr) = 76.712328767123%

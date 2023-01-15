@@ -9,7 +9,8 @@ import os
 N_FOLDS_FIRST = 5
 N_FOLDS_SECOND = 5
 EPOCHS = 70
-names = ['AP', 'logP', 'APH', 'polarity_selu']
+#names = ['AP', 'logP', 'APH', 'polarity_selu']
+names = []
 offset = 1
 # Define random seed
 seed = getSeed()

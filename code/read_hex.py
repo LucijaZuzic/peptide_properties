@@ -46,7 +46,7 @@ SA_AP, NSA_AP = load_data_SA_AP(dict_hex, names, offset, properties, masking_val
 all_data_AP, all_labels_AP = merge_data_AP(SA_AP, NSA_AP) 
 print('encoded AP')
 
-names = ['AP', 'logP', 'APH', 'polarity_selu']
+names = []
 num_props= len(names) * 3
 SA_SEQ, NSA_SEQ = load_data_SA_seq(dict_hex, names, offset, properties, masking_value)
 all_data_SEQ, all_labels_SEQ = merge_data_seq(SA_SEQ, NSA_SEQ) 
@@ -65,13 +65,13 @@ for seed in seed_list:
         print(number)
         
         best_model_file, best_model_image = final_h5_and_png(SEQ_MODEL_DATA_PATH, number, 1)
-        common_no_file_after_training(0.5, number, SEQ_MODEL_DATA_PATH, 'weak', 1, properties, best_model_file, '', names= ['AP', 'logP', 'APH', 'polarity_selu'], offset = 1, masking_value=2)
+        common_no_file_after_training(0.5, number, SEQ_MODEL_DATA_PATH, 'weak', 1, properties, best_model_file, '', names= [], offset = 1, masking_value=2)
 
         model_predictions_seq_hex = model_predict_seq(best_batch_size, all_data_SEQ, all_labels_SEQ, best_model_file, best_model)
 
         other_output = open(
             hex_predictions_name(SEQ_MODEL_DATA_PATH, number, 'weak', 1),
-            "a",
+            "w",
             encoding="utf-8",
         )
         other_output.write(str(model_predictions_seq_hex))
@@ -86,7 +86,7 @@ for seed in seed_list:
 
         other_output = open(
             hex_predictions_name(MY_MODEL_DATA_PATH, number, 'weak', 1),
-            "a",
+            "w",
             encoding="utf-8",
         )
         other_output.write(str(model_predictions_AP_hex))
@@ -101,7 +101,7 @@ for seed in seed_list:
 
         other_output = open(
             hex_predictions_name(MODEL_DATA_PATH, number, 'weak', 1),
-            "a",
+            "w",
             encoding="utf-8",
         )
         other_output.write(str(model_predictions_hex))
