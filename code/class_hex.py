@@ -137,6 +137,9 @@ for i in df['AP']:
     else:
         test_labels.append(1) 
 
+print("Mean:", np.mean(actual_AP), "Mod:", np.argmax(np.bincount(actual_AP)), "StD:", np.std(actual_AP), "Var:", np.var(actual_AP))
+print("Min:", np.min(actual_AP), "Q1:", np.quantile(actual_AP, .25), "Median:", np.median(actual_AP), "Q2:", np.quantile(actual_AP, .75), "Max:", np.max(actual_AP))
+
 for number in range(1, NUM_TESTS + 1): 
     for i in df['AP']:
         actual_AP_long.append(i) 
