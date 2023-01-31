@@ -18,7 +18,10 @@ from sklearn.metrics import (
     f1_score,
 )
 
-def read_ROC(test_labels, model_predictions, lines_dict): 
+PRthr = {'../final_AP/hex_predict.txt': 0.37450, '../final_seq/hex_predict.txt': 0.40009, '../final_all/hex_predict.txt': 0.44563}
+ROCthr = {'../final_AP/hex_predict.txt': 0.74304, '../final_seq/hex_predict.txt': 0.66199, '../final_all/hex_predict.txt': 0.68748}
+
+def read_ROC(test_labels, model_predictions, lines_dict, thr): 
     # Get false positive rate and true positive rate.
     fpr, tpr, thresholds = roc_curve(test_labels, model_predictions) 
 
@@ -28,12 +31,14 @@ def read_ROC(test_labels, model_predictions, lines_dict):
     # Locate the index of the largest g-mean
     ix = np.argmax(gmeans) 
 
-    lines_dict['ROC thr = '].append(thresholds[ix])
+    lines_dict['ROC thr old = '].append(thr)
+    lines_dict['ROC thr new = '].append(thresholds[ix])
     lines_dict['gmean = '].append(gmeans[ix])
     lines_dict['ROC AUC = '].append(roc_auc_score(test_labels, model_predictions))
-    lines_dict['Accuracy (ROC thr) = '].append(my_accuracy_calculate(test_labels, model_predictions, thresholds[ix]))
+    lines_dict['Accuracy (ROC thr old) = '].append(my_accuracy_calculate(test_labels, model_predictions, thr))
+    lines_dict['Accuracy (ROC thr new) = '].append(my_accuracy_calculate(test_labels, model_predictions, thresholds[ix]))
    
-def read_PR(test_labels, model_predictions, lines_dict):  
+def read_PR(test_labels, model_predictions, lines_dict, thr):  
     # Get recall and precision.
     precision, recall, thresholds = precision_recall_curve(
         test_labels, model_predictions
@@ -48,15 +53,18 @@ def read_PR(test_labels, model_predictions, lines_dict):
 
     # Locate the index of the largest F1 score
     ix = np.argmax(fscore)
-    model_predictions_binary_thr = convert_to_binary(model_predictions, thresholds[ix])
+    model_predictions_binary_thr_old = convert_to_binary(model_predictions, thr)
+    model_predictions_binary_thr_new = convert_to_binary(model_predictions, thresholds[ix])
     model_predictions_binary = convert_to_binary(model_predictions, 0.5)
- 
-    lines_dict['PR thr = '].append(thresholds[ix])
-    lines_dict['PR AUC = '].append(auc(recall, precision))
-    lines_dict['F1 = '].append(fscore[ix])
+    
+    lines_dict['PR thr old = '].append(thr)
+    lines_dict['PR thr new = '].append(thresholds[ix])
+    lines_dict['PR AUC = '].append(auc(recall, precision)) 
     lines_dict['F1 (0.5) = '].append(f1_score(test_labels, model_predictions_binary))
-    lines_dict['F1 (thr) = '].append(f1_score(test_labels, model_predictions_binary_thr))
-    lines_dict['Accuracy (PR thr) = '].append(my_accuracy_calculate(test_labels, model_predictions, thresholds[ix]))
+    lines_dict['F1 (thr old) = '].append(f1_score(test_labels, model_predictions_binary_thr_old))
+    lines_dict['F1 (thr new) = '].append(f1_score(test_labels, model_predictions_binary_thr_new))
+    lines_dict['Accuracy (PR thr old) = '].append(my_accuracy_calculate(test_labels, model_predictions_binary_thr_old, thr))
+    lines_dict['Accuracy (PR thr new) = '].append(my_accuracy_calculate(test_labels, model_predictions_binary_thr_new, thresholds[ix]))
     lines_dict['Accuracy (0.5) = '].append(my_accuracy_calculate(test_labels, model_predictions, 0.5))
 
 def arrayToTable(array, addArray, addAvg, addMostFrequent):
@@ -82,8 +90,8 @@ def arrayToTable(array, addArray, addAvg, addMostFrequent):
                 most_freq = []
             most_freq.append(i)
             num_most = freqdict[i] 
-    if addAvg:
-        retstr += " & %.5f" %(np.mean(array))
+    #if addAvg:
+        #retstr += " & %.5f" %(np.mean(array))
     if addMostFrequent: 
         most_freq_str = str(sorted(most_freq)[0])
         for i in sorted(most_freq[1:]):
@@ -115,10 +123,13 @@ actual_AP = []
 actual_AP_long = []
 test_labels = []
 test_labels_long = []
-threshold = 2
- 
+
 for i in df['AP']:
     actual_AP.append(i) 
+
+threshold = np.mean(actual_AP)
+ 
+for i in df['AP']:
     if i < threshold:
         test_labels.append(0) 
     else:
@@ -141,27 +152,28 @@ if not os.path.exists("../seeds/all_seeds/"):
 paths = ["../final_seq/hex_predict.txt", "../final_AP/hex_predict.txt", "../final_all/hex_predict.txt",] 
 
 vals_in_lines = [ 
-'ROC thr = ','ROC AUC = ', 'gmean = ', 
-'PR thr = ', 'PR AUC = ', 'F1 = ', 'F1 (0.5) = ', 'F1 (thr) = ',
-'Accuracy (0.5) = ', 'Accuracy (ROC thr) = ', 'Accuracy (PR thr) = '] 
+'ROC thr new = ','ROC AUC = ', 'gmean = ', 
+'ROC thr old = ',
+'PR thr old = ', 'PR thr new = ', 'PR AUC = ', 'F1 (0.5) = ', 'F1 (thr old) = ','F1 (thr new) = ',
+'Accuracy (0.5) = ', 'Accuracy (ROC thr new) = ', 'Accuracy (PR thr new) = ', 'Accuracy (ROC thr old) = ', 'Accuracy (PR thr old) = '] 
   
-for some_path in paths:
-    lines_dict = dict()
-    sd_dict = dict()
-    for val in vals_in_lines:
-        lines_dict[val] = [] 
-        sd_dict[val] = []   
+lines_dict = dict()
+sd_dict = dict()
+for val in vals_in_lines:
+    lines_dict[val] = [] 
+    sd_dict[val] = []  
+for some_path in paths: 
     model_predictions_hex_file = open(some_path, 'r')
 
     model_predictions_hex_lines = model_predictions_hex_file.readlines()
 
     model_predictions_hex_one = eval(model_predictions_hex_lines[0])
     
-    read_PR(test_labels, model_predictions_hex_one, lines_dict)
-    read_ROC(test_labels, model_predictions_hex_one, lines_dict)
+    read_PR(test_labels, model_predictions_hex_one, lines_dict, PRthr[some_path])
+    read_ROC(test_labels, model_predictions_hex_one, lines_dict, ROCthr[some_path])
 
     print(some_path)
-    for val in vals_in_lines:
-        if len(lines_dict[val]) == 0:
-            continue 
-        print(val.replace(" = ", "") + arrayToTable(lines_dict[val], True, True, False)) 
+for val in vals_in_lines:
+    if len(lines_dict[val]) == 0:
+        continue 
+    print(val.replace(" = ", "") + arrayToTable(lines_dict[val], True, True, False)) 

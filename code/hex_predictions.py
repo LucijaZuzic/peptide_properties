@@ -65,7 +65,7 @@ other_output.close()
 
 plt.figure()
 plt.title(
-    "Model seq. props.\nPredicted self assembly probability for hexapeptides"
+    "Model SP"
 )
 plt.xlabel("Predicted self assembly probability")
 plt.ylabel("AP")
@@ -101,7 +101,7 @@ other_output.close()
 
 plt.figure()
 plt.title(
-    "Model AP\nPredicted self assembly probability for hexapeptides"
+    "Model AP"
 )
 plt.xlabel("Predicted self assembly probability")
 plt.ylabel("AP")
@@ -138,7 +138,7 @@ other_output.close()
 
 plt.figure()
 plt.title(
-    "Model AP and seq. props.\nPredicted self assembly probability for hexapeptides"
+    "Model SP and AP"
 )
 plt.xlabel("Predicted self assembly probability")
 plt.ylabel("AP")

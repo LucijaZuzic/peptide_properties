@@ -74,12 +74,12 @@ def hist_predicted_merged(
 
     plt.figure()
     # Draw the density plot
-    sns.displot(model_predictions_true, kde=True)
+    sns.displot({"SA": model_predictions_true}, kde=True, bins = [0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1], palette = {"SA": '#0485d1'})
+    plt.ylim(0, 750)
     plt.xlabel("Predicted self assembly probability")
     plt.ylabel("Number of peptides")
     plt.title(
-        merge_type_iteration(model_type, final_model_type, iteration, test_number).replace("Test 0 Weak 1", "All tests All seeds")
-        + "\nHistogram of predicted self assembly probability\nfor peptides with self assembly"
+        merge_type_iteration(model_type, final_model_type, iteration, test_number).replace("Test 0 Weak 1", "")
     )
     plt.savefig(save + "_SA.png", bbox_inches="tight")
     plt.close()
@@ -87,23 +87,23 @@ def hist_predicted_merged(
     # Create a histogram of the predicted probabilities only for the peptides that don't show self-assembly
 
     plt.figure()
-    sns.displot(model_predictions_false, kde=True)
+    sns.displot({"NSA": model_predictions_false}, kde=True, bins = [0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1], palette = {"NSA": 'red'})
+    plt.ylim(0, 750)
     plt.xlabel("Predicted self assembly probability")
     plt.ylabel("Number of peptides") 
     plt.title(
-        merge_type_iteration(model_type, final_model_type, iteration, test_number).replace("Test 0 Weak 1", "All tests All seeds")
-        + "\nHistogram of predicted self assembly probability\nfor peptides without self assembly"
+        merge_type_iteration(model_type, final_model_type, iteration, test_number).replace("Test 0 Weak 1", "")
     )
     plt.savefig(save + "_NSA.png", bbox_inches="tight")
     plt.close() 
 
     plt.figure()
-    sns.displot({"SA": model_predictions_true, "NSA": model_predictions_false}, kde=True)
+    sns.displot({"SA": model_predictions_true, "NSA": model_predictions_false}, kde=True, bins = [0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1], palette = {"SA": '#0485d1', "NSA": 'red'}, legend = False)
+    plt.ylim(0, 750)
     plt.xlabel("Predicted self assembly probability")
     plt.ylabel("Number of peptides") 
     plt.title(
-        merge_type_iteration(model_type, final_model_type, iteration, test_number).replace("Test 0 Weak 1", "All tests All seeds")
-        + "\nHistogram of predicted self assembly probability"
+        merge_type_iteration(model_type, final_model_type, iteration, test_number).replace("Test 0 Weak 1", "")
     )
     plt.savefig(save + "_all.png", bbox_inches="tight")
     plt.close() 
