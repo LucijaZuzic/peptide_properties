@@ -6,7 +6,7 @@ from scipy import stats
 from utils import DATA_PATH
 from automate_training import merge_data_AP, merge_data_seq, merge_data, model_predict, model_predict_AP, model_predict_seq, load_data_SA_AP, load_data_SA_seq, load_data_SA
 df = pd.read_csv(DATA_PATH + "41557_2022_1055_MOESM3_ESM_Figure3a_5mer_score_shortMD.csv")
- 
+plt.rcParams.update({'font.size': 22})
 def myfunc(x):
   return slope * x + intercept
 
@@ -17,7 +17,7 @@ for i in df['pep']:
 actual_AP = []
 for i in df['AP']:
     actual_AP.append(i) 
-
+'''
 seq_example = ''
 for i in range(24):
     seq_example += 'A'
@@ -108,8 +108,7 @@ plt.ylabel("AP")
 plt.scatter(
     model_predictions_AP_hex,
     actual_AP
-) 
-plt.savefig("../final_AP/hex_predict.png", bbox_inches="tight")
+)  
 slope, intercept, r, p, std_err = stats.linregress(model_predictions_AP_hex, actual_AP)
 print("AP model R: " + str(r)) 
 print("AP model corrcoef: " + str(np.corrcoef(model_predictions_AP_hex, actual_AP)[0][1])) 
@@ -145,8 +144,7 @@ plt.ylabel("AP")
 plt.scatter(
     model_predictions_hex,
     actual_AP
-) 
-plt.savefig("../final_all/hex_predict.png", bbox_inches="tight")
+)  
 slope, intercept, r, p, std_err = stats.linregress(model_predictions_hex, actual_AP)
 print("Seq. and AP model R: " + str(r)) 
 print("Seq. and AP model corrcoef: " + str(np.corrcoef(model_predictions_hex, actual_AP)[0][1])) 
@@ -158,4 +156,84 @@ plt.plot(
     mymodel, color = 'r'
 )  
 plt.savefig("../final_all/hex_predict.png", bbox_inches="tight")
+plt.close() 
+'''
+
+other_output = open(
+    "../final_all/hex_predict.txt",
+    "r",
+    encoding="utf-8",
+) 
+model_predictions_hex = eval(other_output.readlines()[0])
+other_output.close()
+
+other_output = open(
+    "../final_AP/hex_predict.txt",
+    "r",
+    encoding="utf-8",
+)
+model_predictions_AP_hex = eval(other_output.readlines()[0])
+other_output.close()
+
+other_output = open(
+    "../final_seq/hex_predict.txt",
+    "r",
+    encoding="utf-8",
+)
+model_predictions_seq_hex = eval(other_output.readlines()[0])
+other_output.close()
+
+plt.figure(figsize=(25, 5))
+plt.subplot(1, 3, 1)
+plt.title(
+    "Model SP"
+)
+plt.xlabel("Predicted self assembly probability")
+plt.ylabel("AP")
+plt.xticks([0.25, 0.5, 0.75])
+plt.scatter(
+    model_predictions_seq_hex,
+    actual_AP
+) 
+slope, intercept, r, p, std_err = stats.linregress(model_predictions_seq_hex, actual_AP)
+mymodel = list(map(myfunc, model_predictions_seq_hex)) 
+plt.plot(
+    model_predictions_seq_hex,
+    mymodel, color = 'r'
+)  
+plt.subplot(1, 3, 2)
+plt.title(
+    "Model SP and AP"
+)
+plt.xlabel("Predicted self assembly probability")
+plt.yticks([])
+plt.xticks([0.25, 0.5, 0.75])
+plt.scatter(
+    model_predictions_hex,
+    actual_AP
+) 
+slope, intercept, r, p, std_err = stats.linregress(model_predictions_hex, actual_AP)
+mymodel = list(map(myfunc, model_predictions_hex)) 
+plt.plot(
+    model_predictions_hex,
+    mymodel, color = 'r'
+)  
+plt.subplot(1, 3, 3)
+plt.title(
+    "Model AP"
+)
+plt.xlabel("Predicted self assembly probability")
+plt.yticks([])
+plt.xticks([0.25, 0.5, 0.75])
+plt.scatter(
+    model_predictions_AP_hex,
+    actual_AP
+) 
+slope, intercept, r, p, std_err = stats.linregress(model_predictions_AP_hex, actual_AP)
+mymodel = list(map(myfunc, model_predictions_AP_hex)) 
+plt.plot(
+    model_predictions_AP_hex,
+    mymodel, color = 'r'
+)  
+plt.savefig("../seeds/all_seeds/hex_predict_models_merged.png", bbox_inches="tight")
 plt.close() 

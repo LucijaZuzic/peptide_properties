@@ -18,8 +18,8 @@ from sklearn.metrics import (
     f1_score,
 )
 
-PRthr = {'../final_AP/hex_predict.txt': 0.37450, '../final_seq/hex_predict.txt': 0.40009, '../final_all/hex_predict.txt': 0.44563}
-ROCthr = {'../final_AP/hex_predict.txt': 0.74304, '../final_seq/hex_predict.txt': 0.66199, '../final_all/hex_predict.txt': 0.68748}
+PRthr = {'../final_all/hex_predict.txt': 0.37450, '../final_seq/hex_predict.txt': 0.40009, '../final_AP/hex_predict.txt': 0.44563}
+ROCthr = {'../final_all/hex_predict.txt': 0.74304, '../final_seq/hex_predict.txt': 0.66199, '../final_AP/hex_predict.txt': 0.68748}
 
 def read_ROC(test_labels, model_predictions, lines_dict, thr): 
     # Get false positive rate and true positive rate.
@@ -149,20 +149,22 @@ for number in range(1, NUM_TESTS + 1):
 if not os.path.exists("../seeds/all_seeds/"):
     os.makedirs("../seeds/all_seeds/")
  
-paths = ["../final_seq/hex_predict.txt", "../final_AP/hex_predict.txt", "../final_all/hex_predict.txt",] 
+paths = ["../final_seq/hex_predict.txt", "../final_all/hex_predict.txt", "../final_AP/hex_predict.txt",] 
 
-vals_in_lines = [ 
+vals_in_lines = [ 'ROC thr old = ',
 'ROC thr new = ','ROC AUC = ', 'gmean = ', 
-'ROC thr old = ',
+
 'PR thr old = ', 'PR thr new = ', 'PR AUC = ', 'F1 (0.5) = ', 'F1 (thr old) = ','F1 (thr new) = ',
-'Accuracy (0.5) = ', 'Accuracy (ROC thr new) = ', 'Accuracy (PR thr new) = ', 'Accuracy (ROC thr old) = ', 'Accuracy (PR thr old) = '] 
+'Accuracy (0.5) = ', 'Accuracy (ROC thr old) = ', 'Accuracy (ROC thr new) = ',  'Accuracy (PR thr old) = ' , 'Accuracy (PR thr new) = '] 
   
 lines_dict = dict()
 sd_dict = dict()
 for val in vals_in_lines:
     lines_dict[val] = [] 
     sd_dict[val] = []  
+
 for some_path in paths: 
+
     model_predictions_hex_file = open(some_path, 'r')
 
     model_predictions_hex_lines = model_predictions_hex_file.readlines()
@@ -173,6 +175,7 @@ for some_path in paths:
     read_ROC(test_labels, model_predictions_hex_one, lines_dict, ROCthr[some_path])
 
     print(some_path)
+
 for val in vals_in_lines:
     if len(lines_dict[val]) == 0:
         continue 

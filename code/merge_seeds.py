@@ -75,7 +75,7 @@ def read_PR(test_labels, model_predictions, lines_dict):
  
     lines_dict['PR thr = '].append(thresholds[ix])
     lines_dict['PR AUC = '].append(auc(recall, precision))
-    lines_dict['F1 = '].append(fscore[ix])
+    #lines_dict['F1 = '].append(fscore[ix])
     lines_dict['F1 (0.5) = '].append(f1_score(test_labels, model_predictions_binary))
     lines_dict['F1 (thr) = '].append(f1_score(test_labels, model_predictions_binary_thr))
     lines_dict['Accuracy (PR thr) = '].append(my_accuracy_calculate(test_labels, model_predictions, thresholds[ix]))
@@ -223,11 +223,11 @@ def doubleArrayToTable(array1, array2, addArray, addPercent):
             if not addPercent:
                 retstr += " & %.5f (%.5f)" %(array1[i], array2[i])
             else:
-                retstr += " & %.5f\\%% (%.5f\\%%)" %(array1[i], array2[i])
+                retstr += " & %.2f\\%% (%.2f\\%%)" %(array1[i], array2[i])
     if not addPercent:
         retstr += " & %.5f (%.5f)" %(np.mean(array1), np.mean(array2)) 
     else:
-        retstr += " & %.5f\\%% (%.5f\\%%)" %(np.mean(array1), np.mean(array2))  
+        retstr += " & %.2f\\%% (%.2f\\%%)" %(np.mean(array1), np.mean(array2))  
     return retstr + " \\\\"
 
 def arrayToTable(array, addArray, addAvg, addMostFrequent):
@@ -307,7 +307,7 @@ vals_in_lines = ['num_cells: ', 'kernel_size: ', 'dense: ',
 'Maximum accuracy = ', 'Minimal loss = ',
 'Accuracy = ', 'Loss = ',
 'ROC thr = ','ROC AUC = ', 'gmean = ', 
-'PR thr = ', 'PR AUC = ', 'F1 = ', 'F1 (0.5) = ', 'F1 (thr) = ',
+'PR thr = ', 'PR AUC = ', 'F1 (0.5) = ', 'F1 (thr) = ',
 'Accuracy (0.5) = ', 'Accuracy (ROC thr) = ', 'Accuracy (PR thr) = ']
  
 for some_path in paths:
@@ -336,7 +336,7 @@ for some_path in paths:
                         index = interesting_lines_list[i].find(val)
                         sd_dict[val].append(findValInLine(interesting_lines_list[i][index:], '('))
 
-    print(some_path)
+    '''print(some_path)
     for val in vals_in_lines:
         if len(lines_dict[val]) == 0:
             continue
@@ -350,7 +350,7 @@ for some_path in paths:
             if val.find(":") == -1:
                 print(val.replace(" = ", "") + arrayToTable(lines_dict[val], True, True, False))
             else:
-                print(val.replace(": ", "").replace("_", " ") + arrayToTable(lines_dict[val], True, False, True))
+                print(val.replace(": ", "").replace("_", " ") + arrayToTable(lines_dict[val], True, False, True))'''
   
 for some_path in paths:
 
@@ -389,13 +389,13 @@ for some_path in paths:
         if len(lines_dict[val]) == 0:
             continue
         if val == 'Loss = ':
-            print(val.replace(" = ", "") + doubleArrayToTable(lines_dict[val], sd_dict[val], True, False))
+            print(val.replace(" = ", "") + doubleArrayToTable(lines_dict[val], sd_dict[val], False, False))
             continue
         if val == 'Accuracy = ':
-            print(val.replace(" = ", "") + doubleArrayToTable(lines_dict[val], sd_dict[val], True, True))
+            print(val.replace(" = ", "") + doubleArrayToTable(lines_dict[val], sd_dict[val], False, True))
             continue
         else:
             if val.find(":") == -1:
-                print(val.replace(" = ", "") + arrayToTable(lines_dict[val], True, True, False))
+                print(val.replace(" = ", "") + arrayToTable(lines_dict[val], False, True, False))
             else: 
                 print(val.replace(": ", "").replace("_", " ") + arrayToTableOnlyFreq(lines_dict[val]))
