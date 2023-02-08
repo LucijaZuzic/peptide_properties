@@ -148,7 +148,7 @@ for some_path in paths:
                 all_labels_new.append('NSA') 
             else:
                 all_labels_new.append('SA') 
-            all_model_types.append(PATH_TO_NAME[some_path].replace("SP and AP", "Hybrid SP-AP"))
+            all_model_types.append(PATH_TO_NAME[some_path].replace("SP and AP", "Hybrid AP-SP"))
 
     hist_predicted_merged(
         some_path,
@@ -218,7 +218,7 @@ plt.subplot(1, 3, 3)
 sns.displot({"SA": SPAPY, "NSA": SPAPN}, kde=True, bins = [0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1], palette = {"SA": '#2e85ff', "NSA": '#ff120a'})
 plt.xlabel("Predicted self assembly probability")
 plt.ylabel("Number of peptides")
-plt.title("Hybrid SP-AP model")  
+plt.title("Hybrid AP-SP model")  
 
 plt.savefig("../seeds/all_seeds/hist_merged_models_new.png", bbox_inches="tight")
 plt.close()  
@@ -306,7 +306,7 @@ def read_PR(test_labels, model_predictions, name):
 
     plt.close()
 
-names = ["SP", "Hybrid SP-AP", "AP",]  
+names = ["SP", "Hybrid AP-SP", "AP",]  
 seed_list = [305475974, 369953070, 879273778, 965681145, 992391276]
 paths = [SEQ_MODEL_DATA_PATH, MODEL_DATA_PATH, MY_MODEL_DATA_PATH]
 NUM_TESTS = 5
@@ -329,7 +329,7 @@ for some_path in paths:
                 all_labels_new.append('NSA') 
             else:
                 all_labels_new.append('SA') 
-            all_model_types.append(PATH_TO_NAME[some_path].replace("SP and AP", "Hybrid SP-AP"))
+            all_model_types.append(PATH_TO_NAME[some_path].replace("SP and AP", "Hybrid AP-SP"))
     
     read_PR(seed_labels, seed_predictions, names[ind])
     read_ROC(seed_labels, seed_predictions, names[ind])

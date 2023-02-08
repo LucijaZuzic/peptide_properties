@@ -207,7 +207,7 @@ if not os.path.exists("../seeds/all_seeds/"):
     os.makedirs("../seeds/all_seeds/")
  
 paths = ["../final_seq/hex_predict.txt", "../final_all/hex_predict.txt", "../final_AP/hex_predict.txt",] 
-names = ["SP", "Hybrid SP-AP", "AP",]  
+names = ["SP", "Hybrid AP-SP", "AP",]  
 
 vals_in_lines = [ 'ROC thr old = ',
 'ROC thr new = ','ROC AUC = ', 'gmean = ', 

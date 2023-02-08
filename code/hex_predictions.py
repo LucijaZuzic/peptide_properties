@@ -171,7 +171,7 @@ other_output.close()
 
 plt.figure()
 plt.title(
-    "Hybrid SP-AP model"
+    "Hybrid AP-SP model"
 )
 plt.xlabel("Predicted self assembly probability")
 plt.ylabel("AP")
@@ -232,7 +232,7 @@ plt.plot(
 )  
 plt.subplot(1, 3, 3)
 plt.title(
-    "Hybrid SP-AP model"
+    "Hybrid AP-SP model"
 )
 plt.xlabel("Predicted self assembly probability")
 plt.yticks([])
