@@ -18,10 +18,11 @@ from sklearn.metrics import (
     f1_score,
 )
 
+plt.rcParams.update({'font.size': 22})
 PRthr = {'../final_all/hex_predict.txt': 0.37450, '../final_seq/hex_predict.txt': 0.40009, '../final_AP/hex_predict.txt': 0.44563}
 ROCthr = {'../final_all/hex_predict.txt': 0.74304, '../final_seq/hex_predict.txt': 0.66199, '../final_AP/hex_predict.txt': 0.68748}
 
-def read_ROC(test_labels, model_predictions, lines_dict, thr): 
+def read_ROC(test_labels, model_predictions, lines_dict, thr, name): 
     # Get false positive rate and true positive rate.
     fpr, tpr, thresholds = roc_curve(test_labels, model_predictions) 
 
@@ -37,8 +38,32 @@ def read_ROC(test_labels, model_predictions, lines_dict, thr):
     lines_dict['ROC AUC = '].append(roc_auc_score(test_labels, model_predictions))
     lines_dict['Accuracy (ROC thr old) = '].append(my_accuracy_calculate(test_labels, model_predictions, thr))
     lines_dict['Accuracy (ROC thr new) = '].append(my_accuracy_calculate(test_labels, model_predictions, thresholds[ix]))
+     
+    plt.figure()
+    plt.title(
+        name + " model"
+        + "\nReceiver operating characteristic (ROC) curve"
+    )
+ 
+    # Plot ROC curve.
+    plt.plot(fpr, tpr, "r", label="ROC curve")
+    plt.plot(fpr[ix], tpr[ix], "o", markerfacecolor="r", markeredgecolor="k")
+
+    # Plot random guessing ROC curve.
+    plt.plot([0, 1], [0, 1], "c", label="ROC curve for random guessing")
+
+    plt.xlabel("FPR")
+    plt.ylabel("TPR")
+
+    plt.legend(loc="upper center", bbox_to_anchor=(0.5, -0.2), ncol=2)
+    plt.savefig(
+        '../seeds/all_seeds/' + name + '_ROC_hex.png',
+        bbox_inches="tight",
+    )
+
+    plt.close()
    
-def read_PR(test_labels, model_predictions, lines_dict, thr):  
+def read_PR(test_labels, model_predictions, lines_dict, thr, name):  
     # Get recall and precision.
     precision, recall, thresholds = precision_recall_curve(
         test_labels, model_predictions
@@ -66,6 +91,38 @@ def read_PR(test_labels, model_predictions, lines_dict, thr):
     lines_dict['Accuracy (PR thr old) = '].append(my_accuracy_calculate(test_labels, model_predictions_binary_thr_old, thr))
     lines_dict['Accuracy (PR thr new) = '].append(my_accuracy_calculate(test_labels, model_predictions_binary_thr_new, thresholds[ix]))
     lines_dict['Accuracy (0.5) = '].append(my_accuracy_calculate(test_labels, model_predictions, 0.5))
+    
+    plt.figure()
+    plt.title(
+        name + " model"
+        + "\nPrecision - Recall (PR) curve"
+    )  
+
+    # Plot PR curve.
+    plt.plot(recall, precision, "r", label="PR curve")
+    plt.plot(
+        recall[ix], precision[ix], "o", markerfacecolor="r", markeredgecolor="k"
+    )
+ 
+    # Calculate the no skill line as the proportion of the positive class
+    num_positive = 0
+    for value in test_labels:
+        if value == 1:
+            num_positive += 1
+    no_skill = num_positive / len(test_labels)
+
+    # Plot the no skill precision-recall curve
+    plt.plot([0, 1], [no_skill, no_skill], "c", label="PR curve for random guessing")
+    plt.xlabel("Recall")
+    plt.ylabel("Precision")
+
+    plt.legend(loc="upper center", bbox_to_anchor=(0.5, -0.2), ncol=2)
+    plt.savefig(
+        '../seeds/all_seeds/' + name + '_PR_hex.png',
+        bbox_inches="tight",
+    )
+
+    plt.close()
 
 def arrayToTable(array, addArray, addAvg, addMostFrequent):
     retstr = ""
@@ -150,6 +207,7 @@ if not os.path.exists("../seeds/all_seeds/"):
     os.makedirs("../seeds/all_seeds/")
  
 paths = ["../final_seq/hex_predict.txt", "../final_all/hex_predict.txt", "../final_AP/hex_predict.txt",] 
+names = ["SP", "Hybrid SP-AP", "AP",]  
 
 vals_in_lines = [ 'ROC thr old = ',
 'ROC thr new = ','ROC AUC = ', 'gmean = ', 
@@ -163,7 +221,9 @@ for val in vals_in_lines:
     lines_dict[val] = [] 
     sd_dict[val] = []  
 
+ind = -1
 for some_path in paths: 
+    ind += 1
 
     model_predictions_hex_file = open(some_path, 'r')
 
@@ -171,8 +231,8 @@ for some_path in paths:
 
     model_predictions_hex_one = eval(model_predictions_hex_lines[0])
     
-    read_PR(test_labels, model_predictions_hex_one, lines_dict, PRthr[some_path])
-    read_ROC(test_labels, model_predictions_hex_one, lines_dict, ROCthr[some_path])
+    read_PR(test_labels, model_predictions_hex_one, lines_dict, PRthr[some_path], names[ind])
+    read_ROC(test_labels, model_predictions_hex_one, lines_dict, ROCthr[some_path], names[ind])
 
     print(some_path)
 
