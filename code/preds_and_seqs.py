@@ -3,6 +3,9 @@ from custom_plots import results_name
 import os
 import numpy as np 
 import pandas as pd
+import matplotlib.pyplot as plt 
+import seaborn as sns
+
 MAXLEN = 24
 def read_one_prediction(some_path, test_number, final_model_type, iteration, some_seed):
     file = open(predictions_name(some_path, test_number, final_model_type, iteration), "r")
@@ -36,6 +39,10 @@ NUM_TESTS = 5
 
 dict_some = {} 
 
+aa_preds = [] 
+aa_labels_new= []
+aa_model_types = []
+
 for some_path in paths:
 
     all_preds = []
@@ -45,18 +52,23 @@ for some_path in paths:
     all_seeds = []
 
     for seed in seed_list: 
+        setSeed(seed)
         all_predictions, all_labels, all_sequences = read_all_model_predictions(some_path, 1, 5, "weak", 1, seed)
         for pred in all_predictions: 
             all_preds.append(pred)
+            aa_preds.append(pred)
             all_seeds.append(seed)
         for sequence in all_sequences: 
             all_seqs.append(sequence) 
         for label in all_labels: 
             if label == 1:
                 all_labels_new.append('SA') 
+                aa_labels_new.append('SA') 
             else:
                 all_labels_new.append('NSA') 
+                aa_labels_new.append('NSA') 
             all_model_types.append(PATH_TO_NAME[some_path].replace("SP and AP", "Hybrid AP-SP"))
+            aa_model_types.append(PATH_TO_NAME[some_path].replace("SP and AP", "Hybrid AP-SP"))
 
     dict_some[PATH_TO_NAME[some_path].replace("SP and AP", "Hybrid AP-SP")] = {'sequences': all_seqs, 'labels': all_labels_new, 'predictions': all_preds, 'seeds': all_seeds, 'model_types': all_model_types}
 
@@ -86,3 +98,14 @@ for i in range(5):
 file_output = open("../data/sequence_pred_all.csv", "w", encoding="utf-8") 
 file_output.write(header + write_all.replace('.', ','))
 file_output.close()
+
+
+plt.rcParams.update({'font.size': 22})
+d = {'Predicted self assembly probability': aa_preds, 'Self assembly status': aa_labels_new, 'Model': aa_model_types}
+df = pd.DataFrame(data=d)
+plt.figure()
+g = sns.displot(data=df, x = 'Predicted self assembly probability', kde=True, bins = [0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1], hue = 'Self assembly status', col = 'Model', palette = {'NSA': '#ff120a', 'SA': '#2e85ff'})
+g.set_axis_labels("Self assembly probability", "Number of peptides")
+g.set_titles("{col_name} model")  
+plt.show()
+plt.close() 
