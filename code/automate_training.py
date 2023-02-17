@@ -2,7 +2,7 @@ import tensorflow as tf
 import numpy as np
 import pandas as pd
 from custom_plots import merge_type_params, merge_type_test_number, plt_model, plt_model_final, decorate_stats, decorate_stats_avg, decorate_stats_final
-from utils import convert_list, final_h5_and_png, h5_and_png, percent_grade_names, results_name, DATA_PATH, MODEL_DATA_PATH, SEQ_MODEL_DATA_PATH, MY_MODEL_DATA_PATH, scale, split_amino_acids, split_dipeptides, split_tripeptides, padding
+from utils import convert_list, final_h5_and_png, h5_and_png, percent_grade_names, results_name, TSNE_AP_SEQ_DATA_PATH, TSNE_SEQ_DATA_PATH, DATA_PATH, MODEL_DATA_PATH, SEQ_MODEL_DATA_PATH, MY_MODEL_DATA_PATH, scale, split_amino_acids, split_dipeptides, split_tripeptides, padding
 import new_model
 from sklearn.preprocessing import MinMaxScaler 
 from seqprops import SequentialPropertiesEncoder 
@@ -168,6 +168,15 @@ def common_no_file_after_training(thr, test_number, some_path, final_model_type,
         SA, NSA = load_data_SA(SA_data, names, offset, properties, masking_value)
         all_data, all_labels = merge_data(SA, NSA)
         model_predictions = model_predict(3, 600, all_data, all_labels, model_file, model)
+
+    if some_path == TSNE_SEQ_DATA_PATH:
+        SA, NSA = load_data_SA_TSNE(SA_data, names, offset, masking_value)
+        all_data, all_labels = merge_data_TSNE(SA, NSA)
+        model_predictions = model_predict_TSNE_seq(600, all_data, all_labels, model_file, model)
+    if some_path == TSNE_AP_SEQ_DATA_PATH:
+        SA, NSA = load_data_SA_TSNE(SA_data, names, offset, masking_value)
+        all_data, all_labels = merge_data_TSNE(SA, NSA)
+        model_predictions = model_predict_TSNE_AP_seq(3, 600, all_data, all_labels, model_file, model) 
     
     all_data = all_data[:-1] 
     all_labels = all_labels[:-1]  
@@ -1021,3 +1030,414 @@ def select(sample_weights):
             index += 1
         indices.append(index) 
     return indices
+def multiple_model_predict_TSNE_AP_seq(thr, num_props, test_data, test_labels, model_predictions, alpha_values):
+    test_data, test_labels = reshape_TSNE_AP_seq(num_props, test_data, test_labels) 
+    
+    return common_multiple_model_predict(thr, model_predictions, alpha_values)
+
+def multiple_model_predict_TSNE_seq(thr, test_data, test_labels, model_predictions, alpha_values):
+    test_data, test_labels = reshape_TSNE_seq(test_data, test_labels)
+
+    return common_multiple_model_predict(thr, model_predictions, alpha_values)
+
+def model_predict_TSNE_AP_seq(num_props, best_batch_size, test_data, test_labels, best_model_file, best_model):
+    # Load the best model.
+    if best_model_file != '':
+        best_model = tf.keras.models.load_model(best_model_file)
+    test_data, test_labels = reshape_TSNE_AP_seq(num_props, test_data, test_labels) 
+
+    # Get model predictions on the test data.
+    model_predictions = best_model.predict(test_data, batch_size=best_batch_size)
+    model_predictions = convert_list(model_predictions)  
+    return model_predictions
+
+def model_predict_TSNE_seq(best_batch_size, test_data, test_labels, best_model_file, best_model):
+    # Load the best model.
+    if best_model_file != '':
+        best_model = tf.keras.models.load_model(best_model_file)
+    test_data, test_labels = reshape_TSNE_seq(test_data, test_labels) 
+
+    # Get model predictions on the test data.
+    model_predictions = best_model.predict(test_data, batch_size=best_batch_size)
+    model_predictions = convert_list(model_predictions)  
+    return model_predictions
+
+def reshape_TSNE_seq(all_data, all_labels):  
+    data = []
+    labels = []
+    for i in range(len(all_data)):
+        data.append(np.array(all_data[i]))
+        labels.append(all_labels[i])  
+    if len(data) > 0:
+        data = np.array(data)
+    if len(labels) > 0:
+        labels = np.array(labels)
+    return data, labels
+
+def reshape_TSNE_AP_seq(num_props, all_data, all_labels):  
+    data = [[] for i in range(len(all_data[0]))]
+    labels = []
+    for i in range(len(all_data)):
+        for j in range(len(all_data[0])):
+            data[j].append(all_data[i][j])
+        labels.append(all_labels[i])  
+    new_data = []
+    last_data = []    
+    for i in range(len(data)):
+        if len(data[i]) > 0 and i < num_props: 
+            new_data.append(np.array(data[i]))
+        if len(data[i]) > 0 and i >= num_props: 
+            last_data.append(np.array(data[i])) 
+    if len(last_data) > 0:
+        last_data = np.array(last_data).transpose(1, 2, 0)
+    new_data.append(last_data)
+    labels = np.array(labels) 
+    return new_data, labels 
+
+def load_data_SA_TSNE(SA_data, names=['AP'], offset = 1, masking_value=2):
+    sequences, labels = read_from_npy_SA(SA_data)
+     
+    # Split peptides in two bins.
+    # SA - has self-assembly, NSA - does not have self-assembly.
+    # Convert each peptide sequence to three lists of AP scores: amino acid, dipeptide and tripeptide scores.
+    SA = []
+    NSA = []
+    for index in range(len(sequences)):
+        new_props = []
+
+        for name in names:
+            amino_acids_AP, dipeptides_AP, tripeptides_AP = load_data_AP(name, offset)  
+            amino_acids_ap = split_amino_acids(sequences[index], amino_acids_AP)
+            dipeptides_ap = split_dipeptides(sequences[index], dipeptides_AP)
+            tripeptides_ap = split_tripeptides(sequences[index], tripeptides_AP)
+                    
+            amino_acids_ap_padded = padding(amino_acids_ap, MAXLEN, masking_value)
+            dipeptides_acids_ap_padded = padding(dipeptides_ap, MAXLEN, masking_value)
+            tripeptides_ap_padded = padding(tripeptides_ap, MAXLEN, masking_value)  
+        
+            new_props.append(amino_acids_ap_padded)
+            new_props.append(dipeptides_acids_ap_padded)
+            new_props.append(tripeptides_ap_padded)  
+
+        feature_dict_1  = np.load(DATA_PATH + 'amino_acids_NEW1.npy', allow_pickle=True).item() 
+        feature_dict_2  = np.load(DATA_PATH + 'amino_acids_NEW2.npy', allow_pickle=True).item() 
+        feature_dict_3  = np.load(DATA_PATH + 'amino_acids_NEW3.npy', allow_pickle=True).item() 
+
+        feature1 = split_amino_acids(sequences[index], feature_dict_1)
+        feature1_padded = padding(feature1, MAXLEN, masking_value)
+
+        feature2 = split_amino_acids(sequences[index], feature_dict_2)
+        feature2_padded = padding(feature2, MAXLEN, masking_value)
+
+        feature3 = split_amino_acids(sequences[index], feature_dict_3)
+        feature3_padded = padding(feature3, MAXLEN, masking_value)
+
+        new_props.append(feature1_padded)
+        new_props.append(feature2_padded)
+        new_props.append(feature3_padded) 
+        
+        if labels[index] == '1':
+            SA.append(new_props) 
+        elif labels[index] == '0':
+            NSA.append(new_props) 
+            
+    return SA, NSA 
+   
+def merge_data_TSNE(SA, NSA):
+    # Merge the bins and add labels
+    merged_data = []
+    for i in SA:
+        merged_data.append(i)
+    for i in NSA:
+        merged_data.append(i)
+
+    merged_labels = np.ones(len(SA) + len(NSA))
+    merged_labels[len(SA):] *= 0
+    return merged_data, merged_labels 
+   
+def model_training_TSNE_seq(test_number, train_and_validation_data, train_and_validation_labels, kfold_second, epochs, factor_NSA, test_data, test_labels, properties, names, offset, mask_value=2):
+    params_nr = 0 
+    min_val_loss = 1000
+    
+    hyperparameter_conv = [5]
+    hyperparameter_numcells = [32, 48, 64] 
+    hyperparameter_kernel_size = [4, 6, 8]
+    hyperparameter_dropout = [0.5]
+    hyperparameter_batch_size = [600]
+    
+    best_conv = 0
+    best_numcells = 0
+    best_kernel = 0
+    best_batch_size = 0
+    best_dropout = 0
+    
+    indices = []
+    for train_data_indices, validation_data_indices in kfold_second.split(train_and_validation_data, train_and_validation_labels): 
+        indices.append([train_data_indices, validation_data_indices])
+        
+    for conv in hyperparameter_conv:
+        for numcells in hyperparameter_numcells:
+            for kernel in hyperparameter_kernel_size: 
+                for batch in hyperparameter_batch_size: 
+                    for dropout in hyperparameter_dropout: 
+                        params_nr += 1
+                        fold_nr = 0 
+                        history_val_loss = []
+                        history_val_acc = []
+                        history_loss = []
+                        history_acc = []
+                        
+                        for pair in indices:   
+                            
+                            train_data_indices = pair[0]
+                            
+                            validation_data_indices = pair[1]  
+                            
+                            fold_nr += 1 
+    
+                            # Convert train indices to train data and train labels
+                            train_data, train_labels = data_and_labels_from_indices(train_and_validation_data, train_and_validation_labels, train_data_indices)
+                            
+                            train_data, train_labels = reshape_TSNE_seq(train_data, train_labels)
+                            
+                            # Convert validation indices to validation data and validation labels
+                            val_data, val_labels = data_and_labels_from_indices(train_and_validation_data, train_and_validation_labels, validation_data_indices)
+                            
+                            val_data, val_labels = reshape_TSNE_seq(val_data, val_labels)                    
+                               
+                            # Save model to correct file based on number of fold
+                            model_file, model_picture = h5_and_png(TSNE_SEQ_DATA_PATH, test_number, params_nr, fold_nr)
+
+                            # Choose correct model and instantiate model
+                            model = new_model.create_seq_model(input_shape=np.shape(train_data[0]), conv1_filters=conv, conv2_filters=conv, conv_kernel_size=kernel, num_cells=numcells, dropout=dropout, mask_value=mask_value)
+                    
+                            history = common_final_train('val_loss', model, model_picture, model_file, 0, batch, epochs, [], train_data, train_labels, val_data, val_labels)
+
+                            history_val_loss += history.history['val_loss']
+                            history_val_acc += history.history['val_accuracy']
+                            history_loss += history.history['loss']
+                            history_acc += history.history['accuracy']
+
+                            # Output accuracy, validation accuracy, loss and validation loss for all models
+                            other_output = open(results_name(TSNE_SEQ_DATA_PATH, test_number), "a", encoding="utf-8")
+                            other_output.write('%s: conv: %d num_cells: %d kernel_size: %d batch_size: %d dropout: %.2f' % (merge_type_params(TSNE_SEQ_DATA_PATH, fold_nr, params_nr, test_number), conv, numcells, kernel, batch, dropout))
+                            other_output.write("\n")
+                            other_output.close()
+                            
+                            # Output accuracy, validation accuracy, loss and validation loss for all models
+                            decorate_stats(TSNE_SEQ_DATA_PATH, test_number, history, params_nr, fold_nr)
+                    
+                            # Plot the history
+                            plt_model(params_nr, TSNE_SEQ_DATA_PATH, test_number, history, fold_nr)
+                            
+                        decorate_stats_avg(TSNE_SEQ_DATA_PATH, test_number, history_acc, history_val_acc, history_loss, history_val_loss, params_nr)
+                        avg_val_loss = np.mean(history_val_loss)  
+                        
+                        if avg_val_loss < min_val_loss:
+                            min_val_loss = avg_val_loss
+                            best_conv = conv
+                            best_numcells = numcells
+                            best_kernel = kernel
+                            best_batch_size = batch
+                            best_dropout = dropout 
+                    
+    # All samples have equal weights 
+    sample_weights = []
+    for i in range(len(train_and_validation_labels)):
+        sample_weights.append(1 / len(train_and_validation_labels))  
+
+    other_output = open(results_name(TSNE_SEQ_DATA_PATH, test_number), "a", encoding="utf-8")
+    other_output.write("%s Best params: conv: %d num_cells: %d kernel_size: %d batch_size: %d dropout: %.2f" % (merge_type_test_number(TSNE_SEQ_DATA_PATH, test_number), best_conv, best_numcells, best_kernel, best_batch_size, best_dropout))
+    other_output.write("\n")
+    other_output.close()
+            
+    final_train_TSNE_seq([], [], [], sample_weights, 1, factor_NSA, epochs, test_number, train_and_validation_data, train_and_validation_labels, best_batch_size, best_dropout, best_conv, best_numcells, best_kernel, test_data, test_labels, properties, names, offset, mask_value)
+
+def model_training_TSNE_AP_seq(num_props, test_number, train_and_validation_data, train_and_validation_labels, kfold_second, epochs, factor_NSA, test_data, test_labels, properties, names, offset, mask_value=2):
+    params_nr = 0 
+    min_val_loss = 1000
+    
+    hyperparameter_conv = [5]
+    hyperparameter_numcells = [32, 48, 64]
+    hyperparameter_kernel_size = [4, 6, 8]
+    hyperparameter_lstm = [5]
+    hyperparameter_dense = [15]
+    hyperparameter_lambda = [0.0]
+    hyperparameter_dropout = [0.5]
+    hyperparameter_batch_size = [600]
+    
+    best_conv = 0
+    best_numcells = 0
+    best_kernel = 0
+    best_lstm = 0
+    best_dense = 0
+    best_lambda = 0
+    best_dropout = 0
+    best_batch_size = 0
+    
+    indices = []
+    for train_data_indices, validation_data_indices in kfold_second.split(train_and_validation_data, train_and_validation_labels): 
+        indices.append([train_data_indices, validation_data_indices])
+   
+    for conv in hyperparameter_conv:
+        for numcells in hyperparameter_numcells: 
+            for kernel in hyperparameter_kernel_size: 
+                for lstm_NEW in hyperparameter_lstm:
+                    for dense_NEW in hyperparameter_dense:
+                        for my_lambda in hyperparameter_lambda: 
+                            for dropout in hyperparameter_dropout: 
+                                for batch in hyperparameter_batch_size: 
+                                    params_nr += 1
+                                    fold_nr = 0 
+                                    history_val_loss = []
+                                    history_val_acc = []
+                                    history_loss = []
+                                    history_acc = []
+                                    
+                                    lstm = conv
+                                    dense = numcells * 2
+                                    
+                                    for pair in indices:   
+                                        
+                                        train_data_indices = pair[0]
+                                        
+                                        validation_data_indices = pair[1]
+                                        
+                                        fold_nr += 1 
+                
+                                        # Convert train indices to train data and train labels
+                                        train_data, train_labels = data_and_labels_from_indices(train_and_validation_data, train_and_validation_labels, train_data_indices)
+                                        
+                                        train_data, train_labels = reshape_TSNE_AP_seq(num_props, train_data, train_labels)
+                                        
+                                        # Convert validation indices to validation data and validation labels
+                                        val_data, val_labels = data_and_labels_from_indices(train_and_validation_data, train_and_validation_labels, validation_data_indices)
+                                        
+                                        val_data, val_labels = reshape_TSNE_AP_seq(num_props, val_data, val_labels)
+                                        
+                                        # Save model to correct file based on number of fold
+                                        model_file, model_picture = h5_and_png(TSNE_AP_SEQ_DATA_PATH, test_number, params_nr, fold_nr)
+                                        
+                                        # Choose correct model and instantiate model 
+                                        model = new_model.amino_di_tri_model(num_props, input_shape=np.shape(train_data[num_props][0]), conv=conv, numcells=numcells, kernel_size=kernel, lstm1=lstm, lstm2=lstm, dense=dense, dropout=dropout, lambda2=my_lambda, mask_value=mask_value)
+ 
+                                        history = common_final_train('val_loss', model, model_picture, model_file, 0, batch, epochs, [], train_data, train_labels, val_data, val_labels)
+                                        
+                                        history_val_loss += history.history['val_loss']
+                                        history_val_acc += history.history['val_accuracy']
+                                        history_loss += history.history['loss']
+                                        history_acc += history.history['accuracy']
+
+                                        # Output accuracy, validation accuracy, loss and validation loss for all models
+                                        other_output = open(results_name(TSNE_AP_SEQ_DATA_PATH, test_number), "a", encoding="utf-8")
+                                        other_output.write("%s: conv: %d num_cells: %d kernel_size: %d lstm: %d dense: %d lambda: %.2f dropout: %.2f batch: %d" % (merge_type_params(TSNE_AP_SEQ_DATA_PATH, fold_nr, params_nr, test_number), conv, numcells, kernel, lstm, dense, my_lambda, dropout, batch))
+                                        other_output.write("\n")
+                                        other_output.close()
+                                        
+                                        # Output accuracy, validation accuracy, loss and validation loss for all models
+                                        decorate_stats(TSNE_AP_SEQ_DATA_PATH, test_number, history, params_nr, fold_nr)
+                                
+                                        # Plot the history
+                                        plt_model(params_nr, TSNE_AP_SEQ_DATA_PATH, test_number, history, fold_nr)
+                                    
+                                    decorate_stats_avg(TSNE_AP_SEQ_DATA_PATH, test_number, history_acc, history_val_acc, history_loss, history_val_loss, params_nr)
+                                    avg_val_loss = np.mean(history_val_loss)  
+                                    
+                                    if avg_val_loss < min_val_loss:
+                                        min_val_loss = avg_val_loss
+                                        best_conv = conv
+                                        best_numcells = numcells
+                                        best_kernel = kernel
+                                        best_lstm = lstm
+                                        best_dense = dense
+                                        best_lambda = my_lambda
+                                        best_dropout = dropout
+                                        best_batch_size = batch
+                                   
+    # All samples have equal weights 
+    sample_weights = []
+    for i in range(len(train_and_validation_labels)):
+        sample_weights.append(1 / len(train_and_validation_labels))  
+            
+    other_output = open(results_name(TSNE_AP_SEQ_DATA_PATH, test_number), "a", encoding="utf-8")
+    other_output.write("%s Best params: conv: %d num_cells: %d kernel_size: %d lstm: %d dense: %d lambda: %.2f dropout: %.2f batch: %d" % (merge_type_test_number(TSNE_AP_SEQ_DATA_PATH, test_number), best_conv, best_numcells, best_kernel, best_lstm, best_dense, best_lambda, best_dropout, best_batch_size))
+    other_output.write("\n")
+    other_output.close()
+
+    final_train_TSNE_AP_seq([], [], [], sample_weights, 1, factor_NSA, epochs, test_number, num_props, train_and_validation_data, train_and_validation_labels, best_batch_size, best_lstm, best_dense, best_dropout, best_lambda, best_conv, best_numcells, best_kernel, test_data, test_labels, properties, names, offset, mask_value)
+   
+def final_train_TSNE_AP_seq(models, model_predictions, alpha_values, sample_weights, iteration, factor_NSA, epochs, test_number, num_props, data, labels, best_batch_size, best_lstm, best_dense, best_dropout, best_lambda, best_conv, best_numcells, best_kernel, test_data, test_labels, properties, names, offset, mask_value):
+    model_file, model_picture = final_h5_and_png(TSNE_AP_SEQ_DATA_PATH, test_number, iteration)
+
+    train_and_validation_data, train_and_validation_labels = reshape_TSNE_AP_seq(num_props, data, labels)
+    
+    # Choose correct model and instantiate model
+    model = new_model.amino_di_tri_model(num_props, input_shape = np.shape(train_and_validation_data[num_props][0]), conv=best_conv, numcells=best_numcells, kernel_size = best_kernel,  lstm1=best_lstm, lstm2=best_lstm, dense=best_dense, dropout=best_dropout, lambda2=best_lambda, mask_value=mask_value)
+ 
+    history = common_final_train('loss', model, model_picture, model_file, iteration, best_batch_size, epochs, sample_weights, train_and_validation_data, train_and_validation_labels)
+    
+    # Output accuracy, validation accuracy, loss and validation loss for all models
+    decorate_stats_final(TSNE_AP_SEQ_DATA_PATH, test_number, history, iteration) 
+
+    # Plot the history
+    plt_model_final(iteration, TSNE_AP_SEQ_DATA_PATH, test_number, history)
+    
+    best_model_file, best_model_image = final_h5_and_png(TSNE_AP_SEQ_DATA_PATH, test_number, iteration)
+
+    alpha1, data, labels, sample_weights = boost_TSNE_AP_seq(num_props, best_batch_size, data, labels, best_model_file, sample_weights, 0.5)
+    
+    models.append(model)
+    alpha_values.append(alpha1)
+    model_pred_single = model_predict_TSNE_AP_seq(num_props, best_batch_size, test_data, test_labels, '', model) 
+    model_predictions.append(model_pred_single)
+    model_pred_multiple = multiple_model_predict_TSNE_AP_seq(0.5, num_props, test_data, test_labels, model_predictions, alpha_values)
+
+    adaboost_generate_predictions(0.5, model_pred_single, model, test_number, TSNE_AP_SEQ_DATA_PATH, 'weak', iteration, test_labels, properties, names, offset, mask_value)
+
+    adaboost_generate_predictions(0.5, model_pred_multiple, model, test_number, TSNE_AP_SEQ_DATA_PATH, 'iteration', iteration, test_labels, properties, names, offset, mask_value)
+
+    if iteration < MAX_ITERATIONS:
+        final_train_TSNE_AP_seq(models, model_predictions, alpha_values, sample_weights, iteration + 1, factor_NSA, epochs, test_number, num_props, data, labels, best_batch_size, best_lstm, best_dense, best_dropout, best_lambda, best_conv, best_numcells, best_kernel, test_data, test_labels, properties, names, offset,  mask_value)
+
+def final_train_TSNE_seq(models, model_predictions, alpha_values, sample_weights, iteration, factor_NSA, epochs, test_number, data, labels, best_batch_size, best_dropout, best_conv, best_numcells, best_kernel, test_data, test_labels, properties, names, offset, mask_value):
+    model_file, model_picture = final_h5_and_png(TSNE_SEQ_DATA_PATH, test_number, iteration)
+
+    train_and_validation_data, train_and_validation_labels = reshape_TSNE_seq(data, labels)
+    
+    # Choose correct model and instantiate model
+    model = new_model.create_seq_model(input_shape=np.shape(train_and_validation_data[0]), conv1_filters=best_conv, conv2_filters=best_conv, conv_kernel_size=best_kernel, num_cells=best_numcells, dropout=best_dropout, mask_value=mask_value)
+ 
+    history = common_final_train('loss', model, model_picture, model_file, iteration, best_batch_size, epochs, sample_weights, train_and_validation_data, train_and_validation_labels)
+
+    # Output accuracy, validation accuracy, loss and validation loss for all models
+    decorate_stats_final(TSNE_SEQ_DATA_PATH, test_number, history, iteration) 
+
+    # Plot the history
+    plt_model_final(iteration, TSNE_SEQ_DATA_PATH, test_number, history)
+    
+    best_model_file, best_model_image = final_h5_and_png(TSNE_SEQ_DATA_PATH, test_number, iteration)
+    
+    alpha1, data, labels, sample_weights = boost_TSNE_seq(best_batch_size, data, labels, best_model_file, sample_weights, 0.5)
+    
+    models.append(model)
+    alpha_values.append(alpha1)
+    model_pred_single = model_predict_TSNE_seq(best_batch_size, test_data, test_labels, '', model) 
+    model_predictions.append(model_pred_single)
+    model_pred_multiple = multiple_model_predict_TSNE_seq(0.5, test_data, test_labels, model_predictions, alpha_values)
+  
+    adaboost_generate_predictions(0.5, model_pred_single, model, test_number, TSNE_SEQ_DATA_PATH, 'weak', iteration, test_labels, properties, names, offset, mask_value)
+
+    adaboost_generate_predictions(0.5, model_pred_multiple, model, test_number, TSNE_SEQ_DATA_PATH, 'iteration', iteration, test_labels, properties, names, offset, mask_value)
+
+    if iteration < MAX_ITERATIONS:
+        final_train_TSNE_seq(models, model_predictions, alpha_values, sample_weights, iteration + 1, factor_NSA, epochs, test_number, data, labels, best_batch_size, best_dropout, best_conv, best_numcells, best_kernel, test_data, test_labels, properties, names, offset, mask_value)
+    
+def boost_TSNE_seq(batch_size, data, labels, model_file, sample_weights, thr):
+    train_and_validation_data, train_and_validation_labels = reshape_TSNE_seq(data, labels)
+    return common_boost(train_and_validation_data, batch_size, data, labels, model_file, sample_weights, thr)
+
+def boost_TSNE_AP_seq(num_props, batch_size, data, labels, model_file, sample_weights, thr):
+    train_and_validation_data, train_and_validation_labels = reshape_TSNE_AP_seq(num_props, data, labels)
+    return common_boost(train_and_validation_data, batch_size, data, labels, model_file, sample_weights, thr)
+
+    

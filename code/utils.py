@@ -2,17 +2,23 @@ DATA_PATH = '../data/'
 MODEL_DATA_PATH = '../model_data/'
 SEQ_MODEL_DATA_PATH = '../seq_model_data/'
 MY_MODEL_DATA_PATH = '../only_my_model_data/' 
+TSNE_AP_SEQ_DATA_PATH = '../TSNE_ap_seq_model_data/' 
+TSNE_SEQ_DATA_PATH = '../TSNE_seq_model_data/' 
 
 PATH_TO_NAME = { 
     MODEL_DATA_PATH: 'SP and AP',
     SEQ_MODEL_DATA_PATH: 'SP',
     MY_MODEL_DATA_PATH: 'AP',
+    TSNE_AP_SEQ_DATA_PATH: 'TSNE AP-SP',
+    TSNE_SEQ_DATA_PATH: 'TSNE SP' 
 }
 
 PATH_TO_EXTENSION = { 
     MODEL_DATA_PATH: 'all',
     SEQ_MODEL_DATA_PATH: 'seq',
     MY_MODEL_DATA_PATH: 'AP',
+    TSNE_AP_SEQ_DATA_PATH: 'TSNE_ap_seq',
+    TSNE_SEQ_DATA_PATH: 'TSNE_seq' 
 } 
 
 def setSeed(x):
