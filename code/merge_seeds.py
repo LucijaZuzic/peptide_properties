@@ -1,4 +1,4 @@
-from utils import predictions_name, final_history_name, DATA_PATH, SEQ_MODEL_DATA_PATH, MODEL_DATA_PATH, MY_MODEL_DATA_PATH, setSeed, getSeed, PATH_TO_EXTENSION
+from utils import TSNE_SEQ_DATA_PATH, TSNE_AP_SEQ_DATA_PATH, predictions_name, final_history_name, DATA_PATH, SEQ_MODEL_DATA_PATH, MODEL_DATA_PATH, MY_MODEL_DATA_PATH, setSeed, PATH_TO_EXTENSION
 from custom_plots import merge_type_iteration, results_name,my_accuracy_calculate, weird_division, convert_to_binary
 import matplotlib.pyplot as plt
 import os
@@ -178,7 +178,7 @@ if not os.path.exists("../seeds/all_seeds/"):
     os.makedirs("../seeds/all_seeds/")
 
 seed_list = [305475974, 369953070, 879273778, 965681145, 992391276]
-paths = [SEQ_MODEL_DATA_PATH, MODEL_DATA_PATH, MY_MODEL_DATA_PATH]
+paths = [SEQ_MODEL_DATA_PATH, MODEL_DATA_PATH, MY_MODEL_DATA_PATH, TSNE_SEQ_DATA_PATH, TSNE_AP_SEQ_DATA_PATH]
 NUM_TESTS = 5
 
 for some_path in paths:

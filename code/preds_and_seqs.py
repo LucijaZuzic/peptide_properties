@@ -1,4 +1,4 @@
-from utils import PATH_TO_NAME, predictions_name, DATA_PATH, SEQ_MODEL_DATA_PATH, MODEL_DATA_PATH, MY_MODEL_DATA_PATH, setSeed, PATH_TO_EXTENSION
+from utils import PATH_TO_NAME, predictions_name, TSNE_SEQ_DATA_PATH, TSNE_AP_SEQ_DATA_PATH, DATA_PATH, SEQ_MODEL_DATA_PATH, MODEL_DATA_PATH, MY_MODEL_DATA_PATH, setSeed, PATH_TO_EXTENSION
 from custom_plots import results_name 
 import os
 import numpy as np 
@@ -34,7 +34,7 @@ def read_all_model_predictions(some_path, min_test_number, max_test_number, fina
     return all_predictions, all_labels, all_sequences 
 
 seed_list = [305475974, 369953070, 879273778, 965681145, 992391276]
-paths = [SEQ_MODEL_DATA_PATH, MODEL_DATA_PATH, MY_MODEL_DATA_PATH] 
+paths = [SEQ_MODEL_DATA_PATH, MODEL_DATA_PATH, MY_MODEL_DATA_PATH, TSNE_SEQ_DATA_PATH, TSNE_AP_SEQ_DATA_PATH]
 NUM_TESTS = 5 
 
 dict_some = {} 
@@ -77,15 +77,25 @@ dictionary_final = {'sequences': dict_some['AP']['sequences'],
                     'seeds': dict_some['AP']['seeds'], 
                     'AP': dict_some['AP']['predictions'], 
                     'SP': dict_some['SP']['predictions'], 
-                    'AP-SP': dict_some['Hybrid AP-SP']['predictions']} 
+                    'AP-SP': dict_some['Hybrid AP-SP']['predictions'],
+                    'TSNE SP': dict_some['TSNE SP']['predictions'], 
+                    'TSNE AP-SP': dict_some['TSNE AP-SP']['predictions']} 
   
-header = "sequences;labels;seeds;AP;SP;AP-SP;\n"
+header = "sequences;labels;seeds;AP;SP;AP-SP;TSNE SP;TSNE AP-SP;\n"
 write_all = ""
 
 for i in range(5):
     write_parts = {}  
     for j in range(368*i,368*(i+1)): 
-        write_parts[dictionary_final['sequences'][j]] = dictionary_final['sequences'][j] + ";" + str(dictionary_final['labels'][j]) + ";" + str(dictionary_final['seeds'][j]) + ";" + str(dictionary_final['AP'][j]) + ";" + str(dictionary_final['SP'][j]) + ";" + str(dictionary_final['AP-SP'][j]) + "\n"
+        write_parts[dictionary_final['sequences'][j]] = \
+        dictionary_final['sequences'][j] + ";" + \
+        str(dictionary_final['labels'][j]) + ";" + \
+        str(dictionary_final['seeds'][j]) + ";" + \
+        str(dictionary_final['AP'][j]) + ";" + \
+        str(dictionary_final['SP'][j]) + ";" + \
+        str(dictionary_final['AP-SP'][j]) + ";" + \
+        str(dictionary_final['TSNE SP'][j]) + ";" + \
+        str(dictionary_final['TSNE AP-SP'][j]) + "\n"
     write_str = ""
     print(sorted(write_parts))
     for str_write in sorted(write_parts):
@@ -98,7 +108,6 @@ for i in range(5):
 file_output = open("../data/sequence_pred_all.csv", "w", encoding="utf-8") 
 file_output.write(header + write_all.replace('.', ','))
 file_output.close()
-
 
 plt.rcParams.update({'font.size': 22})
 d = {'Predicted self assembly probability': aa_preds, 'Self assembly status': aa_labels_new, 'Model': aa_model_types}

@@ -1,17 +1,13 @@
-from utils import PATH_TO_NAME, predictions_name, final_history_name, DATA_PATH, SEQ_MODEL_DATA_PATH, MODEL_DATA_PATH, MY_MODEL_DATA_PATH, setSeed, getSeed, PATH_TO_EXTENSION
-from custom_plots import merge_type_iteration, results_name,my_accuracy_calculate, weird_division, convert_to_binary
+from utils import TSNE_AP_SEQ_DATA_PATH, TSNE_SEQ_DATA_PATH, PATH_TO_NAME, predictions_name, final_history_name, SEQ_MODEL_DATA_PATH, MODEL_DATA_PATH, MY_MODEL_DATA_PATH, setSeed, PATH_TO_EXTENSION
+from custom_plots import merge_type_iteration, results_name, weird_division
 import matplotlib.pyplot as plt
-import os
 import numpy as np 
 import seaborn as sns
 import pandas as pd
 
 from sklearn.metrics import (
     roc_curve,
-    precision_recall_curve,
-    roc_auc_score,
-    auc,
-    f1_score,
+    precision_recall_curve
 )
 
 def read_one_final_history(some_path, test_number, iteration):
@@ -128,10 +124,10 @@ def read_one_result(some_path, test_number):
 plt.rcParams.update({'font.size': 22})
 
 seed_list = [305475974, 369953070, 879273778, 965681145, 992391276]
-paths = [SEQ_MODEL_DATA_PATH, MODEL_DATA_PATH, MY_MODEL_DATA_PATH]
+paths = [SEQ_MODEL_DATA_PATH, MODEL_DATA_PATH, MY_MODEL_DATA_PATH, TSNE_SEQ_DATA_PATH, TSNE_AP_SEQ_DATA_PATH]
 NUM_TESTS = 5
 all_preds = []
-all_labels_new= []
+all_labels_new = []
 all_model_types = []
 for some_path in paths:
     seed_predictions = []
@@ -148,7 +144,7 @@ for some_path in paths:
                 all_labels_new.append('NSA') 
             else:
                 all_labels_new.append('SA') 
-            all_model_types.append(PATH_TO_NAME[some_path].replace("SP and AP", "Hybrid AP-SP"))
+            all_model_types.append(PATH_TO_NAME[some_path].replace("SP and AP", "Hybrid AP-SP").replace("TSNE", "t-SNE"))
 
     hist_predicted_merged(
         some_path,
@@ -163,12 +159,18 @@ for some_path in paths:
 APpreds = []
 SPpreds =  []
 SPAPpreds = []
+TSNESPpreds =  []
+TSNESPAPpreds = []
 APN = []
 SPN = []
 SPAPN = []
+TSNESPN = []
+TSNESPAPN = []
 APY = []
 SPY= []
 SPAPY = []
+TSNESPY = []
+TSNESPAPY = []
 
 for i in range(len(all_preds)):
     if all_model_types[i] == 'AP':
@@ -185,6 +187,20 @@ for i in range(len(all_preds)):
         else:
             SPN.append(all_preds[i])
         continue
+    if all_model_types[i] == 'TSNE SP':
+        TSNESPpreds.append(all_preds[i])
+        if all_labels_new[i] == 'SA':
+            TSNESPY.append(all_preds[i])
+        else:
+            TSNESPN.append(all_preds[i])
+        continue
+    if all_model_types[i] == 'TSNE AP-SP':
+        TSNESPAPpreds.append(all_preds[i])
+        if all_labels_new[i] == 'SA':
+            TSNESPAPY.append(all_preds[i])
+        else:
+            TSNESPAPN.append(all_preds[i])
+        continue 
     SPAPpreds.append(all_preds[i])
     if all_labels_new[i] == 'SA':
         SPAPY.append(all_preds[i])
@@ -199,6 +215,7 @@ g.set_axis_labels("Self assembly probability", "Number of peptides")
 g.set_titles("{col_name} model")  
 plt.savefig("../seeds/all_seeds/hist_merged_models.png", bbox_inches="tight")
 plt.close() 
+
 '''
 plt.figure(figsize=(25, 5))
 
@@ -235,10 +252,23 @@ def read_ROC(test_labels, model_predictions, name):
     ix = np.argmax(gmeans) 
      
     plt.figure()
-    plt.title(
-        name + " model"
-        + "\nReceiver operating characteristic (ROC) curve"
-    )
+    #plt.title(
+    #    name + " model"
+    #    + "\nReceiver operating characteristic (ROC) curve"
+    #)
+
+    plt.axvline(fpr[ix], linestyle = '--', color = 'y')
+    plt.axhline(tpr[ix],  linestyle = '--', color = 'y')
+
+    radius = np.sqrt(np.power(fpr[ix], 2) + np.power(1 - tpr[ix], 2))
+    circle1 = plt.Circle((0, 1), radius, color = '#2e85ff')
+    fig = plt.gcf()
+    ax = fig.gca()
+    ax.add_patch(circle1)
+    ax.set_xlim((0, 1))
+    ax.set_ylim((0, 1))
+
+    plt.arrow(fpr[ix], tpr[ix], - fpr[ix], 1 - tpr[ix], length_includes_head = True, head_width = 0.02)
  
     # Plot ROC curve.
     plt.plot(fpr, tpr, "r", label="ROC curve")
@@ -275,11 +305,24 @@ def read_PR(test_labels, model_predictions, name):
     ix = np.argmax(fscore)
     
     plt.figure()
-    plt.title(
-        name + " model"
-        + "\nPrecision - Recall (PR) curve"
-    )  
+    #plt.title(
+    #    name + " model"
+    #    + "\nPrecision - Recall (PR) curve"
+    #)  
 
+    plt.axvline(recall[ix], linestyle = '--', color = 'y')
+    plt.axhline(precision[ix],  linestyle = '--', color = 'y')
+
+    radius = np.sqrt(np.power(1 - recall[ix], 2) + np.power(1 - precision[ix], 2))
+    circle1 = plt.Circle((1, 1), radius, color = '#2e85ff')
+    fig = plt.gcf()
+    ax = fig.gca()
+    ax.add_patch(circle1)
+    ax.set_xlim((0, 1))
+    ax.set_ylim((0, 1))
+
+    plt.arrow(recall[ix], precision[ix], 1 - recall[ix], 1 - precision[ix], length_includes_head = True, head_width = 0.02)
+ 
     # Plot PR curve.
     plt.plot(recall, precision, "r", label="PR curve")
     plt.plot(
@@ -306,9 +349,9 @@ def read_PR(test_labels, model_predictions, name):
 
     plt.close()
 
-names = ["SP", "Hybrid AP-SP", "AP",]  
+names = ["SP", "Hybrid AP-SP", "AP", "t-SNE SP", "t-SNE AP-SP"]  
 seed_list = [305475974, 369953070, 879273778, 965681145, 992391276]
-paths = [SEQ_MODEL_DATA_PATH, MODEL_DATA_PATH, MY_MODEL_DATA_PATH]
+paths = [SEQ_MODEL_DATA_PATH, MODEL_DATA_PATH, MY_MODEL_DATA_PATH, TSNE_SEQ_DATA_PATH, TSNE_AP_SEQ_DATA_PATH]
 NUM_TESTS = 5
 all_preds = []
 all_labels_new= []
@@ -329,7 +372,7 @@ for some_path in paths:
                 all_labels_new.append('NSA') 
             else:
                 all_labels_new.append('SA') 
-            all_model_types.append(PATH_TO_NAME[some_path].replace("SP and AP", "Hybrid AP-SP"))
+            all_model_types.append(PATH_TO_NAME[some_path].replace("SP and AP", "Hybrid AP-SP").replace("TSNE", "t-SNE"))
     
     read_PR(seed_labels, seed_predictions, names[ind])
     read_ROC(seed_labels, seed_predictions, names[ind])

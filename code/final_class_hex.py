@@ -1,12 +1,8 @@
 import pandas as pd
 import matplotlib.pyplot as plt
 import numpy as np
-from utils import PATH_TO_EXTENSION, DATA_PATH, SEQ_MODEL_DATA_PATH, MODEL_DATA_PATH, MY_MODEL_DATA_PATH, setSeed, predictions_name
-from custom_plots import merge_type_iteration 
-from scipy import stats
-import sklearn 
-from utils import predictions_name, final_history_name, DATA_PATH, SEQ_MODEL_DATA_PATH, MODEL_DATA_PATH, MY_MODEL_DATA_PATH, setSeed, getSeed, PATH_TO_EXTENSION
-from custom_plots import merge_type_iteration, results_name,my_accuracy_calculate, weird_division, convert_to_binary
+from utils import DATA_PATH
+from custom_plots import my_accuracy_calculate, weird_division, convert_to_binary
 import matplotlib.pyplot as plt
 import os
 import numpy as np
@@ -19,8 +15,10 @@ from sklearn.metrics import (
 )
 
 plt.rcParams.update({'font.size': 22})
-PRthr = {'../final_all/hex_predict.txt': 0.37450, '../final_seq/hex_predict.txt': 0.40009, '../final_AP/hex_predict.txt': 0.44563}
-ROCthr = {'../final_all/hex_predict.txt': 0.74304, '../final_seq/hex_predict.txt': 0.66199, '../final_AP/hex_predict.txt': 0.68748}
+PRthr = {'../final_all/hex_predict.txt': 0.37450, '../final_seq/hex_predict.txt': 0.40009, '../final_AP/hex_predict.txt': 0.44563,
+        "../final_TSNE_seq/hex_predict.txt": 0.41442, "../final_TSNE_AP_seq/hex_predict.txt": 0.48019}
+ROCthr = {'../final_all/hex_predict.txt': 0.74304, '../final_seq/hex_predict.txt': 0.66199, '../final_AP/hex_predict.txt': 0.68748,
+        "../final_TSNE_seq/hex_predict.txt": 0.65300, "../final_TSNE_AP_seq/hex_predict.txt": 0.67038}
 
 def read_ROC(test_labels, model_predictions, lines_dict, thr, name): 
     # Get false positive rate and true positive rate.
@@ -40,11 +38,24 @@ def read_ROC(test_labels, model_predictions, lines_dict, thr, name):
     lines_dict['Accuracy (ROC thr new) = '].append(my_accuracy_calculate(test_labels, model_predictions, thresholds[ix]))
      
     plt.figure()
-    plt.title(
-        name + " model"
-        + "\nReceiver operating characteristic (ROC) curve"
-    )
+    #plt.title(
+    #    name + " model"
+    #    + "\nReceiver operating characteristic (ROC) curve"
+    #)
  
+    plt.axvline(fpr[ix], linestyle = '--', color = 'y')
+    plt.axhline(tpr[ix],  linestyle = '--', color = 'y')
+
+    radius = np.sqrt(np.power(fpr[ix], 2) + np.power(1 - tpr[ix], 2))
+    circle1 = plt.Circle((0, 1), radius, color = '#2e85ff')
+    fig = plt.gcf()
+    ax = fig.gca()
+    ax.add_patch(circle1)
+    ax.set_xlim((0, 1))
+    ax.set_ylim((0, 1))
+
+    plt.arrow(fpr[ix], tpr[ix], - fpr[ix], 1 - tpr[ix], length_includes_head = True, head_width = 0.02)
+    
     # Plot ROC curve.
     plt.plot(fpr, tpr, "r", label="ROC curve")
     plt.plot(fpr[ix], tpr[ix], "o", markerfacecolor="r", markeredgecolor="k")
@@ -93,11 +104,24 @@ def read_PR(test_labels, model_predictions, lines_dict, thr, name):
     lines_dict['Accuracy (0.5) = '].append(my_accuracy_calculate(test_labels, model_predictions, 0.5))
     
     plt.figure()
-    plt.title(
-        name + " model"
-        + "\nPrecision - Recall (PR) curve"
-    )  
+    #plt.title(
+    #    name + " model"
+    #    + "\nPrecision - Recall (PR) curve"
+    #)  
 
+    plt.axvline(recall[ix], linestyle = '--', color = 'y')
+    plt.axhline(precision[ix],  linestyle = '--', color = 'y')
+
+    radius = np.sqrt(np.power(1 - recall[ix], 2) + np.power(1 - precision[ix], 2))
+    circle1 = plt.Circle((1, 1), radius, color = '#2e85ff')
+    fig = plt.gcf()
+    ax = fig.gca()
+    ax.add_patch(circle1)
+    ax.set_xlim((0, 1))
+    ax.set_ylim((0, 1))
+
+    plt.arrow(recall[ix], precision[ix], 1 - recall[ix], 1 - precision[ix], length_includes_head = True, head_width = 0.02)
+    
     # Plot PR curve.
     plt.plot(recall, precision, "r", label="PR curve")
     plt.plot(
@@ -206,8 +230,9 @@ for number in range(1, NUM_TESTS + 1):
 if not os.path.exists("../seeds/all_seeds/"):
     os.makedirs("../seeds/all_seeds/")
  
-paths = ["../final_seq/hex_predict.txt", "../final_all/hex_predict.txt", "../final_AP/hex_predict.txt",] 
-names = ["SP", "Hybrid AP-SP", "AP",]  
+paths = ["../final_seq/hex_predict.txt", "../final_all/hex_predict.txt", "../final_AP/hex_predict.txt",
+        "../final_TSNE_seq/hex_predict.txt", "../final_TSNE_AP_seq/hex_predict.txt"] 
+names = ["SP", "Hybrid AP-SP", "AP", "t-SNE SP", "t-SNE AP-SP"]  
 
 vals_in_lines = [ 'ROC thr old = ',
 'ROC thr new = ','ROC AUC = ', 'gmean = ', 

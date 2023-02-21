@@ -1,0 +1,166 @@
+Model TSNE SP Test 4 Params 1 Fold 1: conv: 5 num_cells: 32 kernel_size: 4 batch_size: 600 dropout: 0.50
+Model TSNE SP Test 4 Params 1 Fold 1: Maximum accuracy = 69.491523504257% Maximum validation accuracy = 74.576270580292% Minimal loss = 0.676238775253 Minimal validation loss = 0.552547216415
+Model TSNE SP Test 4 Params 1 Fold 1: Accuracy = 66.113802066871% (3.900654500651%) Validation accuracy = 61.355932227203% (4.704071376852%) Loss = 0.721245268413 (0.060528019035) Validation loss = 0.618884256056 (0.030803986721)
+Model TSNE SP Test 4 Params 1 Fold 2: conv: 5 num_cells: 32 kernel_size: 4 batch_size: 600 dropout: 0.50
+Model TSNE SP Test 4 Params 1 Fold 2: Maximum accuracy = 74.152541160583% Maximum validation accuracy = 67.796611785889% Minimal loss = 0.629968702793 Minimal validation loss = 0.612065136433
+Model TSNE SP Test 4 Params 1 Fold 2: Accuracy = 70.187651813030% (6.206903405099%) Validation accuracy = 60.677966049739% (5.633066717697%) Loss = 0.692931488582 (0.080381933283) Validation loss = 0.634394953932 (0.027484814878)
+Model TSNE SP Test 4 Params 1 Fold 3: conv: 5 num_cells: 32 kernel_size: 4 batch_size: 600 dropout: 0.50
+Model TSNE SP Test 4 Params 1 Fold 3: Maximum accuracy = 72.457629442215% Maximum validation accuracy = 72.881358861923% Minimal loss = 0.630538761616 Minimal validation loss = 0.515261411667
+Model TSNE SP Test 4 Params 1 Fold 3: Accuracy = 68.746973233564% (4.819789558929%) Validation accuracy = 68.837772948401% (3.716608679423%) Loss = 0.680447644847 (0.066982788456) Validation loss = 0.544113634314 (0.037390941383)
+Model TSNE SP Test 4 Params 1 Fold 4: conv: 5 num_cells: 32 kernel_size: 4 batch_size: 600 dropout: 0.50
+Model TSNE SP Test 4 Params 1 Fold 4: Maximum accuracy = 70.338982343674% Maximum validation accuracy = 76.271188259125% Minimal loss = 0.667292833328 Minimal validation loss = 0.452279627323
+Model TSNE SP Test 4 Params 1 Fold 4: Accuracy = 67.748183395181% (4.156334543014%) Validation accuracy = 72.397095816476% (3.855889385013%) Loss = 0.723015062298 (0.064120081568) Validation loss = 0.477245082600 (0.050331097336)
+Model TSNE SP Test 4 Params 1 Fold 5: conv: 5 num_cells: 32 kernel_size: 4 batch_size: 600 dropout: 0.50
+Model TSNE SP Test 4 Params 1 Fold 5: Maximum accuracy = 69.915252923965% Maximum validation accuracy = 69.491523504257% Minimal loss = 0.661925792694 Minimal validation loss = 0.516748011112
+Model TSNE SP Test 4 Params 1 Fold 5: Accuracy = 67.191283873149% (4.589239973795%) Validation accuracy = 65.447941422462% (2.469377335380%) Loss = 0.709205287695 (0.067491986652) Validation loss = 0.541327613592 (0.042441460410)
+Model TSNE SP Test 4 Params 1 average: Maximum accuracy = 74.152541160583% (0.000000000000%) Maximum validation accuracy = 76.271188259125% (0.000000000000%) Minimal loss = 0.629968702793 (0.000000000000) Minimal validation loss = 0.452279627323 (0.000000000000)
+Model TSNE SP Test 4 Params 1 average: Accuracy = 67.997578876359% (4.998525849755%) Validation accuracy = 65.743341692856% (6.123417638742%) Loss = 0.705368950367 (0.070188411448) Validation loss = 0.563193108099 (0.069046761159)
+Model TSNE SP Test 4 Params 2 Fold 1: conv: 5 num_cells: 32 kernel_size: 6 batch_size: 600 dropout: 0.50
+Model TSNE SP Test 4 Params 2 Fold 1: Maximum accuracy = 71.610170602798% Maximum validation accuracy = 67.796611785889% Minimal loss = 0.670091152191 Minimal validation loss = 0.604083240032
+Model TSNE SP Test 4 Params 2 Fold 1: Accuracy = 66.368039590972% (5.039738136190%) Validation accuracy = 61.961260565690% (5.463202267470%) Loss = 0.724649241992 (0.076393670276) Validation loss = 0.639591977426 (0.036874302268)
+Model TSNE SP Test 4 Params 2 Fold 2: conv: 5 num_cells: 32 kernel_size: 6 batch_size: 600 dropout: 0.50
+Model TSNE SP Test 4 Params 2 Fold 2: Maximum accuracy = 72.457629442215% Maximum validation accuracy = 71.186441183090% Minimal loss = 0.663084268570 Minimal validation loss = 0.558549821377
+Model TSNE SP Test 4 Params 2 Fold 2: Accuracy = 69.521792147841% (4.531731887513%) Validation accuracy = 60.774817083563% (3.593011281722%) Loss = 0.708374959230 (0.057226800441) Validation loss = 0.629429649455 (0.030497828149)
+Model TSNE SP Test 4 Params 2 Fold 3: conv: 5 num_cells: 32 kernel_size: 6 batch_size: 600 dropout: 0.50
+Model TSNE SP Test 4 Params 2 Fold 3: Maximum accuracy = 72.457629442215% Maximum validation accuracy = 72.881358861923% Minimal loss = 0.675070941448 Minimal validation loss = 0.498683184385
+Model TSNE SP Test 4 Params 2 Fold 3: Accuracy = 68.256658869130% (6.114772322417%) Validation accuracy = 67.917675461088% (3.441750055069%) Loss = 0.723998234102 (0.061303732125) Validation loss = 0.537622218047 (0.040809305853)
+Model TSNE SP Test 4 Params 2 Fold 4: conv: 5 num_cells: 32 kernel_size: 6 batch_size: 600 dropout: 0.50
+Model TSNE SP Test 4 Params 2 Fold 4: Maximum accuracy = 72.033900022507% Maximum validation accuracy = 76.271188259125% Minimal loss = 0.673590838909 Minimal validation loss = 0.446875780821
+Model TSNE SP Test 4 Params 2 Fold 4: Accuracy = 67.893462308816% (5.133029400144%) Validation accuracy = 73.753027703081% (5.334795174026%) Loss = 0.725668712173 (0.068789787243) Validation loss = 0.477333288533 (0.053181417010)
+Model TSNE SP Test 4 Params 2 Fold 5: conv: 5 num_cells: 32 kernel_size: 6 batch_size: 600 dropout: 0.50
+Model TSNE SP Test 4 Params 2 Fold 5: Maximum accuracy = 72.033900022507% Maximum validation accuracy = 67.796611785889% Minimal loss = 0.682110369205 Minimal validation loss = 0.521015346050
+Model TSNE SP Test 4 Params 2 Fold 5: Accuracy = 68.323244197028% (4.306001606278%) Validation accuracy = 65.108959206513% (3.065512698769%) Loss = 0.730780205556 (0.058156635647) Validation loss = 0.547861881767 (0.043515355860)
+Model TSNE SP Test 4 Params 2 average: Maximum accuracy = 72.457629442215% (0.000000000000%) Maximum validation accuracy = 76.271188259125% (0.000000000000%) Minimal loss = 0.663084268570 (0.000000000000) Minimal validation loss = 0.446875780821 (0.000000000000)
+Model TSNE SP Test 4 Params 2 average: Accuracy = 68.072639422757% (5.164302666334%) Validation accuracy = 65.903148003987% (6.334150026639%) Loss = 0.722694270611 (0.065219737468) Validation loss = 0.566367803046 (0.073636375773)
+Model TSNE SP Test 4 Params 3 Fold 1: conv: 5 num_cells: 32 kernel_size: 8 batch_size: 600 dropout: 0.50
+Model TSNE SP Test 4 Params 3 Fold 1: Maximum accuracy = 69.915252923965% Maximum validation accuracy = 67.796611785889% Minimal loss = 0.653684735298 Minimal validation loss = 0.582099914551
+Model TSNE SP Test 4 Params 3 Fold 1: Accuracy = 67.106537222862% (5.276922846468%) Validation accuracy = 61.743341684341% (4.378484800876%) Loss = 0.705478324209 (0.070545217324) Validation loss = 0.615936945166 (0.028096865985)
+Model TSNE SP Test 4 Params 3 Fold 2: conv: 5 num_cells: 32 kernel_size: 8 batch_size: 600 dropout: 0.50
+Model TSNE SP Test 4 Params 3 Fold 2: Maximum accuracy = 72.881358861923% Maximum validation accuracy = 66.101694107056% Minimal loss = 0.655094623566 Minimal validation loss = 0.602508664131
+Model TSNE SP Test 4 Params 3 Fold 2: Accuracy = 69.757870052542% (5.233974514806%) Validation accuracy = 60.266342248235% (4.148074621038%) Loss = 0.700337367398 (0.061522496293) Validation loss = 0.620695852382 (0.031382283770)
+Model TSNE SP Test 4 Params 3 Fold 3: conv: 5 num_cells: 32 kernel_size: 8 batch_size: 600 dropout: 0.50
+Model TSNE SP Test 4 Params 3 Fold 3: Maximum accuracy = 73.305082321167% Maximum validation accuracy = 69.491523504257% Minimal loss = 0.667811512947 Minimal validation loss = 0.519118189812
+Model TSNE SP Test 4 Params 3 Fold 3: Accuracy = 69.303874714034% (5.448375818455%) Validation accuracy = 64.745763284819% (5.008303188510%) Loss = 0.715494626760 (0.064346261842) Validation loss = 0.559883973428 (0.046220657363)
+Model TSNE SP Test 4 Params 3 Fold 4: conv: 5 num_cells: 32 kernel_size: 8 batch_size: 600 dropout: 0.50
+Model TSNE SP Test 4 Params 3 Fold 4: Maximum accuracy = 72.033900022507% Maximum validation accuracy = 77.966099977493% Minimal loss = 0.635293841362 Minimal validation loss = 0.432714074850
+Model TSNE SP Test 4 Params 3 Fold 4: Accuracy = 67.953994955335% (5.167392896458%) Validation accuracy = 73.559322101729% (5.039345387197%) Loss = 0.697210638864 (0.073918403279) Validation loss = 0.465204446656 (0.054870355028)
+Model TSNE SP Test 4 Params 3 Fold 5: conv: 5 num_cells: 32 kernel_size: 8 batch_size: 600 dropout: 0.50
+Model TSNE SP Test 4 Params 3 Fold 5: Maximum accuracy = 72.457629442215% Maximum validation accuracy = 69.491523504257% Minimal loss = 0.688403487206 Minimal validation loss = 0.512800514698
+Model TSNE SP Test 4 Params 3 Fold 5: Accuracy = 67.893462479115% (4.963325741930%) Validation accuracy = 65.617434637887% (5.093961775541%) Loss = 0.741773547445 (0.065355887282) Validation loss = 0.547542434931 (0.054682512753)
+Model TSNE SP Test 4 Params 3 average: Maximum accuracy = 73.305082321167% (0.000000000000%) Maximum validation accuracy = 77.966099977493% (0.000000000000%) Minimal loss = 0.635293841362 (0.000000000000) Minimal validation loss = 0.432714074850 (0.000000000000)
+Model TSNE SP Test 4 Params 3 average: Accuracy = 68.403147884778% (5.311328506567%) Validation accuracy = 65.186440791403% (6.623467316689%) Loss = 0.712058900935 (0.069185753809) Validation loss = 0.561852730513 (0.071900946369)
+Model TSNE SP Test 4 Params 4 Fold 1: conv: 5 num_cells: 48 kernel_size: 4 batch_size: 600 dropout: 0.50
+Model TSNE SP Test 4 Params 4 Fold 1: Maximum accuracy = 72.457629442215% Maximum validation accuracy = 66.101694107056% Minimal loss = 0.649832248688 Minimal validation loss = 0.602734148502
+Model TSNE SP Test 4 Params 4 Fold 1: Accuracy = 67.929781717913% (5.514312064097%) Validation accuracy = 63.171912346567% (6.681624074089%) Loss = 0.701588846104 (0.074707859744) Validation loss = 0.644927822692 (0.036142940750)
+Model TSNE SP Test 4 Params 4 Fold 2: conv: 5 num_cells: 48 kernel_size: 4 batch_size: 600 dropout: 0.50
+Model TSNE SP Test 4 Params 4 Fold 2: Maximum accuracy = 74.152541160583% Maximum validation accuracy = 67.796611785889% Minimal loss = 0.662771880627 Minimal validation loss = 0.587795317173
+Model TSNE SP Test 4 Params 4 Fold 2: Accuracy = 68.692494460515% (7.582105233574%) Validation accuracy = 59.830507465771% (6.440359213470%) Loss = 0.725387345042 (0.083741492703) Validation loss = 0.636763465405 (0.039085714811)
+Model TSNE SP Test 4 Params 4 Fold 3: conv: 5 num_cells: 48 kernel_size: 4 batch_size: 600 dropout: 0.50
+Model TSNE SP Test 4 Params 4 Fold 3: Maximum accuracy = 74.576270580292% Maximum validation accuracy = 72.881358861923% Minimal loss = 0.641951918602 Minimal validation loss = 0.487768709660
+Model TSNE SP Test 4 Params 4 Fold 3: Accuracy = 70.720339460032% (5.209403179906%) Validation accuracy = 68.329296750682% (3.784992153454%) Loss = 0.695644451891 (0.069365064445) Validation loss = 0.533734096374 (0.046194869921)
+Model TSNE SP Test 4 Params 4 Fold 4: conv: 5 num_cells: 48 kernel_size: 4 batch_size: 600 dropout: 0.50
+Model TSNE SP Test 4 Params 4 Fold 4: Maximum accuracy = 72.881358861923% Maximum validation accuracy = 79.661017656326% Minimal loss = 0.652322053909 Minimal validation loss = 0.442642539740
+Model TSNE SP Test 4 Params 4 Fold 4: Accuracy = 68.244551845959% (4.517312133138%) Validation accuracy = 75.399516906057% (2.340541833383%) Loss = 0.707368694884 (0.068044548195) Validation loss = 0.462988199932 (0.044463264533)
+Model TSNE SP Test 4 Params 4 Fold 5: conv: 5 num_cells: 48 kernel_size: 4 batch_size: 600 dropout: 0.50
+Model TSNE SP Test 4 Params 4 Fold 5: Maximum accuracy = 69.915252923965% Maximum validation accuracy = 66.101694107056% Minimal loss = 0.681989908218 Minimal validation loss = 0.522732198238
+Model TSNE SP Test 4 Params 4 Fold 5: Accuracy = 66.822034333433% (4.136420579959%) Validation accuracy = 63.922520577908% (2.329997929846%) Loss = 0.728537602936 (0.055770121835) Validation loss = 0.550008842775 (0.048082187698)
+Model TSNE SP Test 4 Params 4 average: Maximum accuracy = 74.576270580292% (0.000000000000%) Maximum validation accuracy = 79.661017656326% (0.000000000000%) Minimal loss = 0.641951918602 (0.000000000000) Minimal validation loss = 0.442642539740 (0.000000000000)
+Model TSNE SP Test 4 Params 4 average: Accuracy = 68.481840363571% (5.669589172532%) Validation accuracy = 66.130750809397% (7.147352241193%) Loss = 0.711705388171 (0.072104653811) Validation loss = 0.565684485435 (0.080500506862)
+Model TSNE SP Test 4 Params 5 Fold 1: conv: 5 num_cells: 48 kernel_size: 6 batch_size: 600 dropout: 0.50
+Model TSNE SP Test 4 Params 5 Fold 1: Maximum accuracy = 70.338982343674% Maximum validation accuracy = 67.796611785889% Minimal loss = 0.650217115879 Minimal validation loss = 0.562072813511
+Model TSNE SP Test 4 Params 5 Fold 1: Accuracy = 67.070218537535% (4.354989428857%) Validation accuracy = 60.314771234989% (4.015941177698%) Loss = 0.697863502162 (0.063793321780) Validation loss = 0.635066863469 (0.039985336805)
+Model TSNE SP Test 4 Params 5 Fold 2: conv: 5 num_cells: 48 kernel_size: 6 batch_size: 600 dropout: 0.50
+Model TSNE SP Test 4 Params 5 Fold 2: Maximum accuracy = 72.033900022507% Maximum validation accuracy = 67.796611785889% Minimal loss = 0.644778728485 Minimal validation loss = 0.560425758362
+Model TSNE SP Test 4 Params 5 Fold 2: Accuracy = 68.577481380531% (4.869661877432%) Validation accuracy = 60.895883355822% (4.559843764952%) Loss = 0.694263358627 (0.072076899149) Validation loss = 0.606237349340 (0.044250552050)
+Model TSNE SP Test 4 Params 5 Fold 3: conv: 5 num_cells: 48 kernel_size: 6 batch_size: 600 dropout: 0.50
+Model TSNE SP Test 4 Params 5 Fold 3: Maximum accuracy = 73.305082321167% Maximum validation accuracy = 71.186441183090% Minimal loss = 0.663381457329 Minimal validation loss = 0.525269210339
+Model TSNE SP Test 4 Params 5 Fold 3: Accuracy = 68.886199338096% (6.284331301033%) Validation accuracy = 65.859565138817% (3.465093424803%) Loss = 0.718700644800 (0.071759111807) Validation loss = 0.558717332567 (0.038793483539)
+Model TSNE SP Test 4 Params 5 Fold 4: conv: 5 num_cells: 48 kernel_size: 6 batch_size: 600 dropout: 0.50
+Model TSNE SP Test 4 Params 5 Fold 4: Maximum accuracy = 72.457629442215% Maximum validation accuracy = 83.050847053528% Minimal loss = 0.666458249092 Minimal validation loss = 0.447535067797
+Model TSNE SP Test 4 Params 5 Fold 4: Accuracy = 68.075060844421% (5.658637747137%) Validation accuracy = 78.135592171124% (5.237024725062%) Loss = 0.718508190768 (0.063769998543) Validation loss = 0.472417659419 (0.047963523410)
+Model TSNE SP Test 4 Params 5 Fold 5: conv: 5 num_cells: 48 kernel_size: 6 batch_size: 600 dropout: 0.50
+Model TSNE SP Test 4 Params 5 Fold 5: Maximum accuracy = 70.762711763382% Maximum validation accuracy = 71.186441183090% Minimal loss = 0.662329673767 Minimal validation loss = 0.510132551193
+Model TSNE SP Test 4 Params 5 Fold 5: Accuracy = 68.371670288699% (3.611853960344%) Validation accuracy = 65.084746224540% (2.420822915212%) Loss = 0.708330163785 (0.054651202939) Validation loss = 0.535848081112 (0.040929300480)
+Model TSNE SP Test 4 Params 5 average: Maximum accuracy = 73.305082321167% (0.000000000000%) Maximum validation accuracy = 83.050847053528% (0.000000000000%) Minimal loss = 0.644778728485 (0.000000000000) Minimal validation loss = 0.447535067797 (0.000000000000)
+Model TSNE SP Test 4 Params 5 average: Accuracy = 68.196126077856% (5.082770959481%) Validation accuracy = 66.058111625058% (7.598691986052%) Loss = 0.707533172028 (0.066306550600) Validation loss = 0.561657457181 (0.070784740649)
+Model TSNE SP Test 4 Params 6 Fold 1: conv: 5 num_cells: 48 kernel_size: 8 batch_size: 600 dropout: 0.50
+Model TSNE SP Test 4 Params 6 Fold 1: Maximum accuracy = 70.762711763382% Maximum validation accuracy = 67.796611785889% Minimal loss = 0.654109239578 Minimal validation loss = 0.563355565071
+Model TSNE SP Test 4 Params 6 Fold 1: Accuracy = 67.972154191562% (4.059523461252%) Validation accuracy = 60.871671012470% (3.830260786347%) Loss = 0.693719922645 (0.058051901721) Validation loss = 0.628851157427 (0.035530096344)
+Model TSNE SP Test 4 Params 6 Fold 2: conv: 5 num_cells: 48 kernel_size: 8 batch_size: 600 dropout: 0.50
+Model TSNE SP Test 4 Params 6 Fold 2: Maximum accuracy = 71.610170602798% Maximum validation accuracy = 66.101694107056% Minimal loss = 0.655036509037 Minimal validation loss = 0.583788871765
+Model TSNE SP Test 4 Params 6 Fold 2: Accuracy = 67.354720873492% (5.175955254628%) Validation accuracy = 58.740920083863% (4.784395617949%) Loss = 0.696085079227 (0.059433192547) Validation loss = 0.622085303920 (0.047190100965)
+Model TSNE SP Test 4 Params 6 Fold 3: conv: 5 num_cells: 48 kernel_size: 8 batch_size: 600 dropout: 0.50
+Model TSNE SP Test 4 Params 6 Fold 3: Maximum accuracy = 74.152541160583% Maximum validation accuracy = 72.881358861923% Minimal loss = 0.667242288589 Minimal validation loss = 0.540931761265
+Model TSNE SP Test 4 Params 6 Fold 3: Accuracy = 70.072640095438% (4.494706115010%) Validation accuracy = 65.859563946724% (2.314851002694%) Loss = 0.719296830893 (0.064745165535) Validation loss = 0.565711165326 (0.035852442890)
+Model TSNE SP Test 4 Params 6 Fold 4: conv: 5 num_cells: 48 kernel_size: 8 batch_size: 600 dropout: 0.50
+Model TSNE SP Test 4 Params 6 Fold 4: Maximum accuracy = 73.728811740875% Maximum validation accuracy = 79.661017656326% Minimal loss = 0.644057393074 Minimal validation loss = 0.438459426165
+Model TSNE SP Test 4 Params 6 Fold 4: Accuracy = 68.038741009576% (6.055689549952%) Validation accuracy = 74.842614744391% (6.300472378669%) Loss = 0.707604018279 (0.079446768807) Validation loss = 0.482427907842 (0.064201547399)
+Model TSNE SP Test 4 Params 6 Fold 5: conv: 5 num_cells: 48 kernel_size: 8 batch_size: 600 dropout: 0.50
+Model TSNE SP Test 4 Params 6 Fold 5: Maximum accuracy = 72.881358861923% Maximum validation accuracy = 72.881358861923% Minimal loss = 0.678530395031 Minimal validation loss = 0.493498325348
+Model TSNE SP Test 4 Params 6 Fold 5: Accuracy = 68.196126307760% (7.866790681294%) Validation accuracy = 68.910413299288% (7.702803685248%) Loss = 0.729187067917 (0.077406575889) Validation loss = 0.532136118838 (0.070896919695)
+Model TSNE SP Test 4 Params 6 average: Maximum accuracy = 74.152541160583% (0.000000000000%) Maximum validation accuracy = 79.661017656326% (0.000000000000%) Minimal loss = 0.644057393074 (0.000000000000) Minimal validation loss = 0.438459426165 (0.000000000000)
+Model TSNE SP Test 4 Params 6 average: Accuracy = 68.326876495566% (5.766266050442%) Validation accuracy = 65.845036617347% (7.842257400160%) Loss = 0.709178583792 (0.069732974809) Validation loss = 0.566242330670 (0.076353885419)
+Model TSNE SP Test 4 Params 7 Fold 1: conv: 5 num_cells: 64 kernel_size: 4 batch_size: 600 dropout: 0.50
+Model TSNE SP Test 4 Params 7 Fold 1: Maximum accuracy = 71.610170602798% Maximum validation accuracy = 72.881358861923% Minimal loss = 0.638823151588 Minimal validation loss = 0.567037165165
+Model TSNE SP Test 4 Params 7 Fold 1: Accuracy = 68.226391843387% (5.504511635080%) Validation accuracy = 63.559323634420% (4.679141779057%) Loss = 0.691326911960 (0.080218310805) Validation loss = 0.619086222138 (0.034385709396)
+Model TSNE SP Test 4 Params 7 Fold 2: conv: 5 num_cells: 64 kernel_size: 4 batch_size: 600 dropout: 0.50
+Model TSNE SP Test 4 Params 7 Fold 2: Maximum accuracy = 75.423729419708% Maximum validation accuracy = 67.796611785889% Minimal loss = 0.648747563362 Minimal validation loss = 0.575891852379
+Model TSNE SP Test 4 Params 7 Fold 2: Accuracy = 70.647700471537% (5.218146213023%) Validation accuracy = 61.016949372632% (4.502590320450%) Loss = 0.693922879866 (0.068657028654) Validation loss = 0.636143752507 (0.040697688340)
+Model TSNE SP Test 4 Params 7 Fold 3: conv: 5 num_cells: 64 kernel_size: 4 batch_size: 600 dropout: 0.50
+Model TSNE SP Test 4 Params 7 Fold 3: Maximum accuracy = 74.576270580292% Maximum validation accuracy = 67.796611785889% Minimal loss = 0.652452409267 Minimal validation loss = 0.533747673035
+Model TSNE SP Test 4 Params 7 Fold 3: Accuracy = 70.611380892141% (4.719007931935%) Validation accuracy = 65.496368152755% (1.743509512040%) Loss = 0.694444001572 (0.060607003445) Validation loss = 0.563212674856 (0.029720239857)
+Model TSNE SP Test 4 Params 7 Fold 4: conv: 5 num_cells: 64 kernel_size: 4 batch_size: 600 dropout: 0.50
+Model TSNE SP Test 4 Params 7 Fold 4: Maximum accuracy = 72.033900022507% Maximum validation accuracy = 77.966099977493% Minimal loss = 0.642736911774 Minimal validation loss = 0.458076268435
+Model TSNE SP Test 4 Params 7 Fold 4: Accuracy = 68.825665797506% (5.195312999256%) Validation accuracy = 71.331719330379% (3.263290101246%) Loss = 0.692325571605 (0.064453689256) Validation loss = 0.479904307212 (0.039800447772)
+Model TSNE SP Test 4 Params 7 Fold 5: conv: 5 num_cells: 64 kernel_size: 4 batch_size: 600 dropout: 0.50
+Model TSNE SP Test 4 Params 7 Fold 5: Maximum accuracy = 71.186441183090% Maximum validation accuracy = 66.101694107056% Minimal loss = 0.657401382923 Minimal validation loss = 0.550258934498
+Model TSNE SP Test 4 Params 7 Fold 5: Accuracy = 66.053269122328% (4.811857755150%) Validation accuracy = 63.414045018809% (3.209397516422%) Loss = 0.710366169895 (0.064005576161) Validation loss = 0.571790302651 (0.030929957024)
+Model TSNE SP Test 4 Params 7 average: Maximum accuracy = 75.423729419708% (0.000000000000%) Maximum validation accuracy = 77.966099977493% (0.000000000000%) Minimal loss = 0.638823151588 (0.000000000000) Minimal validation loss = 0.458076268435 (0.000000000000)
+Model TSNE SP Test 4 Params 7 average: Accuracy = 68.872881625380% (5.375606774981%) Validation accuracy = 64.963681101799% (5.038705331869%) Loss = 0.696477106980 (0.068293907626) Validation loss = 0.574027451873 (0.065011641373)
+Model TSNE SP Test 4 Params 8 Fold 1: conv: 5 num_cells: 64 kernel_size: 6 batch_size: 600 dropout: 0.50
+Model TSNE SP Test 4 Params 8 Fold 1: Maximum accuracy = 70.338982343674% Maximum validation accuracy = 66.101694107056% Minimal loss = 0.643071591854 Minimal validation loss = 0.608581244946
+Model TSNE SP Test 4 Params 8 Fold 1: Accuracy = 67.627118485315% (4.058832807116%) Validation accuracy = 59.055690935680% (3.133606158582%) Loss = 0.692783706529 (0.073578714216) Validation loss = 0.650737280505 (0.039682900707)
+Model TSNE SP Test 4 Params 8 Fold 2: conv: 5 num_cells: 64 kernel_size: 6 batch_size: 600 dropout: 0.50
+Model TSNE SP Test 4 Params 8 Fold 2: Maximum accuracy = 72.033900022507% Maximum validation accuracy = 67.796611785889% Minimal loss = 0.650470018387 Minimal validation loss = 0.572168588638
+Model TSNE SP Test 4 Params 8 Fold 2: Accuracy = 68.305084194456% (5.155182075348%) Validation accuracy = 59.878933940615% (4.119141322023%) Loss = 0.696788546869 (0.069251862522) Validation loss = 0.610122851815 (0.038982654200)
+Model TSNE SP Test 4 Params 8 Fold 3: conv: 5 num_cells: 64 kernel_size: 6 batch_size: 600 dropout: 0.50
+Model TSNE SP Test 4 Params 8 Fold 3: Maximum accuracy = 75.423729419708% Maximum validation accuracy = 71.186441183090% Minimal loss = 0.621199011803 Minimal validation loss = 0.523533046246
+Model TSNE SP Test 4 Params 8 Fold 3: Accuracy = 70.932203531265% (5.990032678000%) Validation accuracy = 64.866829557078% (4.111163255561%) Loss = 0.680337587425 (0.077679682757) Validation loss = 0.555104784455 (0.042577042359)
+Model TSNE SP Test 4 Params 8 Fold 4: conv: 5 num_cells: 64 kernel_size: 6 batch_size: 600 dropout: 0.50
+Model TSNE SP Test 4 Params 8 Fold 4: Maximum accuracy = 70.762711763382% Maximum validation accuracy = 74.576270580292% Minimal loss = 0.715745866299 Minimal validation loss = 0.463095784187
+Model TSNE SP Test 4 Params 8 Fold 4: Accuracy = 66.313559242657% (6.244277337126%) Validation accuracy = 71.234866721290% (6.809687743776%) Loss = 0.770778080395 (0.070610977382) Validation loss = 0.498740433795 (0.071507917109)
+Model TSNE SP Test 4 Params 8 Fold 5: conv: 5 num_cells: 64 kernel_size: 6 batch_size: 600 dropout: 0.50
+Model TSNE SP Test 4 Params 8 Fold 5: Maximum accuracy = 72.457629442215% Maximum validation accuracy = 74.576270580292% Minimal loss = 0.703314721584 Minimal validation loss = 0.527845323086
+Model TSNE SP Test 4 Params 8 Fold 5: Accuracy = 68.601694575378% (5.584385550698%) Validation accuracy = 69.830508743014% (3.741997646398%) Loss = 0.747799485922 (0.056685518953) Validation loss = 0.555219292641 (0.042965422601)
+Model TSNE SP Test 4 Params 8 average: Maximum accuracy = 75.423729419708% (0.000000000000%) Maximum validation accuracy = 74.576270580292% (0.000000000000%) Minimal loss = 0.621199011803 (0.000000000000) Minimal validation loss = 0.463095784187 (0.000000000000)
+Model TSNE SP Test 4 Params 8 average: Accuracy = 68.355932005814% (5.665853762252%) Validation accuracy = 64.973365979535% (6.750474987023%) Loss = 0.717697481428 (0.078256323723) Validation loss = 0.573984928642 (0.071321539766)
+Model TSNE SP Test 4 Params 9 Fold 1: conv: 5 num_cells: 64 kernel_size: 8 batch_size: 600 dropout: 0.50
+Model TSNE SP Test 4 Params 9 Fold 1: Maximum accuracy = 70.762711763382% Maximum validation accuracy = 67.796611785889% Minimal loss = 0.657543659210 Minimal validation loss = 0.569690823555
+Model TSNE SP Test 4 Params 9 Fold 1: Accuracy = 66.997578484671% (6.397580362688%) Validation accuracy = 59.806295207569% (4.988128892332%) Loss = 0.708481265817 (0.072567771062) Validation loss = 0.651713427476 (0.042112620178)
+Model TSNE SP Test 4 Params 9 Fold 2: conv: 5 num_cells: 64 kernel_size: 8 batch_size: 600 dropout: 0.50
+Model TSNE SP Test 4 Params 9 Fold 2: Maximum accuracy = 73.305082321167% Maximum validation accuracy = 69.491523504257% Minimal loss = 0.643806040287 Minimal validation loss = 0.551086127758
+Model TSNE SP Test 4 Params 9 Fold 2: Accuracy = 69.279661306313% (5.234747977273%) Validation accuracy = 60.726392141410% (4.776546757816%) Loss = 0.692275271245 (0.071301866211) Validation loss = 0.619846720355 (0.035573582610)
+Model TSNE SP Test 4 Params 9 Fold 3: conv: 5 num_cells: 64 kernel_size: 8 batch_size: 600 dropout: 0.50
+Model TSNE SP Test 4 Params 9 Fold 3: Maximum accuracy = 73.305082321167% Maximum validation accuracy = 69.491523504257% Minimal loss = 0.670917809010 Minimal validation loss = 0.526364386082
+Model TSNE SP Test 4 Params 9 Fold 3: Accuracy = 68.625908579145% (6.174337489685%) Validation accuracy = 64.406780685697% (5.027931036362%) Loss = 0.722820448875 (0.072980663349) Validation loss = 0.566160328048 (0.050020661971)
+Model TSNE SP Test 4 Params 9 Fold 4: conv: 5 num_cells: 64 kernel_size: 8 batch_size: 600 dropout: 0.50
+Model TSNE SP Test 4 Params 9 Fold 4: Maximum accuracy = 70.338982343674% Maximum validation accuracy = 76.271188259125% Minimal loss = 0.697419643402 Minimal validation loss = 0.458557516336
+Model TSNE SP Test 4 Params 9 Fold 4: Accuracy = 66.507263992514% (4.655751058263%) Validation accuracy = 72.615013122559% (4.157957079564%) Loss = 0.738317032371 (0.061051185467) Validation loss = 0.484841602615 (0.051556820238)
+Model TSNE SP Test 4 Params 9 Fold 5: conv: 5 num_cells: 64 kernel_size: 8 batch_size: 600 dropout: 0.50
+Model TSNE SP Test 4 Params 9 Fold 5: Maximum accuracy = 71.610170602798% Maximum validation accuracy = 71.186441183090% Minimal loss = 0.686134219170 Minimal validation loss = 0.508748650551
+Model TSNE SP Test 4 Params 9 Fold 5: Accuracy = 68.069006800652% (4.746106038916%) Validation accuracy = 67.845034854753% (4.382231657854%) Loss = 0.730172584738 (0.060940598045) Validation loss = 0.538732523578 (0.052100717475)
+Model TSNE SP Test 4 Params 9 average: Maximum accuracy = 73.305082321167% (0.000000000000%) Maximum validation accuracy = 76.271188259125% (0.000000000000%) Minimal loss = 0.643806040287 (0.000000000000) Minimal validation loss = 0.458557516336 (0.000000000000)
+Model TSNE SP Test 4 Params 9 average: Accuracy = 67.895883832659% (5.583342549335%) Validation accuracy = 65.079903202397% (6.649968556146%) Loss = 0.718413320610 (0.069932714280) Validation loss = 0.572258920414 (0.075225297097)
+Model TSNE SP Test 4 Best params: conv: 5 num_cells: 48 kernel_size: 6 batch_size: 600 dropout: 0.50
+Model TSNE SP Test 4 Weak 1: Maximum accuracy = 74.576270580292% Minimal loss = 0.001594532863
+Model TSNE SP Test 4 Weak 1: Accuracy = 70.634382792882% (2.900900699589%) Loss = 0.001691321628 (0.000146401491)
+Model TSNE SP Test 4 Weak 1 ROC curve: ROC thr = 0.647107243538 gmean = 0.740152745693 ROC AUC = 0.778260869565
+Model TSNE SP Test 4 Weak 1 PR curve: PR thr = 0.357705861330 PR AUC = 0.901745757836 F1 = 0.820512820513 F1 (0.5) = 0.762886597938 F1 (thr) = 0.820512820513
+Model TSNE SP Test 4 Weak 1: Accuracy (0.5) = 68.493150684932% Accuracy (ROC thr) = 69.863013698630% Accuracy (PR thr) = 71.232876712329%
+Model TSNE SP Test 4 Weak 1: ROC thr = 0.647107243538 ROC AUC = 0.778260869565 gmean = 0.740152745693
+Model TSNE SP Test 4 Weak 1: PR thr = 0.357705861330 PR AUC 0.901745757836 F1 = 0.820512820513 F1 (thr) = 0.820512820513 F1 (0.5) = 0.762886597938
+Model TSNE SP Test 4 Iteration 1 ROC curve: ROC thr = 1.000000000000 gmean = 0.646730909703 ROC AUC = 0.652608695652
+Model TSNE SP Test 4 Iteration 1 PR curve: PR thr = 0.000000000000 PR AUC = 0.852658117167 F1 = 0.813008130081 F1 (0.5) = 0.762886597938 F1 (thr) = 0.813008130081
+Model TSNE SP Test 4 Iteration 1: Accuracy (0.5) = 68.493150684932% Accuracy (ROC thr) = 68.493150684932% Accuracy (PR thr) = 68.493150684932%
+Model TSNE SP Test 4 Iteration 1: ROC thr = 1.000000000000 ROC AUC = 0.652608695652 gmean = 0.646730909703
+Model TSNE SP Test 4 Iteration 1: PR thr = 0.000000000000 PR AUC 0.852658117167 F1 = 0.813008130081 F1 (thr) = 0.813008130081 F1 (0.5) = 0.762886597938
