@@ -40,6 +40,26 @@ def read_all_final_history(some_path, iteration, lines_dict, sd_dict):
     sd_dict['Accuracy = '].append(np.std(all_acc) * 100)
     sd_dict['Loss = '].append(np.std(all_loss)) 
 
+def returnGMEAN(actual, pred):
+    tn = 0
+    tp = 0
+    apo = 0
+    ane = 0
+    for i in range(len(pred)):
+        a = actual[i]
+        p = pred[i]
+        if a == 1:
+            apo += 1
+        else:
+            ane += 1
+        if p == a:
+            if a == 1:
+                tp += 1
+            else:
+                tn += 1
+    
+    return np.sqrt(tp / apo * tn / ane)
+
 def read_ROC(test_labels, model_predictions, lines_dict): 
     # Get false positive rate and true positive rate.
     fpr, tpr, thresholds = roc_curve(test_labels, model_predictions) 
@@ -50,8 +70,33 @@ def read_ROC(test_labels, model_predictions, lines_dict):
     # Locate the index of the largest g-mean
     ix = np.argmax(gmeans) 
 
+    model_predictions_binary_thrROC = convert_to_binary(model_predictions, thresholds[ix])
+
+
+    # Get recall and precision.
+    precision, recall, thresholdsPR = precision_recall_curve(
+        test_labels, model_predictions
+    ) 
+
+    # Calculate the F1 score for each threshold
+    fscore = []
+    for i in range(len(precision)):
+        fscore.append(
+            weird_division(2 * precision[i] * recall[i], precision[i] + recall[i])
+        )
+
+    # Locate the index of the largest F1 score
+    ixPR = np.argmax(fscore)
+
+    model_predictions_binary_thrPR = convert_to_binary(model_predictions, thresholdsPR[ixPR])
+
+    model_predictions_binary = convert_to_binary(model_predictions, 0.5)
+
     lines_dict['ROC thr = '].append(thresholds[ix])
-    lines_dict['gmean = '].append(gmeans[ix])
+    #lines_dict['gmean = '].append(gmeans[ix])
+    lines_dict['gmean (0.5) = '].append(returnGMEAN(test_labels, model_predictions_binary))
+    lines_dict['gmean (PR thr) = '].append(returnGMEAN(test_labels, model_predictions_binary_thrPR))
+    lines_dict['gmean (ROC thr) = '].append(returnGMEAN(test_labels, model_predictions_binary_thrROC))
     lines_dict['ROC AUC = '].append(roc_auc_score(test_labels, model_predictions))
     lines_dict['Accuracy (ROC thr) = '].append(my_accuracy_calculate(test_labels, model_predictions, thresholds[ix]))
    
@@ -70,14 +115,26 @@ def read_PR(test_labels, model_predictions, lines_dict):
 
     # Locate the index of the largest F1 score
     ix = np.argmax(fscore)
-    model_predictions_binary_thr = convert_to_binary(model_predictions, thresholds[ix])
+    model_predictions_binary_thrPR = convert_to_binary(model_predictions, thresholds[ix])
     model_predictions_binary = convert_to_binary(model_predictions, 0.5)
+
+    # Get false positive rate and true positive rate.
+    fpr, tpr, thresholdsROC = roc_curve(test_labels, model_predictions) 
+
+    # Calculate the g-mean for each threshold
+    gmeans = np.sqrt(tpr * (1 - fpr))
+
+    # Locate the index of the largest g-mean
+    ixROC = np.argmax(gmeans) 
+ 
+    model_predictions_binary_thrROC = convert_to_binary(model_predictions, thresholdsROC[ixROC])
  
     lines_dict['PR thr = '].append(thresholds[ix])
     lines_dict['PR AUC = '].append(auc(recall, precision))
     #lines_dict['F1 = '].append(fscore[ix])
     lines_dict['F1 (0.5) = '].append(f1_score(test_labels, model_predictions_binary))
-    lines_dict['F1 (thr) = '].append(f1_score(test_labels, model_predictions_binary_thr))
+    lines_dict['F1 (PR thr) = '].append(f1_score(test_labels, model_predictions_binary_thrPR))
+    lines_dict['F1 (ROC thr) = '].append(f1_score(test_labels, model_predictions_binary_thrROC))
     lines_dict['Accuracy (PR thr) = '].append(my_accuracy_calculate(test_labels, model_predictions, thresholds[ix]))
     lines_dict['Accuracy (0.5) = '].append(my_accuracy_calculate(test_labels, model_predictions, 0.5))
   
@@ -178,7 +235,7 @@ if not os.path.exists("../seeds/all_seeds/"):
     os.makedirs("../seeds/all_seeds/")
 
 seed_list = [305475974, 369953070, 879273778, 965681145, 992391276]
-paths = [SEQ_MODEL_DATA_PATH, MODEL_DATA_PATH, MY_MODEL_DATA_PATH, TSNE_SEQ_DATA_PATH, TSNE_AP_SEQ_DATA_PATH]
+paths = [MY_MODEL_DATA_PATH, SEQ_MODEL_DATA_PATH, MODEL_DATA_PATH, TSNE_SEQ_DATA_PATH, TSNE_AP_SEQ_DATA_PATH]
 NUM_TESTS = 5
 
 for some_path in paths:
@@ -306,9 +363,11 @@ def arrayToTableOnlyFreq(array):
 vals_in_lines = ['num_cells: ', 'kernel_size: ', 'dense: ',
 'Maximum accuracy = ', 'Minimal loss = ',
 'Accuracy = ', 'Loss = ',
-'ROC thr = ','ROC AUC = ', 'gmean = ', 
-'PR thr = ', 'PR AUC = ', 'F1 (0.5) = ', 'F1 (thr) = ',
-'Accuracy (0.5) = ', 'Accuracy (ROC thr) = ', 'Accuracy (PR thr) = ']
+'ROC thr = ', 'PR thr = ', 
+'ROC AUC = ', 'gmean (ROC thr) = ', 'F1 (ROC thr) = ', 'Accuracy (ROC thr) = ', 
+'PR AUC = ', 'gmean (PR thr) = ', 'F1 (PR thr) = ', 'Accuracy (PR thr) = ', 
+ 'gmean (0.5) = ', 'F1 (0.5) = ', 'Accuracy (0.5) = ', # 'gmean = '
+ ]
  
 for some_path in paths:
 

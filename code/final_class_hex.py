@@ -20,7 +20,27 @@ PRthr = {'../final_all/hex_predict.txt': 0.37450, '../final_seq/hex_predict.txt'
 ROCthr = {'../final_all/hex_predict.txt': 0.74304, '../final_seq/hex_predict.txt': 0.66199, '../final_AP/hex_predict.txt': 0.68748,
         "../final_TSNE_seq/hex_predict.txt": 0.65300, "../final_TSNE_AP_seq/hex_predict.txt": 0.67038}
 
-def read_ROC(test_labels, model_predictions, lines_dict, thr, name): 
+def returnGMEAN(actual, pred):
+    tn = 0
+    tp = 0
+    apo = 0
+    ane = 0
+    for i in range(len(pred)):
+        a = actual[i]
+        p = pred[i]
+        if a == 1:
+            apo += 1
+        else:
+            ane += 1
+        if p == a:
+            if a == 1:
+                tp += 1
+            else:
+                tn += 1
+    
+    return np.sqrt(tp / apo * tn / ane)
+
+def read_ROC(test_labels, model_predictions, lines_dict, thrPR, thrROC, name): 
     # Get false positive rate and true positive rate.
     fpr, tpr, thresholds = roc_curve(test_labels, model_predictions) 
 
@@ -30,11 +50,38 @@ def read_ROC(test_labels, model_predictions, lines_dict, thr, name):
     # Locate the index of the largest g-mean
     ix = np.argmax(gmeans) 
 
-    lines_dict['ROC thr old = '].append(thr)
-    lines_dict['ROC thr new = '].append(thresholds[ix])
-    lines_dict['gmean = '].append(gmeans[ix])
+    # Get recall and precision.
+    precision, recall, thresholdsPR = precision_recall_curve(
+        test_labels, model_predictions
+    ) 
+
+    # Calculate the F1 score for each threshold
+    fscore = []
+    for i in range(len(precision)):
+        fscore.append(
+            weird_division(2 * precision[i] * recall[i], precision[i] + recall[i])
+        )
+
+    # Locate the index of the largest F1 score
+    ixPR = np.argmax(fscore)
+
+    model_predictions_binary_thrPR_old = convert_to_binary(model_predictions, thrPR)
+    model_predictions_binary_thrPR_new = convert_to_binary(model_predictions, thresholdsPR[ixPR])
+    model_predictions_binary_thrROC_old = convert_to_binary(model_predictions, thrROC)
+    model_predictions_binary_thrROC_new = convert_to_binary(model_predictions, thresholds[ix])
+
+    model_predictions_binary = convert_to_binary(model_predictions, 0.5)
+
+    lines_dict['ROC thr old = '].append(thrROC)
+    lines_dict['ROC thr new = '].append(thresholds[ix]) 
     lines_dict['ROC AUC = '].append(roc_auc_score(test_labels, model_predictions))
-    lines_dict['Accuracy (ROC thr old) = '].append(my_accuracy_calculate(test_labels, model_predictions, thr))
+    lines_dict['gmean (0.5) = '].append(returnGMEAN(test_labels, model_predictions_binary))
+    lines_dict['gmean (PR thr old) = '].append(returnGMEAN(test_labels, model_predictions_binary_thrPR_old))
+    lines_dict['gmean (ROC thr old) = '].append(returnGMEAN(test_labels, model_predictions_binary_thrROC_old))
+    lines_dict['gmean (PR thr new) = '].append(returnGMEAN(test_labels, model_predictions_binary_thrPR_new))
+    lines_dict['gmean (ROC thr new) = '].append(returnGMEAN(test_labels, model_predictions_binary_thrROC_new))
+    #lines_dict['gmean new = '].append(gmeans[ix]) 
+    lines_dict['Accuracy (ROC thr old) = '].append(my_accuracy_calculate(test_labels, model_predictions, thrROC))
     lines_dict['Accuracy (ROC thr new) = '].append(my_accuracy_calculate(test_labels, model_predictions, thresholds[ix]))
      
     plt.figure()
@@ -43,25 +90,25 @@ def read_ROC(test_labels, model_predictions, lines_dict, thr, name):
     #    + "\nReceiver operating characteristic (ROC) curve"
     #)
  
-    plt.axvline(fpr[ix], linestyle = '--', color = 'y')
-    plt.axhline(tpr[ix],  linestyle = '--', color = 'y')
+    #plt.axvline(fpr[ix], linestyle = '--', color = 'y')
+    #plt.axhline(tpr[ix],  linestyle = '--', color = 'y')
 
-    radius = np.sqrt(np.power(fpr[ix], 2) + np.power(1 - tpr[ix], 2))
-    circle1 = plt.Circle((0, 1), radius, color = '#2e85ff')
+    #radius = np.sqrt(np.power(fpr[ix], 2) + np.power(1 - tpr[ix], 2))
+    #circle1 = plt.Circle((0, 1), radius, color = '#2e85ff')
     fig = plt.gcf()
     ax = fig.gca()
-    ax.add_patch(circle1)
+    #ax.add_patch(circle1)
     ax.set_xlim((0, 1))
     ax.set_ylim((0, 1))
 
     plt.arrow(fpr[ix], tpr[ix], - fpr[ix], 1 - tpr[ix], length_includes_head = True, head_width = 0.02)
     
     # Plot ROC curve.
-    plt.plot(fpr, tpr, "r", label="ROC curve")
+    plt.plot(fpr, tpr, "r", label="model performance")
     plt.plot(fpr[ix], tpr[ix], "o", markerfacecolor="r", markeredgecolor="k")
 
     # Plot random guessing ROC curve.
-    plt.plot([0, 1], [0, 1], "c", label="ROC curve for random guessing")
+    plt.plot([0, 1], [0, 1], "c", label="random guessing")
 
     plt.xlabel("FPR")
     plt.ylabel("TPR")
@@ -73,8 +120,8 @@ def read_ROC(test_labels, model_predictions, lines_dict, thr, name):
     )
 
     plt.close()
-   
-def read_PR(test_labels, model_predictions, lines_dict, thr, name):  
+
+def read_PR(test_labels, model_predictions, lines_dict, thrPR, thrROC, name):  
     # Get recall and precision.
     precision, recall, thresholds = precision_recall_curve(
         test_labels, model_predictions
@@ -89,18 +136,32 @@ def read_PR(test_labels, model_predictions, lines_dict, thr, name):
 
     # Locate the index of the largest F1 score
     ix = np.argmax(fscore)
-    model_predictions_binary_thr_old = convert_to_binary(model_predictions, thr)
-    model_predictions_binary_thr_new = convert_to_binary(model_predictions, thresholds[ix])
+
+    # Get false positive rate and true positive rate.
+    fpr, tpr, thresholdsROC = roc_curve(test_labels, model_predictions) 
+
+    # Calculate the g-mean for each threshold
+    gmeans = np.sqrt(tpr * (1 - fpr))
+
+    # Locate the index of the largest g-mean
+    ixROC = np.argmax(gmeans)  
+
+    model_predictions_binary_thrPR_old = convert_to_binary(model_predictions, thrPR)
+    model_predictions_binary_thrPR_new = convert_to_binary(model_predictions, thresholds[ix])
+    model_predictions_binary_thrROC_old = convert_to_binary(model_predictions, thrROC)
+    model_predictions_binary_thrROC_new = convert_to_binary(model_predictions, thresholdsROC[ixROC])
     model_predictions_binary = convert_to_binary(model_predictions, 0.5)
     
-    lines_dict['PR thr old = '].append(thr)
+    lines_dict['PR thr old = '].append(thrPR)
     lines_dict['PR thr new = '].append(thresholds[ix])
-    lines_dict['PR AUC = '].append(auc(recall, precision)) 
+    lines_dict['PR AUC = '].append(auc(recall, precision))  
     lines_dict['F1 (0.5) = '].append(f1_score(test_labels, model_predictions_binary))
-    lines_dict['F1 (thr old) = '].append(f1_score(test_labels, model_predictions_binary_thr_old))
-    lines_dict['F1 (thr new) = '].append(f1_score(test_labels, model_predictions_binary_thr_new))
-    lines_dict['Accuracy (PR thr old) = '].append(my_accuracy_calculate(test_labels, model_predictions_binary_thr_old, thr))
-    lines_dict['Accuracy (PR thr new) = '].append(my_accuracy_calculate(test_labels, model_predictions_binary_thr_new, thresholds[ix]))
+    lines_dict['F1 (PR thr old) = '].append(f1_score(test_labels, model_predictions_binary_thrPR_old))
+    lines_dict['F1 (ROC thr old) = '].append(f1_score(test_labels, model_predictions_binary_thrROC_old)) 
+    lines_dict['F1 (PR thr new) = '].append(f1_score(test_labels, model_predictions_binary_thrPR_new))
+    lines_dict['F1 (ROC thr new) = '].append(f1_score(test_labels, model_predictions_binary_thrROC_new))
+    lines_dict['Accuracy (PR thr old) = '].append(my_accuracy_calculate(test_labels, model_predictions_binary_thrPR_old, thrPR))
+    lines_dict['Accuracy (PR thr new) = '].append(my_accuracy_calculate(test_labels, model_predictions_binary_thrPR_new, thresholds[ix]))
     lines_dict['Accuracy (0.5) = '].append(my_accuracy_calculate(test_labels, model_predictions, 0.5))
     
     plt.figure()
@@ -109,21 +170,21 @@ def read_PR(test_labels, model_predictions, lines_dict, thr, name):
     #    + "\nPrecision - Recall (PR) curve"
     #)  
 
-    plt.axvline(recall[ix], linestyle = '--', color = 'y')
-    plt.axhline(precision[ix],  linestyle = '--', color = 'y')
+    #plt.axvline(recall[ix], linestyle = '--', color = 'y')
+    #plt.axhline(precision[ix],  linestyle = '--', color = 'y')
 
-    radius = np.sqrt(np.power(1 - recall[ix], 2) + np.power(1 - precision[ix], 2))
-    circle1 = plt.Circle((1, 1), radius, color = '#2e85ff')
+    #radius = np.sqrt(np.power(1 - recall[ix], 2) + np.power(1 - precision[ix], 2))
+    #circle1 = plt.Circle((1, 1), radius, color = '#2e85ff')
     fig = plt.gcf()
     ax = fig.gca()
-    ax.add_patch(circle1)
+    #ax.add_patch(circle1)
     ax.set_xlim((0, 1))
     ax.set_ylim((0, 1))
 
     plt.arrow(recall[ix], precision[ix], 1 - recall[ix], 1 - precision[ix], length_includes_head = True, head_width = 0.02)
     
     # Plot PR curve.
-    plt.plot(recall, precision, "r", label="PR curve")
+    plt.plot(recall, precision, "r", label="model performance")
     plt.plot(
         recall[ix], precision[ix], "o", markerfacecolor="r", markeredgecolor="k"
     )
@@ -136,7 +197,7 @@ def read_PR(test_labels, model_predictions, lines_dict, thr, name):
     no_skill = num_positive / len(test_labels)
 
     # Plot the no skill precision-recall curve
-    plt.plot([0, 1], [no_skill, no_skill], "c", label="PR curve for random guessing")
+    plt.plot([0, 1], [no_skill, no_skill], "c", label="random guessing")
     plt.xlabel("Recall")
     plt.ylabel("Precision")
 
@@ -230,16 +291,20 @@ for number in range(1, NUM_TESTS + 1):
 if not os.path.exists("../seeds/all_seeds/"):
     os.makedirs("../seeds/all_seeds/")
  
-paths = ["../final_seq/hex_predict.txt", "../final_all/hex_predict.txt", "../final_AP/hex_predict.txt",
+paths = ["../final_AP/hex_predict.txt", "../final_seq/hex_predict.txt", "../final_all/hex_predict.txt", 
         "../final_TSNE_seq/hex_predict.txt", "../final_TSNE_AP_seq/hex_predict.txt"] 
 names = ["SP", "Hybrid AP-SP", "AP", "t-SNE SP", "t-SNE AP-SP"]  
-
-vals_in_lines = [ 'ROC thr old = ',
-'ROC thr new = ','ROC AUC = ', 'gmean = ', 
-
-'PR thr old = ', 'PR thr new = ', 'PR AUC = ', 'F1 (0.5) = ', 'F1 (thr old) = ','F1 (thr new) = ',
-'Accuracy (0.5) = ', 'Accuracy (ROC thr old) = ', 'Accuracy (ROC thr new) = ',  'Accuracy (PR thr old) = ' , 'Accuracy (PR thr new) = '] 
   
+vals_in_lines = [ 
+'ROC thr old = ', 'PR thr old = ', 
+'ROC AUC = ', 'gmean (ROC thr old) = ', 'F1 (ROC thr old) = ', 'Accuracy (ROC thr old) = ', 
+'PR AUC = ', 'gmean (PR thr old) = ', 'F1 (PR thr old) = ', 'Accuracy (PR thr old) = ', 
+'gmean (0.5) = ', 'F1 (0.5) = ', 'Accuracy (0.5) = ',  
+'ROC thr new = ', 'PR thr new = ', 
+'gmean (ROC thr new) = ', 'F1 (ROC thr new) = ', 'Accuracy (ROC thr new) = ', 
+'gmean (PR thr new) = ', 'F1 (PR thr new) = ', 'Accuracy (PR thr new) = ', # 'gmean new = '
+ ]
+
 lines_dict = dict()
 sd_dict = dict()
 for val in vals_in_lines:
@@ -256,12 +321,14 @@ for some_path in paths:
 
     model_predictions_hex_one = eval(model_predictions_hex_lines[0])
     
-    read_PR(test_labels, model_predictions_hex_one, lines_dict, PRthr[some_path], names[ind])
-    read_ROC(test_labels, model_predictions_hex_one, lines_dict, ROCthr[some_path], names[ind])
+    read_PR(test_labels, model_predictions_hex_one, lines_dict, PRthr[some_path], ROCthr[some_path], names[ind])
+    read_ROC(test_labels, model_predictions_hex_one, lines_dict, PRthr[some_path], ROCthr[some_path], names[ind])
 
     print(some_path)
 
 for val in vals_in_lines:
+    if val.find('new') != -1:
+        continue
     if len(lines_dict[val]) == 0:
         continue 
     print(val.replace(" = ", "") + arrayToTable(lines_dict[val], True, True, False)) 

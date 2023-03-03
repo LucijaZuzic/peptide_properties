@@ -257,25 +257,25 @@ def read_ROC(test_labels, model_predictions, name):
     #    + "\nReceiver operating characteristic (ROC) curve"
     #)
 
-    plt.axvline(fpr[ix], linestyle = '--', color = 'y')
-    plt.axhline(tpr[ix],  linestyle = '--', color = 'y')
+    #plt.axvline(fpr[ix], linestyle = '--', color = 'y')
+    #plt.axhline(tpr[ix],  linestyle = '--', color = 'y')
 
-    radius = np.sqrt(np.power(fpr[ix], 2) + np.power(1 - tpr[ix], 2))
-    circle1 = plt.Circle((0, 1), radius, color = '#2e85ff')
+    #radius = np.sqrt(np.power(fpr[ix], 2) + np.power(1 - tpr[ix], 2))
+    #circle1 = plt.Circle((0, 1), radius, color = '#2e85ff')
     fig = plt.gcf()
     ax = fig.gca()
-    ax.add_patch(circle1)
+    #ax.add_patch(circle1)
     ax.set_xlim((0, 1))
     ax.set_ylim((0, 1))
 
     plt.arrow(fpr[ix], tpr[ix], - fpr[ix], 1 - tpr[ix], length_includes_head = True, head_width = 0.02)
  
     # Plot ROC curve.
-    plt.plot(fpr, tpr, "r", label="ROC curve")
+    plt.plot(fpr, tpr, "r", label="model performance")
     plt.plot(fpr[ix], tpr[ix], "o", markerfacecolor="r", markeredgecolor="k")
 
     # Plot random guessing ROC curve.
-    plt.plot([0, 1], [0, 1], "c", label="ROC curve for random guessing")
+    plt.plot([0, 1], [0, 1], "c", label="random guessing")
 
     plt.xlabel("FPR")
     plt.ylabel("TPR")
@@ -310,21 +310,21 @@ def read_PR(test_labels, model_predictions, name):
     #    + "\nPrecision - Recall (PR) curve"
     #)  
 
-    plt.axvline(recall[ix], linestyle = '--', color = 'y')
-    plt.axhline(precision[ix],  linestyle = '--', color = 'y')
+    #plt.axvline(recall[ix], linestyle = '--', color = 'y')
+    #plt.axhline(precision[ix],  linestyle = '--', color = 'y')
 
-    radius = np.sqrt(np.power(1 - recall[ix], 2) + np.power(1 - precision[ix], 2))
-    circle1 = plt.Circle((1, 1), radius, color = '#2e85ff')
+    #radius = np.sqrt(np.power(1 - recall[ix], 2) + np.power(1 - precision[ix], 2))
+    #circle1 = plt.Circle((1, 1), radius, color = '#2e85ff')
     fig = plt.gcf()
     ax = fig.gca()
-    ax.add_patch(circle1)
+    #ax.add_patch(circle1)
     ax.set_xlim((0, 1))
     ax.set_ylim((0, 1))
 
     plt.arrow(recall[ix], precision[ix], 1 - recall[ix], 1 - precision[ix], length_includes_head = True, head_width = 0.02)
  
     # Plot PR curve.
-    plt.plot(recall, precision, "r", label="PR curve")
+    plt.plot(recall, precision, "r", label="model performance")
     plt.plot(
         recall[ix], precision[ix], "o", markerfacecolor="r", markeredgecolor="k"
     )
@@ -337,7 +337,7 @@ def read_PR(test_labels, model_predictions, name):
     no_skill = num_positive / len(test_labels)
 
     # Plot the no skill precision-recall curve
-    plt.plot([0, 1], [no_skill, no_skill], "c", label="PR curve for random guessing")
+    plt.plot([0, 1], [no_skill, no_skill], "c", label="random guessing")
     plt.xlabel("Recall")
     plt.ylabel("Precision")
 
