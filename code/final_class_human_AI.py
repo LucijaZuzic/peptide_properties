@@ -15,10 +15,10 @@ from sklearn.metrics import (
 )
 
 plt.rcParams.update({'font.size': 22})
-PRthr = {'../final_all/hex_predict.txt': 0.37450, '../final_seq/hex_predict.txt': 0.40009, '../final_AP/hex_predict.txt': 0.44563,
-        "../final_TSNE_seq/hex_predict.txt": 0.41442, "../final_TSNE_AP_seq/hex_predict.txt": 0.48019}
-ROCthr = {'../final_all/hex_predict.txt': 0.74304, '../final_seq/hex_predict.txt': 0.66199, '../final_AP/hex_predict.txt': 0.68748,
-        "../final_TSNE_seq/hex_predict.txt": 0.65300, "../final_TSNE_AP_seq/hex_predict.txt": 0.67038}
+PRthr = {'../final_all/human_AI_predict.txt': 0.37450, '../final_seq/human_AI_predict.txt': 0.40009, '../final_AP/human_AI_predict.txt': 0.44563,
+        "../final_TSNE_seq/human_AI_predict.txt": 0.41442, "../final_TSNE_AP_seq/human_AI_predict.txt": 0.48019}
+ROCthr = {'../final_all/human_AI_predict.txt': 0.74304, '../final_seq/human_AI_predict.txt': 0.66199, '../final_AP/human_AI_predict.txt': 0.68748,
+        "../final_TSNE_seq/human_AI_predict.txt": 0.65300, "../final_TSNE_AP_seq/human_AI_predict.txt": 0.67038}
 
 def returnGMEAN(actual, pred):
     tn = 0
@@ -115,7 +115,7 @@ def read_ROC(test_labels, model_predictions, lines_dict, thrPR, thrROC, name):
 
     plt.legend(loc="upper center", bbox_to_anchor=(0.5, -0.2), ncol=2)
     plt.savefig(
-        '../seeds/all_seeds/' + name + '_ROC_hex.png',
+        '../seeds/all_seeds/' + name + '_ROC_human_AI.png',
         bbox_inches="tight",
     )
 
@@ -203,7 +203,7 @@ def read_PR(test_labels, model_predictions, lines_dict, thrPR, thrROC, name):
 
     plt.legend(loc="upper center", bbox_to_anchor=(0.5, -0.2), ncol=2)
     plt.savefig(
-        '../seeds/all_seeds/' + name + '_PR_hex.png',
+        '../seeds/all_seeds/' + name + '_PR_human_AI.png',
         bbox_inches="tight",
     )
 
@@ -241,16 +241,16 @@ def arrayToTable(array, addArray, addAvg, addMostFrequent):
         retstr += " & %s (%d/%d)" %(most_freq_str, num_most, len(array)) 
     return retstr + " \\\\" 
 
-df = pd.read_csv(DATA_PATH + "41557_2022_1055_MOESM3_ESM_Figure3a_5mer_score_shortMD.csv")
+df = pd.read_csv(DATA_PATH + "human_AI.csv", sep = ";")
 
-dict_hex = {}
-for i in df['pep']:
-    dict_hex[i] = '1' 
+dict_human_AI = {}
+for i in range(len(df['pep'])):
+    dict_human_AI[df['pep'][i]] = str(df['agg'][i])
 
 seq_example = ''
 for i in range(24):
     seq_example += 'A'
-dict_hex[seq_example] = '1' 
+dict_human_AI[seq_example] = '1' 
 
 best_batch_size = 600
 best_model = ''  
@@ -291,10 +291,10 @@ for number in range(1, NUM_TESTS + 1):
 if not os.path.exists("../seeds/all_seeds/"):
     os.makedirs("../seeds/all_seeds/")
  
-paths = ["../final_AP/hex_predict.txt", "../final_seq/hex_predict.txt", "../final_all/hex_predict.txt", 
-        "../final_TSNE_seq/hex_predict.txt", "../final_TSNE_AP_seq/hex_predict.txt"] 
+paths = ["../final_AP/human_AI_predict.txt", "../final_seq/human_AI_predict.txt", "../final_all/human_AI_predict.txt", 
+        "../final_TSNE_seq/human_AI_predict.txt", "../final_TSNE_AP_seq/human_AI_predict.txt"] 
 names = ["AP", "SP", "Hybrid AP-SP",  "t-SNE SP", "t-SNE AP-SP"]  
-  
+
 vals_in_lines = [ 
 'ROC thr old = ', 'PR thr old = ', 
 'ROC AUC = ', 'gmean (ROC thr old) = ', 'F1 (ROC thr old) = ', 'Accuracy (ROC thr old) = ', 
@@ -315,14 +315,14 @@ ind = -1
 for some_path in paths: 
     ind += 1
 
-    model_predictions_hex_file = open(some_path, 'r')
+    model_predictions_human_AI_file = open(some_path, 'r')
 
-    model_predictions_hex_lines = model_predictions_hex_file.readlines()
+    model_predictions_human_AI_lines = model_predictions_human_AI_file.readlines()
 
-    model_predictions_hex_one = eval(model_predictions_hex_lines[0])
+    model_predictions_human_AI_one = eval(model_predictions_human_AI_lines[0])
     
-    read_PR(test_labels, model_predictions_hex_one, lines_dict, PRthr[some_path], ROCthr[some_path], names[ind])
-    read_ROC(test_labels, model_predictions_hex_one, lines_dict, PRthr[some_path], ROCthr[some_path], names[ind])
+    read_PR(test_labels, model_predictions_human_AI_one, lines_dict, PRthr[some_path], ROCthr[some_path], names[ind])
+    read_ROC(test_labels, model_predictions_human_AI_one, lines_dict, PRthr[some_path], ROCthr[some_path], names[ind])
 
     print(some_path)
 
