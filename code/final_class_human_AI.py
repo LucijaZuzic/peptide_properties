@@ -295,6 +295,10 @@ paths = ["../final_AP/human_AI_predict.txt", "../final_seq/human_AI_predict.txt"
         "../final_TSNE_seq/human_AI_predict.txt", "../final_TSNE_AP_seq/human_AI_predict.txt"] 
 names = ["AP", "SP", "Hybrid AP-SP",  "t-SNE SP", "t-SNE AP-SP"]  
 
+header_line = "Metric"
+for i in names:
+    header_line += ";" + i
+
 vals_in_lines = [ 
 'ROC thr old = ', 'PR thr old = ', 
 'ROC AUC = ', 'gmean (ROC thr old) = ', 'F1 (ROC thr old) = ', 'Accuracy (ROC thr old) = ', 
@@ -324,11 +328,16 @@ for some_path in paths:
     read_PR(test_labels, model_predictions_human_AI_one, lines_dict, PRthr[some_path], ROCthr[some_path], names[ind])
     read_ROC(test_labels, model_predictions_human_AI_one, lines_dict, PRthr[some_path], ROCthr[some_path], names[ind])
 
-    print(some_path)
-
+print(header_line)
+ress = header_line + "\n"
 for val in vals_in_lines:
     if val.find('new') != -1:
         continue
     if len(lines_dict[val]) == 0:
         continue 
-    print(val.replace(" = ", "") + arrayToTable(lines_dict[val], True, True, False)) 
+    print(val.replace(" = ", "") + arrayToTable(lines_dict[val], True, True, False).replace(" \\\\", "").replace(" & ", ";"))
+    ress += val.replace(" = ", "") + arrayToTable(lines_dict[val], True, True, False).replace(" \\\\", "\n").replace(" & ", ";")
+
+save_ress = open(DATA_PATH + "final_class_human_AI_final.csv", "w")
+save_ress.write(ress[-1])
+save_ress.close()

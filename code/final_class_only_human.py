@@ -275,8 +275,10 @@ for i in range(len(df['AP'])):
 
 threshold = np.mean(actual_AP)
  
-for i in df['AP']:
-    if i < threshold:
+for i in range(len(df['AP'])):
+    if df['expert'][i] == 'AI':
+        continue
+    if df['AP'][i] < threshold:
         test_labels.append(0) 
     else:
         test_labels.append(1) 
@@ -284,20 +286,26 @@ for i in df['AP']:
 print("Mean:", np.mean(actual_AP), "Mod:", np.argmax(np.bincount(actual_AP)), "StD:", np.std(actual_AP), "Var:", np.var(actual_AP))
 print("Min:", np.min(actual_AP), "Q1:", np.quantile(actual_AP, .25), "Median:", np.median(actual_AP), "Q2:", np.quantile(actual_AP, .75), "Max:", np.max(actual_AP))
 
-for number in range(1, NUM_TESTS + 1): 
-    for i in df['AP']:
+for number in range(1, NUM_TESTS + 1):  
+    for i in range(len(df['AP'])):
+        if df['expert'][i] == 'AI':
+            continue
         actual_AP_long.append(i) 
-        if i < threshold:
+        if df['AP'][i] < threshold:
             test_labels_long.append(0) 
         else:
             test_labels_long.append(1) 
- 
+
 if not os.path.exists("../seeds/all_seeds/"):
     os.makedirs("../seeds/all_seeds/")
  
 paths = ["../final_AP/human_AI_predict.txt", "../final_seq/human_AI_predict.txt", "../final_all/human_AI_predict.txt", 
         "../final_TSNE_seq/human_AI_predict.txt", "../final_TSNE_AP_seq/human_AI_predict.txt"] 
 names = ["AP", "SP", "Hybrid AP-SP",  "t-SNE SP", "t-SNE AP-SP"]  
+
+header_line = "Metric"
+for i in names:
+    header_line += ";" + i
 
 vals_in_lines = [ 
 'ROC thr old = ', 'PR thr old = ', 
@@ -324,15 +332,25 @@ for some_path in paths:
     model_predictions_human_AI_lines = model_predictions_human_AI_file.readlines()
 
     model_predictions_human_AI_one = eval(model_predictions_human_AI_lines[0])
+    model_predictions_human = []
+    for i in range(len(df['pep'])):
+        if df['expert'][i] == 'AI':
+            continue
+        model_predictions_human.append(model_predictions_human_AI_one[i])
     
-    read_PR(test_labels, model_predictions_human_AI_one, lines_dict, PRthr[some_path], ROCthr[some_path], names[ind])
-    read_ROC(test_labels, model_predictions_human_AI_one, lines_dict, PRthr[some_path], ROCthr[some_path], names[ind])
+    read_PR(test_labels, model_predictions_human, lines_dict, PRthr[some_path], ROCthr[some_path], names[ind])
+    read_ROC(test_labels, model_predictions_human, lines_dict, PRthr[some_path], ROCthr[some_path], names[ind])
 
-    print(some_path)
-
+print(header_line)
+ress = header_line + "\n"
 for val in vals_in_lines:
     if val.find('new') != -1:
         continue
     if len(lines_dict[val]) == 0:
         continue 
-    print(val.replace(" = ", "") + arrayToTable(lines_dict[val], True, True, False)) 
+    print(val.replace(" = ", "") + arrayToTable(lines_dict[val], True, True, False).replace(" \\\\", "").replace(" & ", ";"))
+    ress += val.replace(" = ", "") + arrayToTable(lines_dict[val], True, True, False).replace(" \\\\", "\n").replace(" & ", ";")
+
+save_ress = open(DATA_PATH + "final_class_human_final.csv", "w")
+save_ress.write(ress[-1])
+save_ress.close()

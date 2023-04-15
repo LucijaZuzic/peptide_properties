@@ -40,7 +40,7 @@ def returnGMEAN(actual, pred):
     
     return np.sqrt(tp / apo * tn / ane)
 
-def read_ROC(test_labels, model_predictions, lines_dict, thrPR, thrROC, name): 
+def read_ROC(test_labels, model_predictions, lines_dict, thrPR, thrROC, name, seed): 
     # Get false positive rate and true positive rate.
     fpr, tpr, thresholds = roc_curve(test_labels, model_predictions) 
 
@@ -115,13 +115,13 @@ def read_ROC(test_labels, model_predictions, lines_dict, thrPR, thrROC, name):
 
     plt.legend(loc="upper center", bbox_to_anchor=(0.5, -0.2), ncol=2)
     plt.savefig(
-        '../seeds/all_seeds/' + name + '_ROC_only_AI.png',
+        '../seeds/all_seeds/' + name + '_ROC_only_AI_' + str(seed) + '.png',
         bbox_inches="tight",
     )
 
     plt.close()
 
-def read_PR(test_labels, model_predictions, lines_dict, thrPR, thrROC, name):  
+def read_PR(test_labels, model_predictions, lines_dict, thrPR, thrROC, name, seed):  
     # Get recall and precision.
     precision, recall, thresholds = precision_recall_curve(
         test_labels, model_predictions
@@ -203,7 +203,7 @@ def read_PR(test_labels, model_predictions, lines_dict, thrPR, thrROC, name):
 
     plt.legend(loc="upper center", bbox_to_anchor=(0.5, -0.2), ncol=2)
     plt.savefig(
-        '../seeds/all_seeds/' + name + '_PR_only_AI.png',
+        '../seeds/all_seeds/' + name + '_PR_only_AI_' + str(seed) + '.png',
         bbox_inches="tight",
     )
 
@@ -295,7 +295,7 @@ for number in range(1, NUM_TESTS + 1):
             test_labels_long.append(0) 
         else:
             test_labels_long.append(1) 
-
+ 
 if not os.path.exists("../seeds/all_seeds/"):
     os.makedirs("../seeds/all_seeds/")
  
@@ -306,7 +306,7 @@ names = ["AP", "SP", "Hybrid AP-SP",  "t-SNE SP", "t-SNE AP-SP"]
 header_line = "Metric"
 for i in names:
     header_line += ";" + i
-    
+
 vals_in_lines = [ 
 'ROC thr old = ', 'PR thr old = ', 
 'ROC AUC = ', 'gmean (ROC thr old) = ', 'F1 (ROC thr old) = ', 'Accuracy (ROC thr old) = ', 
@@ -317,42 +317,72 @@ vals_in_lines = [
 'gmean (PR thr new) = ', 'F1 (PR thr new) = ', 'Accuracy (PR thr new) = ', # 'gmean new = '
  ]
 
-lines_dict = dict()
-sd_dict = dict()
-for val in vals_in_lines:
-    lines_dict[val] = [] 
-    sd_dict[val] = []  
+seed_list = [305475974, 369953070, 879273778, 965681145, 992391276] 
 
-ind = -1
-for some_path in paths: 
-    ind += 1
+ress = []
+resnew = []
 
-    model_predictions_human_AI_file = open(some_path, 'r')
+for seed in seed_list:
+    print(seed)
 
-    model_predictions_human_AI_lines = model_predictions_human_AI_file.readlines()
+    lines_dict = dict()
+    sd_dict = dict()
+    for val in vals_in_lines:
+        lines_dict[val] = [] 
+        sd_dict[val] = []  
 
-    model_predictions_human_AI_one = eval(model_predictions_human_AI_lines[0])
-    model_predictions_human = []
-    for i in range(len(df['pep'])):
-        if df['expert'][i] == 'Human':
-            continue
-        model_predictions_human.append(model_predictions_human_AI_one[i])
+    ind = -1
+    for some_path in paths: 
+        ind += 1
+
+        df = pd.read_csv(DATA_PATH + "AI_results_folds_" + str(seed) + ".csv", sep = ";")
+        model_predictions_human_one = df[names[ind]]
+        
+        read_PR(test_labels, model_predictions_human_one, lines_dict, PRthr[some_path], ROCthr[some_path], names[ind], seed)
+        read_ROC(test_labels, model_predictions_human_one, lines_dict, PRthr[some_path], ROCthr[some_path], names[ind], seed)
     
-    read_PR(test_labels, model_predictions_human, lines_dict, PRthr[some_path], ROCthr[some_path], names[ind])
-    read_ROC(test_labels, model_predictions_human, lines_dict, PRthr[some_path], ROCthr[some_path], names[ind])
+    print(header_line)
+    ress.append(header_line + "\n")
+    for val in vals_in_lines:
+        if val.find('new') != -1:
+            continue
+        if len(lines_dict[val]) == 0:
+            continue 
+        ress[-1] += val.replace(" = ", "") + arrayToTable(lines_dict[val], True, True, False).replace(" \\\\", "\n").replace(" & ", ";")
+        print(val.replace(" = ", "") + arrayToTable(lines_dict[val], True, True, False).replace(" \\\\", "").replace(" & ", ";"))
 
-    print(some_path)
+    save_ress = open(DATA_PATH + "final_class_AI_" + str(seed) + ".csv", "w")
+    save_ress.write(ress[-1])
+    save_ress.close()
+ 
+    ressss = ress[-1].split("\n")[1:-1]
+    row_titles = ress[-1].split("\n")[1:-1]
 
-print(header_line)
-ress = header_line + "\n"
-for val in vals_in_lines:
-    if val.find('new') != -1:
-        continue
-    if len(lines_dict[val]) == 0:
-        continue 
-    print(val.replace(" = ", "") + arrayToTable(lines_dict[val], True, True, False).replace(" \\\\", "").replace(" & ", ";"))
-    ress += val.replace(" = ", "") + arrayToTable(lines_dict[val], True, True, False).replace(" \\\\", "\n").replace(" & ", ";")
+    for j in range(len(ressss)):
+        ressss[j] = ressss[j].split(";")[1:]
+        row_titles[j] = row_titles[j].split(";")[0]
+        for k in range(len(ressss[j])):
+            ressss[j][k] = float(ressss[j][k])
+ 
+    resnew.append(ressss) 
 
-save_ress = open(DATA_PATH + "final_class_AI_final.csv", "w")
+finalres = [[0 for k in range(len(resnew[0][0]))] for j in range(len(resnew[0]))]
+for i in range(len(resnew)):
+    for j in range(len(resnew[0])):
+        for k in range(len(resnew[0][0])):
+            finalres[j][k] += resnew[i][j][k]
+for j in range(len(resnew[0])):
+    for k in range(len(resnew[0][0])):
+        finalres[j][k] /= len(resnew)
+
+finalresstring = header_line + "\n"
+for j in range(len(resnew[0])):
+    finalresstring += row_titles[j]
+    for k in range(len(resnew[0][0])):
+        finalresstring += ";" + str(finalres[j][k] )
+    finalresstring += "\n"
+print(finalresstring)
+
+save_ress = open(DATA_PATH + "final_class_AI_avg.csv", "w")
 save_ress.write(ress[-1])
 save_ress.close()
