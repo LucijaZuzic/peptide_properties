@@ -354,5 +354,5 @@ for val in vals_in_lines:
     ress += val.replace(" = ", "") + arrayToTable(lines_dict[val], True, True, False).replace(" \\\\", "\n").replace(" & ", ";")
 
 save_ress = open(DATA_PATH + "final_class_AI_final.csv", "w")
-save_ress.write(ress[-1])
+save_ress.write(ress)
 save_ress.close()

@@ -15,10 +15,10 @@ from sklearn.metrics import (
 )
 
 plt.rcParams.update({'font.size': 22})
-PRthr = {'../final_all/human_AI_predict.txt': 0.37450, '../final_seq/human_AI_predict.txt': 0.40009, '../final_AP/human_AI_predict.txt': 0.44563,
-        "../final_TSNE_seq/human_AI_predict.txt": 0.41442, "../final_TSNE_AP_seq/human_AI_predict.txt": 0.48019}
-ROCthr = {'../final_all/human_AI_predict.txt': 0.74304, '../final_seq/human_AI_predict.txt': 0.66199, '../final_AP/human_AI_predict.txt': 0.68748,
-        "../final_TSNE_seq/human_AI_predict.txt": 0.65300, "../final_TSNE_AP_seq/human_AI_predict.txt": 0.67038}
+PRthr = {'../final_no_all/human_AI_predict.txt': 0.37450, '../final_no_seq/human_AI_predict.txt': 0.40009, '../final_no_AP/human_AI_predict.txt': 0.44563,
+        "../final_no_TSNE_seq/human_AI_predict.txt": 0.41442, "../final_no_TSNE_AP_seq/human_AI_predict.txt": 0.48019}
+ROCthr = {'../final_no_all/human_AI_predict.txt': 0.74304, '../final_no_seq/human_AI_predict.txt': 0.66199, '../final_no_AP/human_AI_predict.txt': 0.68748,
+        "../final_no_TSNE_seq/human_AI_predict.txt": 0.65300, "../final_no_TSNE_AP_seq/human_AI_predict.txt": 0.67038}
 
 def returnGMEAN(actual, pred):
     tn = 0
@@ -115,7 +115,7 @@ def read_ROC(test_labels, model_predictions, lines_dict, thrPR, thrROC, name):
 
     plt.legend(loc="upper center", bbox_to_anchor=(0.5, -0.2), ncol=2)
     plt.savefig(
-        '../seeds/all_seeds/' + name + '_ROC_only_human.png',
+        '../seeds/all_seeds/' + name + '_ROC_only_AI_no.png',
         bbox_inches="tight",
     )
 
@@ -203,7 +203,7 @@ def read_PR(test_labels, model_predictions, lines_dict, thrPR, thrROC, name):
 
     plt.legend(loc="upper center", bbox_to_anchor=(0.5, -0.2), ncol=2)
     plt.savefig(
-        '../seeds/all_seeds/' + name + '_PR_only_human.png',
+        '../seeds/all_seeds/' + name + '_PR_only_AI_no.png',
         bbox_inches="tight",
     )
 
@@ -245,7 +245,7 @@ df = pd.read_csv(DATA_PATH + "human_AI.csv", sep = ";")
 
 dict_human_AI = {}
 for i in range(len(df['pep'])):
-    if df['expert'][i] == 'AI':
+    if df['expert'][i] == 'Human':
         continue
     dict_human_AI[df['pep'][i]] = str(df['agg'][i])
 
@@ -269,14 +269,14 @@ test_labels = []
 test_labels_long = []
 
 for i in range(len(df['AP'])):
-    if df['expert'][i] == 'AI':
+    if df['expert'][i] == 'Human':
         continue
     actual_AP.append(df['AP'][i]) 
 
 threshold = np.mean(actual_AP)
  
 for i in range(len(df['AP'])):
-    if df['expert'][i] == 'AI':
+    if df['expert'][i] == 'Human':
         continue
     if df['AP'][i] < threshold:
         test_labels.append(0) 
@@ -288,7 +288,7 @@ print("Min:", np.min(actual_AP), "Q1:", np.quantile(actual_AP, .25), "Median:", 
 
 for number in range(1, NUM_TESTS + 1):  
     for i in range(len(df['AP'])):
-        if df['expert'][i] == 'AI':
+        if df['expert'][i] == 'Human':
             continue
         actual_AP_long.append(i) 
         if df['AP'][i] < threshold:
@@ -299,14 +299,14 @@ for number in range(1, NUM_TESTS + 1):
 if not os.path.exists("../seeds/all_seeds/"):
     os.makedirs("../seeds/all_seeds/")
  
-paths = ["../final_AP/human_AI_predict.txt", "../final_seq/human_AI_predict.txt", "../final_all/human_AI_predict.txt", 
-        "../final_TSNE_seq/human_AI_predict.txt", "../final_TSNE_AP_seq/human_AI_predict.txt"] 
+paths = ["../final_no_AP/human_AI_predict.txt", "../final_no_seq/human_AI_predict.txt", "../final_no_all/human_AI_predict.txt", 
+        "../final_no_TSNE_seq/human_AI_predict.txt", "../final_no_TSNE_AP_seq/human_AI_predict.txt"] 
 names = ["AP", "SP", "Hybrid AP-SP",  "t-SNE SP", "t-SNE AP-SP"]  
 
 header_line = "Metric"
 for i in names:
     header_line += ";" + i
-
+    
 vals_in_lines = [ 
 'ROC thr old = ', 'PR thr old = ', 
 'ROC AUC = ', 'gmean (ROC thr old) = ', 'F1 (ROC thr old) = ', 'Accuracy (ROC thr old) = ', 
@@ -334,12 +334,14 @@ for some_path in paths:
     model_predictions_human_AI_one = eval(model_predictions_human_AI_lines[0])
     model_predictions_human = []
     for i in range(len(df['pep'])):
-        if df['expert'][i] == 'AI':
+        if df['expert'][i] == 'Human':
             continue
         model_predictions_human.append(model_predictions_human_AI_one[i])
     
     read_PR(test_labels, model_predictions_human, lines_dict, PRthr[some_path], ROCthr[some_path], names[ind])
     read_ROC(test_labels, model_predictions_human, lines_dict, PRthr[some_path], ROCthr[some_path], names[ind])
+
+    print(some_path)
 
 print(header_line)
 ress = header_line + "\n"
@@ -350,7 +352,7 @@ for val in vals_in_lines:
         continue 
     print(val.replace(" = ", "") + arrayToTable(lines_dict[val], True, True, False).replace(" \\\\", "").replace(" & ", ";"))
     ress += val.replace(" = ", "") + arrayToTable(lines_dict[val], True, True, False).replace(" \\\\", "\n").replace(" & ", ";")
-
-save_ress = open(DATA_PATH + "final_class_human_final.csv", "w")
+    
+save_ress = open(DATA_PATH + "final_no_class_AI_final.csv", "w")
 save_ress.write(ress)
 save_ress.close()
