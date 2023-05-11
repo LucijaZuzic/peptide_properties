@@ -2,7 +2,7 @@ import numpy as np
 from automate_training import model_predict, merge_data, load_data_SA
 import sys
 
-if len(sys.argv) > 1 and len(sys.argv[1]) <= 25: 
+if len(sys.argv) > 1 and len(sys.argv[1]) <= 24: 
     dict_peptides = {sys.argv[1]: '1'}
 
     actual_AP = [1]
@@ -35,5 +35,5 @@ if len(sys.argv) > 1 and len(sys.argv[1]) <= 25:
 else:
     if len(sys.argv) <= 1:
         print("No peptide")
-    if len(sys.argv[0]) > 25:
+    if len(sys.argv[0]) > 24:
         print("Peptide too long")
