@@ -263,25 +263,30 @@ offset = 1
 properties = np.ones(95)
 masking_value = 2
 
+actual_AP_all = []
 actual_AP = []
 actual_AP_long = []
 test_labels = []
 test_labels_long = []
+thold_AP = []
+thold_AP_long = []
 
 for i in range(len(df['AP'])):
+    actual_AP_all.append(df['AP'][i]) 
     if df['expert'][i] == 'Human':
         continue
     actual_AP.append(df['AP'][i]) 
 
-threshold = np.mean(actual_AP)
+threshold = np.mean(actual_AP_all)
  
 for i in range(len(df['AP'])):
     if df['expert'][i] == 'Human':
         continue
+    test_labels.append(int(df['agg'][i]))  
     if df['AP'][i] < threshold:
-        test_labels.append(0) 
+        thold_AP.append(0) 
     else:
-        test_labels.append(1) 
+        thold_AP.append(1) 
 
 print("Mean:", np.mean(actual_AP), "Mod:", np.argmax(np.bincount(actual_AP)), "StD:", np.std(actual_AP), "Var:", np.var(actual_AP))
 print("Min:", np.min(actual_AP), "Q1:", np.quantile(actual_AP, .25), "Median:", np.median(actual_AP), "Q2:", np.quantile(actual_AP, .75), "Max:", np.max(actual_AP))
@@ -291,11 +296,12 @@ for number in range(1, NUM_TESTS + 1):
         if df['expert'][i] == 'Human':
             continue
         actual_AP_long.append(i) 
+        test_labels_long.append(int(df['agg'][i])) 
         if df['AP'][i] < threshold:
-            test_labels_long.append(0) 
+            thold_AP_long.append(0) 
         else:
-            test_labels_long.append(1) 
- 
+            thold_AP_long.append(1)  
+            
 if not os.path.exists("../seeds/all_seeds/"):
     os.makedirs("../seeds/all_seeds/")
  

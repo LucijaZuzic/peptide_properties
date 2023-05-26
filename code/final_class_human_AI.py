@@ -265,28 +265,32 @@ actual_AP = []
 actual_AP_long = []
 test_labels = []
 test_labels_long = []
+thold_AP = []
+thold_AP_long = []
 
-for i in df['AP']:
-    actual_AP.append(i) 
+for i in range(len(df['AP'])): 
+    actual_AP.append(df['AP'][i]) 
 
 threshold = np.mean(actual_AP)
  
-for i in df['AP']:
-    if i < threshold:
-        test_labels.append(0) 
+for i in range(len(df['AP'])): 
+    test_labels.append(int(df['agg'][i]))  
+    if df['AP'][i] < threshold:
+        thold_AP.append(0) 
     else:
-        test_labels.append(1) 
+        thold_AP.append(1) 
 
 print("Mean:", np.mean(actual_AP), "Mod:", np.argmax(np.bincount(actual_AP)), "StD:", np.std(actual_AP), "Var:", np.var(actual_AP))
 print("Min:", np.min(actual_AP), "Q1:", np.quantile(actual_AP, .25), "Median:", np.median(actual_AP), "Q2:", np.quantile(actual_AP, .75), "Max:", np.max(actual_AP))
 
-for number in range(1, NUM_TESTS + 1): 
-    for i in df['AP']:
+for number in range(1, NUM_TESTS + 1):  
+    for i in range(len(df['AP'])): 
         actual_AP_long.append(i) 
-        if i < threshold:
-            test_labels_long.append(0) 
+        test_labels_long.append(int(df['agg'][i])) 
+        if df['AP'][i] < threshold:
+            thold_AP_long.append(0) 
         else:
-            test_labels_long.append(1) 
+            thold_AP_long.append(1) 
  
 if not os.path.exists("../seeds/all_seeds/"):
     os.makedirs("../seeds/all_seeds/")
