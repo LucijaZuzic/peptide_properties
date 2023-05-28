@@ -117,4 +117,42 @@ for x2 in dict_grades:
     dict_grades2[x2] = dict_grades[x2]
 
 print(len(df2['pep']), len(dict_grades2))
-np.save(DATA_PATH+'data_SA_no_updated.npy', np.array(dict_grades2)) 
+np.save(DATA_PATH+'data_SA_no_updated.npy', np.array(dict_grades2))
+
+banned_no_AI = ['IHIHIQI', 'IHIHINI', 'IHINIHI']
+
+for i in range(len(df2['pep'])):
+    if df2['expert'][i] != "AI":
+        continue
+    banned_no_AI.append(df2['pep'][i])
+
+#print(df2['pep'])
+dict_grades2_no_AI = {}
+for x2 in dict_grades:
+    #print("yes", x2)
+    if x2 in banned_no_AI:
+        #print("skip", x2)
+        continue
+    dict_grades2_no_AI[x2] = dict_grades[x2]
+
+print(len(df2['pep']), len(banned_no_AI), len(dict_grades2_no_AI))
+np.save(DATA_PATH+'data_SA_no_AI_updated.npy', np.array(dict_grades2_no_AI))
+
+banned_no_human = ['IHIHIQI', 'IHIHINI', 'IHINIHI']
+
+for i in range(len(df2['pep'])):
+    if df2['expert'][i] == "AI":
+        continue
+    banned_no_human.append(df2['pep'][i])
+
+#print(df2['pep'])
+dict_grades2_no_human = {}
+for x2 in dict_grades:
+    #print("yes", x2)
+    if x2 in banned_no_human:
+        #print("skip", x2)
+        continue
+    dict_grades2_no_human[x2] = dict_grades[x2]
+
+print(len(df2['pep']), len(banned_no_human), len(dict_grades2_no_human))
+np.save(DATA_PATH+'data_SA_no_human_updated.npy', np.array(dict_grades2_no_human))
