@@ -32,6 +32,8 @@ no_len_list = []
 
 for pep in SA_data:
     peptide = [pep, SA_data[pep]]
+    if peptide[1] == '-1':
+        continue
     if len(peptide[0]) not in all_lens:
         all_lens[len(peptide[0])] = 1
         all_len_list.append(len(peptide[0]))
@@ -44,7 +46,7 @@ for pep in SA_data:
             all_yes_len_list.append(len(peptide[0]))
         else:
             all_yes_lens[len(peptide[0])] += 1
-    else:
+    if peptide[1] == '0':
         all_no += 1
         if len(peptide[0]) not in all_no_lens:
             all_no_lens[len(peptide[0])] = 1
@@ -66,7 +68,7 @@ for pep in SA_data:
             yes_len_list.append(len(peptide[0]))
         else:
             yes_lens[len(peptide[0])] += 1
-    else:
+    if peptide[1] == '0':
         no_num += 1
         if len(peptide[0]) not in no_lens:
             no_lens[len(peptide[0])] = 1
@@ -114,6 +116,8 @@ plt.legend()
 plt.savefig(DATA_PATH + "peptide_used.png", bbox_inches="tight")
 plt.show()
 plt.close()   
+print(sum(list(lens.values())))
+print(sum(list(no_lens.values())))
 
 print(len(SA_data), all_yes, all_no)  
 
